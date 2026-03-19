@@ -17,36 +17,7 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header>
-      <div class="logo-container">
-        <i class="fas fa-grin-squint meme-icon"></i>
-        <a href="#" class="logo">MEMENEBA</a>
-      </div>
-      <div class="search-container">
-        <input
-          type="text"
-          id="search-bar"
-          placeholder="Busca Elden Ring, Mario, Zelda..."
-        />
-        <button><i class="fas fa-search"></i></button>
-      </div>
-      <div class="header-actions">
-        <div class="action-group">
-          <i class="fas fa-heart"></i>
-          <span>FAVORITOS</span>
-        </div>
-        <div class="action-group">
-          <i class="fas fa-shopping-cart">
-            <span class="cart-count">0</span>
-          </i>
-          <span>CARRITO</span>
-        </div>
-        <div class="action-group">
-          <i class="fas fa-user-circle"></i>
-          <span>CUENTA</span>
-        </div>
-      </div>
-    </header>
+    <div id="header-placeholder"></div>
 
     <main>
       <section class="hero">
@@ -54,17 +25,16 @@
           <h1>¡JUEGAZOS A PRECIOS ABSURDOS!</h1>
           <p>
             Tu cartera se va a reír tanto como tú. Aprovecha antes de que nos
-            demos cuenta del error.
+            demos cuenta del error
           </p>
-          <a href="#" class="btn-primary">Saquear la tienda</a>
+          <a href="loot.html" class="btn-primary">Saquear la tienda</a>
         </div>
       </section>
 
       <div class="store-container">
         <aside class="sidebar-filters">
           <div class="filter-box">
-            <h3><i class="fas fa-filter"></i> Filtros Reales</h3>
-
+            <h3><i class="fas fa-filter"></i> Filtros Bombasticos</h3>
             <div class="filter-group">
               <h4>Plataforma</h4>
               <label
@@ -104,9 +74,8 @@
                 <i class="fas fa-gamepad"></i> Nintendo</label
               >
             </div>
-
             <div class="filter-group">
-              <h4>Precio Máximo: <span id="price-display">70€</span></h4>
+              <h4>Precio Máximo: <span id="price-display">80€</span></h4>
               <input
                 type="range"
                 id="price-filter"
@@ -115,18 +84,6 @@
                 value="80"
                 class="price-slider"
               />
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  font-weight: bold;
-                  margin-top: 5px;
-                  font-size: 12px;
-                "
-              >
-                <span>1€</span>
-                <span>80€</span>
-              </div>
             </div>
           </div>
         </aside>
@@ -135,11 +92,59 @@
           <h2 class="section-title">
             <i class="fas fa-fire"></i> Catálogo Completo
           </h2>
-
           <div class="product-grid" id="game-grid"></div>
         </div>
       </div>
     </main>
+
+    <div id="qty-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h3>¿Cuántas copias quieres?</h3>
+        <p
+          id="modal-game-title"
+          style="
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--primary-purple);
+          "
+        ></p>
+        <div class="qty-controls">
+          <button id="qty-minus" class="qty-btn">-</button>
+          <input
+            type="number"
+            id="qty-input"
+            value="1"
+            min="1"
+            max="99"
+            readonly
+          />
+          <button id="qty-plus" class="qty-btn">+</button>
+        </div>
+        <div
+          style="
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+          "
+        >
+          <button
+            id="modal-cancel"
+            class="btn-secondary"
+            style="padding: 10px 20px; border-radius: 8px; cursor: pointer"
+          >
+            Cancelar
+          </button>
+          <button
+            id="modal-confirm"
+            class="btn-primary"
+            style="padding: 10px 20px; border: none; cursor: pointer"
+          >
+            Añadir al Carrito
+          </button>
+        </div>
+      </div>
+    </div>
 
     <script src="app.js"></script>
   </body>

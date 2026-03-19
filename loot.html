@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>¡Saqueo Total! | Memeneba</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+
+    <main>
+      <div class="page-header-box">
+        <h2 class="section-title">
+          <i class="fas fa-bomb" style="color: #ff0044"></i> ¡Zona de Saqueo!
+          (Descuentos +40%)
+        </h2>
+        <p>
+          Aquí solo entran las verdaderas gangas. Si no está casi regalado, no
+          nos interesa.
+        </p>
+      </div>
+
+      <div class="product-grid" id="loot-grid"></div>
+    </main>
+
+    <div id="qty-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h3>¿Cuántas copias quieres?</h3>
+        <p
+          id="modal-game-title"
+          style="
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--primary-purple);
+          "
+        ></p>
+        <div class="qty-controls">
+          <button id="qty-minus" class="qty-btn">-</button>
+          <input
+            type="number"
+            id="qty-input"
+            value="1"
+            min="1"
+            max="99"
+            readonly
+          />
+          <button id="qty-plus" class="qty-btn">+</button>
+        </div>
+        <div
+          style="
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+          "
+        >
+          <button
+            id="modal-cancel"
+            class="btn-secondary"
+            style="padding: 10px 20px; border-radius: 8px; cursor: pointer"
+          >
+            Cancelar
+          </button>
+          <button
+            id="modal-confirm"
+            class="btn-primary"
+            style="padding: 10px 20px; border: none; cursor: pointer"
+          >
+            Añadir al Carrito
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

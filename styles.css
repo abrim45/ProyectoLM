@@ -19,6 +19,7 @@ body {
   font-family: "Fredoka", sans-serif;
   color: var(--text-dark);
   overflow-x: hidden;
+
   background-color: #fffacd;
   background-image:
     radial-gradient(#ffe066 15%, transparent 15%),
@@ -27,8 +28,16 @@ body {
   background-position:
     0 0,
     10px 10px;
+
+  /* MAGIA DE TRANSICIÓN AQUÍ */
+  opacity: 0; /* Empezamos invisibles */
+  transition: opacity 0.3s ease-in-out; /* Duración del desvanecimiento */
 }
 
+/* Esta clase se la pondrá JavaScript cuando todo esté listo */
+body.page-loaded {
+  opacity: 1;
+}
 header {
   background-color: var(--primary-purple);
   padding: 15px 5%;
@@ -127,6 +136,10 @@ header {
   font-size: 12px;
   font-weight: 700;
   border: 1px solid #000;
+  transition: transform 0.2s;
+}
+.cart-count.bump {
+  transform: scale(1.5);
 }
 
 main {
@@ -243,7 +256,7 @@ main {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 }
 
@@ -252,7 +265,6 @@ main {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -274,7 +286,7 @@ main {
 }
 
 .card-img {
-  height: 150px;
+  height: 160px;
   background-size: cover;
   background-position: center;
   display: flex;
@@ -284,7 +296,6 @@ main {
   position: relative;
 }
 
-/* Novedad: Etiqueta de descuento y colores de plataforma */
 .discount-badge {
   background: #ff0044;
   color: white;
@@ -295,7 +306,6 @@ main {
   border: 1px solid #000;
   box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
 }
-
 .platform-tag {
   color: #fff;
   padding: 4px 10px;
@@ -327,15 +337,55 @@ main {
 .card-title {
   font-size: 17px;
   font-weight: 700;
-  margin: 0 0 10px 0;
+  margin: 0 0 15px 0;
   line-height: 1.2;
 }
+
+/* NUEVA DISPOSICIÓN DEL FOOTER (Precio a la derecha, botones a la izquierda) */
 .card-footer {
   margin-top: auto;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: flex-end;
 }
+
+/* Botones de acción (Carrito y Favorito) */
+.card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.action-btn {
+  background: #f3f4f6;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #555;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.action-btn:hover {
+  transform: scale(1.1);
+}
+.cart-btn:hover {
+  border-color: var(--price-green);
+  color: var(--price-green);
+}
+.like-btn:hover {
+  border-color: #ff0044;
+  color: #ff0044;
+}
+.like-btn.liked {
+  color: #ff0044;
+  border-color: #ff0044;
+  background: #ffe6eb;
+}
+
 .price-box {
   display: flex;
   flex-direction: column;
@@ -353,7 +403,7 @@ main {
 }
 .new-price {
   color: var(--price-green);
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
 }
 
@@ -375,4 +425,143 @@ main {
     margin: 0;
     width: 100%;
   }
+}
+
+/* --- ESTILOS DE LA VENTANA MODAL --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hidden {
+  display: none !important;
+}
+.modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  border: 3px solid #000;
+  text-align: center;
+  width: 300px;
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 1);
+}
+.qty-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+.qty-btn {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  font-weight: bold;
+  background: var(--accent-yellow);
+  border: 2px solid #000;
+  border-radius: 8px;
+  cursor: pointer;
+}
+#qty-input {
+  width: 60px;
+  height: 40px;
+  font-size: 20px;
+  text-align: center;
+  border: 2px solid #000;
+  border-radius: 8px;
+  font-family: "Fredoka";
+}
+.btn-secondary {
+  background: #eee;
+  border: 2px solid #000;
+  font-family: "Fredoka";
+  font-weight: bold;
+}
+
+/* --- ESTILOS DE LA PÁGINA DEL CARRITO --- */
+.cart-container {
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+}
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 2px dashed #ccc;
+  padding: 15px 0;
+}
+.cart-item:last-child {
+  border-bottom: none;
+}
+.cart-item img {
+  width: 120px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #000;
+}
+.cart-item-details {
+  flex-grow: 1;
+}
+.cart-item-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+.cart-item-price {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--price-green);
+}
+.remove-btn {
+  background: #ff4444;
+  color: #fff;
+  border: 2px solid #000;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.cart-summary {
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: right;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+}
+
+/* --- CAJITAS PARA LOS TÍTULOS DE LAS PÁGINAS --- */
+.page-header-box {
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 12px;
+  padding: 20px 30px;
+  margin-bottom: 30px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.page-header-box .section-title {
+  margin-bottom: 0; /* Quitamos el margen porque la caja ya le da espacio */
+}
+
+.page-header-box p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #555;
+  font-weight: 600;
 }

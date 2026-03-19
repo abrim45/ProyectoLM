@@ -1,6 +1,5 @@
-// Base de datos de juegos
+// Base de datos COMPLETA de juegos
 const gamesDatabase = [
-  // PC
   {
     id: 1,
     title: "Elden Ring",
@@ -57,8 +56,6 @@ const gamesDatabase = [
     newPrice: 4.5,
     img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/105600/header.jpg",
   },
-
-  // PlayStation
   {
     id: 8,
     title: "God of War Ragnarök",
@@ -107,8 +104,6 @@ const gamesDatabase = [
     newPrice: 15.99,
     img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1151640/header.jpg",
   },
-
-  // Xbox
   {
     id: 14,
     title: "Forza Horizon 5",
@@ -157,15 +152,13 @@ const gamesDatabase = [
     newPrice: 8.95,
     img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/271590/header.jpg",
   },
-
-  // Nintendo (Usando imágenes adaptadas)
   {
     id: 20,
     title: "Zelda: Tears of the Kingdom",
     platform: "Nintendo",
     oldPrice: 69.99,
     newPrice: 55.0,
-    img: "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto:best/f_auto/dpr_2.0/ncom/software/switch/70010000063714/b0b5e90d3d57fdfb15802d3ee8a4d79435b6c3be568aa688b13ff7eaae3d1ba3",
+    img: "https://upload.wikimedia.org/wikipedia/en/f/fb/The_Legend_of_Zelda_Tears_of_the_Kingdom_cover.jpg",
   },
   {
     id: 21,
@@ -173,7 +166,7 @@ const gamesDatabase = [
     platform: "Nintendo",
     oldPrice: 59.99,
     newPrice: 45.99,
-    img: "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto:best/f_auto/dpr_2.0/ncom/software/switch/70010000000125/8626605e55cd7820a4d0485a3a7f8ee88e7a0364d93f7702bf929aa1f868d4a5",
+    img: "https://upload.wikimedia.org/wikipedia/en/b/b5/Mario_Kart_8_Deluxe_box_art.jpg",
   },
   {
     id: 22,
@@ -181,15 +174,15 @@ const gamesDatabase = [
     platform: "Nintendo",
     oldPrice: 59.99,
     newPrice: 48.5,
-    img: "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto:best/f_auto/dpr_2.0/ncom/software/switch/70010000012332/ac4d1fc9824876ce756406f0525d50c57ded4b2a666f6dfe40a6ac5c3563fad9",
+    img: "https://upload.wikimedia.org/wikipedia/en/4/44/Super_Smash_Bros._Ultimate.jpg",
   },
   {
     id: 23,
-    title: "Animal Crossing: New Horizons",
+    title: "Animal Crossing: NH",
     platform: "Nintendo",
     oldPrice: 59.99,
     newPrice: 39.9,
-    img: "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto:best/f_auto/dpr_2.0/ncom/software/switch/70010000027619/9989957eae3a6b545194c42fec2071675c34aadacd65e6b33fdfe7b3b6a86c3a",
+    img: "https://upload.wikimedia.org/wikipedia/en/1/1f/Animal_Crossing_New_Horizons.jpg",
   },
   {
     id: 24,
@@ -197,7 +190,7 @@ const gamesDatabase = [
     platform: "Nintendo",
     oldPrice: 59.99,
     newPrice: 35.0,
-    img: "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto:best/f_auto/dpr_2.0/ncom/software/switch/70010000001130/c42553b4fd0312c31e70ec7468c6c9bccd739f340152925b9600631f2d29f8b5",
+    img: "https://upload.wikimedia.org/wikipedia/en/8/8d/Super_Mario_Odyssey.jpg",
   },
   {
     id: 25,
@@ -209,62 +202,78 @@ const gamesDatabase = [
   },
 ];
 
-// Referencias al DOM (los elementos de la página)
-const gameGrid = document.getElementById("game-grid");
-const checkboxes = document.querySelectorAll(".filter-platform");
-const priceSlider = document.getElementById("price-filter");
-const priceDisplay = document.getElementById("price-display");
-const searchBar = document.getElementById("search-bar");
-
-// Función para calcular el porcentaje de descuento
-function calculateDiscount(oldPrice, newPrice) {
-  const discount = ((oldPrice - newPrice) / oldPrice) * 100;
-  return Math.round(discount); // Redondeamos para que no tenga decimales
+// Lógica de LocalStorage (La "memoria" del navegador)
+function getCart() {
+  return JSON.parse(localStorage.getItem("memeneba_cart")) || [];
+}
+function setCart(cart) {
+  localStorage.setItem("memeneba_cart", JSON.stringify(cart));
+  updateCartBadge();
 }
 
-// Función principal que dibuja los juegos en la pantalla
-function renderGames(gamesToRender) {
-  // 1. Limpiamos la cuadrícula
-  gameGrid.innerHTML = "";
+function getFavorites() {
+  return JSON.parse(localStorage.getItem("memeneba_favs")) || [];
+}
+function setFavorites(favs) {
+  localStorage.setItem("memeneba_favs", JSON.stringify(favs));
+}
 
-  // 2. Si no hay juegos, mostramos un mensaje
+// Actualiza SÓLO el número del carrito
+function updateCartBadge() {
+  const cart = getCart();
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartCountEl = document.getElementById("cart-count");
+  if (cartCountEl) {
+    cartCountEl.textContent = totalItems;
+    cartCountEl.classList.add("bump");
+    setTimeout(() => cartCountEl.classList.remove("bump"), 300);
+  }
+}
+
+// Variables globales para el Modal
+let gameToAddToCart = null;
+const qtyModal = document.getElementById("qty-modal");
+const qtyInput = document.getElementById("qty-input");
+
+// Función que dibuja tarjetas de juegos
+function renderGameCards(gamesToRender, containerElement) {
+  containerElement.innerHTML = "";
+  const favs = getFavorites();
+
   if (gamesToRender.length === 0) {
-    gameGrid.innerHTML =
-      '<h3 style="grid-column: 1/-1; text-align: center; padding: 40px;">No hemos encontrado juegos de risa con esos filtros 😢</h3>';
+    containerElement.innerHTML =
+      '<h3 style="grid-column: 1/-1; text-align: center; padding: 40px; font-size: 24px;">No hay juegos aquí 😢</h3>';
     return;
   }
 
-  // 3. Recorremos la lista y creamos el HTML para cada juego
   gamesToRender.forEach((game) => {
-    const discountPercentage = calculateDiscount(game.oldPrice, game.newPrice);
+    const discount = Math.round(
+      ((game.oldPrice - game.newPrice) / game.oldPrice) * 100,
+    );
+    let tagClass =
+      game.platform === "PC"
+        ? "tag-pc"
+        : game.platform === "PlayStation"
+          ? "tag-playstation"
+          : game.platform === "Xbox"
+            ? "tag-xbox"
+            : "tag-nintendo";
+    const heartClass = favs.includes(game.id) ? "liked" : "";
+    const bgSize = game.platform === "Nintendo" ? "contain" : "cover";
 
-    // Asignamos una clase de color según la plataforma
-    let tagClass = "tag-pc";
-    let iconClass = "fas fa-desktop";
-
-    if (game.platform === "PlayStation") {
-      tagClass = "tag-playstation";
-      iconClass = "fab fa-playstation";
-    }
-    if (game.platform === "Xbox") {
-      tagClass = "tag-xbox";
-      iconClass = "fab fa-xbox";
-    }
-    if (game.platform === "Nintendo") {
-      tagClass = "tag-nintendo";
-      iconClass = "fas fa-gamepad";
-    }
-
-    // Creamos la tarjeta
     const cardHTML = `
-            <div class="card scroll-anim">
-                <div class="card-img" style="background-image: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5)), url('${game.img}');">
-                    <span class="platform-tag ${tagClass}"><i class="${iconClass}"></i> ${game.platform}</span>
-                    <span class="discount-badge">-${discountPercentage}%</span>
+            <div class="card scroll-anim visible">
+                <div class="card-img" style="background-image: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5)), url('${game.img}'); background-size: ${bgSize}; background-position: top; background-repeat: no-repeat; background-color: #222;">
+                    <span class="platform-tag ${tagClass}">${game.platform}</span>
+                    <span class="discount-badge">-${discount}%</span>
                 </div>
                 <div class="card-body">
                     <h3 class="card-title">${game.title}</h3>
                     <div class="card-footer">
+                        <div class="card-actions">
+                            <button class="action-btn cart-btn" data-id="${game.id}" title="Añadir al carrito"><i class="fas fa-cart-plus"></i></button>
+                            <button class="action-btn like-btn ${heartClass}" data-id="${game.id}" title="Me gusta"><i class="fas fa-heart"></i></button>
+                        </div>
                         <div class="price-box">
                             <span class="old-price">${game.oldPrice.toFixed(2)}€</span>
                             <span class="new-price">${game.newPrice.toFixed(2)}€</span>
@@ -273,79 +282,246 @@ function renderGames(gamesToRender) {
                 </div>
             </div>
         `;
-
-    gameGrid.insertAdjacentHTML("beforeend", cardHTML);
+    containerElement.insertAdjacentHTML("beforeend", cardHTML);
   });
-
-  // 4. Reactivamos la animación de scroll para las nuevas tarjetas
-  animateCards();
 }
 
-// Lógica de Filtros
-function applyFilters() {
-  // A) Saber qué plataformas están marcadas
-  const selectedPlatforms = Array.from(checkboxes)
-    .filter((checkbox) => checkbox.checked)
-    .map((checkbox) => checkbox.value);
+// Escuchar clics en botones de carrito y favoritos
+document.addEventListener("click", (e) => {
+  const cartBtn = e.target.closest(".cart-btn");
+  const likeBtn = e.target.closest(".like-btn");
 
-  // B) Saber el precio máximo
-  const maxPrice = parseFloat(priceSlider.value);
+  if (cartBtn) {
+    gameToAddToCart = parseInt(cartBtn.dataset.id);
+    const gameObj = gamesDatabase.find((g) => g.id === gameToAddToCart);
+    document.getElementById("modal-game-title").textContent = gameObj.title;
+    qtyInput.value = 1;
+    qtyModal.classList.remove("hidden");
+  }
 
-  // C) Saber qué han escrito en el buscador
-  const searchTerm = searchBar.value.toLowerCase();
+  if (likeBtn) {
+    const gameId = parseInt(likeBtn.dataset.id);
+    let favs = getFavorites();
 
-  // D) Filtrar la base de datos
-  const filteredGames = gamesDatabase.filter((game) => {
-    const matchesPlatform = selectedPlatforms.includes(game.platform);
-    const matchesPrice = game.newPrice <= maxPrice;
-    const matchesSearch = game.title.toLowerCase().includes(searchTerm);
-
-    return matchesPlatform && matchesPrice && matchesSearch;
-  });
-
-  // E) Dibujar los juegos filtrados
-  renderGames(filteredGames);
-}
-
-// Animación de aparición suave
-function animateCards() {
-  const cards = document.querySelectorAll(".scroll-anim");
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          // Pequeño retraso para que aparezcan en cascada
-          setTimeout(() => {
-            entry.target.classList.add("visible");
-          }, 50);
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
-  );
-
-  cards.forEach((card) => observer.observe(card));
-}
-
-// --- EVENTOS (Escuchar cuando el usuario toca algo) ---
-
-// Cuando cambia una casilla de plataforma
-checkboxes.forEach((checkbox) => {
-  checkbox.addEventListener("change", applyFilters);
+    if (favs.includes(gameId)) {
+      favs = favs.filter((id) => id !== gameId);
+      likeBtn.classList.remove("liked");
+      const favGrid = document.getElementById("favorites-grid");
+      if (favGrid) setTimeout(() => loadFavoritesPage(), 200);
+    } else {
+      favs.push(gameId);
+      likeBtn.classList.add("liked");
+      likeBtn.style.transform = "scale(1.3)";
+      setTimeout(() => (likeBtn.style.transform = ""), 200);
+    }
+    setFavorites(favs);
+  }
 });
 
-// Cuando se mueve el deslizador de precio
-priceSlider.addEventListener("input", (e) => {
-  priceDisplay.textContent = e.target.value + "€";
-  applyFilters();
-});
+// Lógica del modal
+if (qtyModal) {
+  document
+    .getElementById("qty-plus")
+    .addEventListener(
+      "click",
+      () => (qtyInput.value = parseInt(qtyInput.value) + 1),
+    );
+  document.getElementById("qty-minus").addEventListener("click", () => {
+    if (qtyInput.value > 1) qtyInput.value = parseInt(qtyInput.value) - 1;
+  });
 
-// Cuando se escribe en el buscador
-searchBar.addEventListener("keyup", applyFilters);
+  document
+    .getElementById("modal-cancel")
+    .addEventListener("click", () => qtyModal.classList.add("hidden"));
 
-// --- INICIO ---
-// Dibujar todos los juegos la primera vez que carga la página
+  document.getElementById("modal-confirm").addEventListener("click", () => {
+    const qty = parseInt(qtyInput.value);
+    let cart = getCart();
+    const existingItemIndex = cart.findIndex(
+      (item) => item.id === gameToAddToCart,
+    );
+    if (existingItemIndex > -1) {
+      cart[existingItemIndex].quantity += qty;
+    } else {
+      cart.push({ id: gameToAddToCart, quantity: qty });
+    }
+    setCart(cart);
+    qtyModal.classList.add("hidden");
+
+    const btnConfirm = document.getElementById("modal-confirm");
+    const originalText = btnConfirm.textContent;
+    btnConfirm.textContent = "¡Añadido!";
+    btnConfirm.style.backgroundColor = "var(--price-green)";
+    btnConfirm.style.color = "white";
+    setTimeout(() => {
+      btnConfirm.textContent = originalText;
+      btnConfirm.style.backgroundColor = "";
+      btnConfirm.style.color = "";
+    }, 1000);
+  });
+}
+
+// Función global de filtros para poder llamarla desde el header inyectado
+window.applyFiltersGlobal = function () {
+  const searchBar = document.getElementById("search-bar");
+  const search = searchBar ? searchBar.value.toLowerCase() : "";
+
+  const homeGrid = document.getElementById("game-grid");
+  if (homeGrid) {
+    const checkboxes = document.querySelectorAll(".filter-platform");
+    const selectedPlatforms = Array.from(checkboxes)
+      .filter((c) => c.checked)
+      .map((c) => c.value);
+    const maxPrice = parseFloat(document.getElementById("price-filter").value);
+
+    const filtered = gamesDatabase.filter(
+      (g) =>
+        selectedPlatforms.includes(g.platform) &&
+        g.newPrice <= maxPrice &&
+        g.title.toLowerCase().includes(search),
+    );
+    renderGameCards(filtered, homeGrid);
+  }
+
+  const lootGrid = document.getElementById("loot-grid");
+  if (lootGrid) {
+    const lootGames = gamesDatabase.filter((game) => {
+      const discount = Math.round(
+        ((game.oldPrice - game.newPrice) / game.oldPrice) * 100,
+      );
+      return discount >= 40 && game.title.toLowerCase().includes(search);
+    });
+    renderGameCards(lootGames, lootGrid);
+  }
+};
+
+// --- INICIALIZACIÓN ---
 document.addEventListener("DOMContentLoaded", () => {
-  renderGames(gamesDatabase);
+  // 1. CARGAR EL HEADER DINÁMICAMENTE
+  fetch("header.html")
+    .then((response) => response.text())
+    .then((data) => {
+      document.getElementById("header-placeholder").innerHTML = data;
+
+      updateCartBadge();
+      const searchBar = document.getElementById("search-bar");
+      if (searchBar) {
+        searchBar.addEventListener("keyup", applyFiltersGlobal);
+      }
+
+      // ¡NUEVO! Mostrar la página suavemente una vez que el header ya está en su sitio
+      document.body.classList.add("page-loaded");
+
+      // ¡NUEVO! Activar las transiciones suaves al cambiar de página
+      enableSmoothNavigation();
+    });
+
+  // 2. Lógica para INDEX.HTML
+  const homeGrid = document.getElementById("game-grid");
+  if (homeGrid) {
+    renderGameCards(gamesDatabase, homeGrid);
+    document
+      .querySelectorAll(".filter-platform")
+      .forEach((cb) => cb.addEventListener("change", applyFiltersGlobal));
+    document.getElementById("price-filter").addEventListener("input", (e) => {
+      document.getElementById("price-display").textContent =
+        e.target.value + "€";
+      applyFiltersGlobal();
+    });
+  }
+
+  // 3. Lógica para FAVORITES.HTML
+  const favGrid = document.getElementById("favorites-grid");
+  if (favGrid) loadFavoritesPage();
+
+  // 4. Lógica para CART.HTML
+  const cartContainer = document.getElementById("cart-items-container");
+  if (cartContainer) loadCartPage();
+
+  // 5. Lógica para LOOT.HTML
+  const lootGrid = document.getElementById("loot-grid");
+  if (lootGrid) applyFiltersGlobal();
 });
+
+function loadFavoritesPage() {
+  const favs = getFavorites();
+  const favoriteGames = gamesDatabase.filter((game) => favs.includes(game.id));
+  const favGrid = document.getElementById("favorites-grid");
+  if (favGrid) renderGameCards(favoriteGames, favGrid);
+}
+
+function loadCartPage() {
+  const cart = getCart();
+  const cartContainer = document.getElementById("cart-items-container");
+  const totalPriceEl = document.getElementById("cart-total-price");
+
+  if (!cartContainer || !totalPriceEl) return;
+  cartContainer.innerHTML = "";
+  let total = 0;
+
+  if (cart.length === 0) {
+    cartContainer.innerHTML =
+      '<h3 style="text-align: center;">Tu carrito está más vacío que mi cartera 🥲</h3>';
+    totalPriceEl.textContent = "0.00€";
+    return;
+  }
+
+  cart.forEach((cartItem) => {
+    const game = gamesDatabase.find((g) => g.id === cartItem.id);
+    if (!game) return;
+    const subtotal = game.newPrice * cartItem.quantity;
+    total += subtotal;
+
+    const itemHTML = `
+            <div class="cart-item">
+                <img src="${game.img}" alt="${game.title}" style="object-fit: contain; background: #222;">
+                <div class="cart-item-details">
+                    <h4 class="cart-item-title">${game.title}</h4>
+                    <span class="platform-tag" style="background:#000; display:inline-block; margin-top:5px;">${game.platform}</span>
+                    <p style="margin: 5px 0;">Cantidad: <strong>${cartItem.quantity}</strong></p>
+                </div>
+                <div style="text-align: right;">
+                    <div class="cart-item-price">${subtotal.toFixed(2)}€</div>
+                    <button class="remove-btn" onclick="removeFromCart(${game.id})"><i class="fas fa-trash"></i> Eliminar</button>
+                </div>
+            </div>
+        `;
+    cartContainer.insertAdjacentHTML("beforeend", itemHTML);
+  });
+  totalPriceEl.textContent = total.toFixed(2) + "€";
+}
+
+window.removeFromCart = function (id) {
+  let cart = getCart();
+  cart = cart.filter((item) => item.id !== id);
+  setCart(cart);
+  loadCartPage();
+};
+
+// Función para transiciones suaves entre páginas
+function enableSmoothNavigation() {
+  const links = document.querySelectorAll("a");
+
+  links.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      const targetUrl = link.getAttribute("href");
+
+      // Si es un enlace normal a otra de nuestras páginas (y no un enlace externo o vacío)
+      if (
+        targetUrl &&
+        !targetUrl.startsWith("http") &&
+        !targetUrl.startsWith("#")
+      ) {
+        e.preventDefault(); // Congelamos el salto de página
+
+        // Desvanecemos la página
+        document.body.classList.remove("page-loaded");
+
+        // Esperamos 300ms (lo que dura la animación CSS) y luego viajamos a la página
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 300);
+      }
+    });
+  });
+}
