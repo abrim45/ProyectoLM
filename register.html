@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crear Cuenta | Memeneba</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+
+    <main class="auth-container">
+      <div class="auth-box">
+        <h2 style="margin: 0; color: var(--price-green)">
+          <i class="fas fa-user-plus"></i> Únete al Meme
+        </h2>
+        <p>Regístrate y empieza a comprar juegazos</p>
+
+        <form id="register-form" class="auth-form">
+          <input
+            type="text"
+            id="reg-user"
+            class="auth-input"
+            placeholder="Elige un nombre gracioso"
+            required
+          />
+          <input
+            type="password"
+            id="reg-pass"
+            class="auth-input"
+            placeholder="Contraseña (mínimo 4 letras)"
+            required
+            minlength="4"
+          />
+          <button
+            type="submit"
+            class="btn-primary"
+            style="
+              width: 100%;
+              border: 2px solid #000;
+              background-color: var(--price-green);
+              color: white;
+            "
+          >
+            Crear mi cuenta
+          </button>
+        </form>
+
+        <a href="login.html" class="auth-link"
+          >¿Ya eres de los nuestros? Inicia sesión</a
+        >
+      </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+    <script src="js/app.js"></script>
+  </body>
+</html>
