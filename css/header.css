@@ -1,0 +1,208 @@
+header {
+  background-color: var(--primary-purple);
+  padding: 15px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid #000;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+#header-placeholder {
+  position: sticky;
+  top: 0;
+  z-index: 999; 
+  display: block;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logo-container:hover {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+.logo {
+  color: var(--text-light);
+  font-size: 36px;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  text-shadow: 2px 2px #000;
+}
+
+.meme-icon {
+  font-size: 36px;
+  color: var(--accent-yellow);
+}
+
+.logo-container .meme-icon {
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.logo-container:hover .meme-icon {
+  color: var(--accent-yellow);
+  transform: scale(1.2) rotate(15deg);
+}
+
+.search-container {
+  flex-grow: 1;
+  max-width: 600px;
+  margin: 0 30px;
+  display: flex;
+  border: 2px solid #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  font-size: 15px;
+  outline: none;
+  font-family: "Fredoka", sans-serif;
+}
+
+.search-container button {
+  padding: 12px 20px;
+  background-color: var(--accent-yellow);
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #000;
+  transition: background 0.2s;
+}
+
+.search-container button:hover {
+  background-color: #e6a600;
+}
+
+.header-actions {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.action-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.action-group i {
+  font-size: 24px;
+  margin-bottom: 5px;
+  position: relative;
+}
+
+.action-group span {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.action-group:hover i {
+  color: var(--accent-yellow);
+}
+
+.cart-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: var(--price-green);
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #000;
+  transition: transform 0.2s;
+}
+
+.cart-count.bump {
+  transform: scale(1.5);
+}
+
+/* Modo móvil solo para el header */
+@media (max-width: 900px) {
+  header {
+    flex-direction: column;
+    gap: 15px;
+    position: static;
+  }
+  .search-container {
+    margin: 0;
+    width: 100%;
+  }
+}
+
+/* =========================================
+   MÓVILES: TIENDA, FILTROS Y CARRITO
+   ========================================= */
+@media (max-width: 900px) {
+    /* Reducimos el padding lateral de la página */
+    main { padding: 20px 5%; }
+
+    /* El banner gigante se apila y se centra */
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+        gap: 20px;
+    }
+    .hero h1 { font-size: 2.2rem; }
+
+    /* Los filtros se ponen encima de los juegos y ocupan todo el ancho */
+    .store-container {
+        flex-direction: column;
+    }
+    .sidebar-filters {
+        width: 100%;
+        position: static; /* Ya no flota al hacer scroll */
+        margin-bottom: 20px;
+    }
+
+    /* Las cajitas de título se centran */
+    .page-header-box {
+        text-align: center;
+        padding: 15px 20px;
+    }
+
+    /* Arreglamos los items del carrito para que no se aplasten */
+    .cart-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    .cart-item img {
+        width: 100%;
+        max-width: 250px;
+        height: auto;
+    }
+    .cart-item > div:last-child {
+        width: 100%;
+        display: flex;
+        justify-content: space-between; /* Precio a un lado, botón al otro */
+        align-items: center;
+        margin-top: 10px;
+    }
+}
+
+/* Pantallas MUY pequeñas (Teléfonos en vertical) */
+@media (max-width: 480px) {
+    .product-grid {
+        /* En móviles pequeños, forzamos 1 sola columna de juegos grandes */
+        grid-template-columns: 1fr; 
+    }
+}

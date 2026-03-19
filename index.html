@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Memeneba | ¡Juegos reales, precios de risa!</title>
+    <title>Memeba | ¡Juegos reales, precios de risa!</title>
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
@@ -24,8 +24,7 @@
         <div>
           <h1>¡JUEGAZOS A PRECIOS ABSURDOS!</h1>
           <p>
-            Tu cartera se va a reír tanto como tú. Aprovecha antes de que nos
-            demos cuenta del error
+            Dale caña antes de que se agoten. En Memeba, los mejores juegos están a un clic
           </p>
           <a href="loot.html" class="btn-primary">Saquear la tienda</a>
         </div>
@@ -33,68 +32,57 @@
 
       <div class="store-container">
         <aside class="sidebar-filters">
-          <div class="filter-box">
-            <h3><i class="fas fa-filter"></i> Filtros Bombasticos</h3>
-            <div class="filter-group">
-              <h4>Plataforma</h4>
-              <label
-                ><input
-                  type="checkbox"
-                  class="filter-platform"
-                  value="PC"
-                  checked
-                />
-                <i class="fas fa-desktop"></i> PC</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  class="filter-platform"
-                  value="PlayStation"
-                  checked
-                />
-                <i class="fab fa-playstation"></i> PlayStation</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  class="filter-platform"
-                  value="Xbox"
-                  checked
-                />
-                <i class="fab fa-xbox"></i> Xbox</label
-              >
-              <label
-                ><input
-                  type="checkbox"
-                  class="filter-platform"
-                  value="Nintendo"
-                  checked
-                />
-                <i class="fas fa-gamepad"></i> Nintendo</label
-              >
+    <div class="filter-box">
+        <h3><i class="fas fa-filter"></i> Filtros Bombásticos</h3>
+
+        <details class="filter-group">
+            <summary><h4><i class="fas fa-sort"></i> Ordenar por</h4></summary>
+            <div class="filter-content">
+                <select id="sort-filter" class="custom-select">
+                    <option value="default">Relevancia</option>
+                    <option value="price-asc">Precio: Más barato primero</option>
+                    <option value="price-desc">Precio: Más caro primero</option>
+                    <option value="alpha-asc">Nombre: A - Z</option>
+                    <option value="alpha-desc">Nombre: Z - A</option>
+                </select>
             </div>
-            <div class="filter-group">
-              <h4>Precio Máximo: <span id="price-display">80€</span></h4>
-              <input
-                type="range"
-                id="price-filter"
-                min="1"
-                max="80"
-                value="80"
-                class="price-slider"
-              />
+        </details>
+
+        <details class="filter-group">
+            <summary><h4><i class="fas fa-gamepad"></i> Plataforma</h4></summary>
+            <div class="filter-content">
+                <label><input type="checkbox" class="filter-platform" value="PC" checked> PC</label>
+                <label><input type="checkbox" class="filter-platform" value="PlayStation" checked> PlayStation</label>
+                <label><input type="checkbox" class="filter-platform" value="Xbox" checked> Xbox</label>
+                <label><input type="checkbox" class="filter-platform" value="Nintendo" checked> Nintendo</label>
             </div>
-          </div>
-        </aside>
+        </details>
+
+        <details class="filter-group">
+            <summary><h4><i class="fas fa-tag"></i> Precio Máx: <span id="price-display">80€</span></h4></summary>
+            <div class="filter-content">
+                <input type="range" id="price-filter" min="0" max="80" value="80" step="1">
+            </div>
+        </details>
+
+        <button id="reset-filters-btn" class="btn-reset">
+            <i class="fas fa-undo-alt"></i> Restablecer Filtros
+        </button>
+
+    </div>
+</aside>
 
         <div class="product-section">
-          <h2 class="section-title">
-            <i class="fas fa-fire"></i> Catálogo Completo
-          </h2>
-          <div class="product-grid" id="game-grid"></div>
-        </div>
-      </div>
+                
+                <div class="page-header-box">
+                    <h2 class="section-title"><i class="fas fa-fire"></i> Catálogo Completo</h2>
+                    <p>Explora nuestra colección de juegazos disponibles. Gastate los ahorros y aprovecha las ofertas.</p>
+                </div>
+                
+                <div class="product-grid" id="game-grid">
+                    </div>
+                
+            </div>
     </main>
 
     <div id="qty-modal" class="modal-overlay hidden">

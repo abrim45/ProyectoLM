@@ -1,3 +1,8 @@
+@import url('header.css');
+@import url('footer.css');
+@import url('auth.css');
+
+/* --- VARIABLES GLOBALES --- */
 :root {
   --primary-purple: #3b125f;
   --dark-purple: #2a0b45;
@@ -14,139 +19,28 @@
   --color-nintendo: #e60012;
 }
 
+/* --- ESTILOS BASE --- */
 body {
   margin: 0;
   font-family: "Fredoka", sans-serif;
   color: var(--text-dark);
   overflow-x: hidden;
 
+  /* Fondo Memeba (Puntitos) */
   background-color: #fffacd;
   background-image:
     radial-gradient(#ffe066 15%, transparent 15%),
     radial-gradient(#ffe066 15%, transparent 15%);
   background-size: 20px 20px;
-  background-position:
-    0 0,
-    10px 10px;
+  background-position: 0 0, 10px 10px;
 
-  /* MAGIA DE TRANSICIÓN AQUÍ */
-  opacity: 0; /* Empezamos invisibles */
-  transition: opacity 0.3s ease-in-out; /* Duración del desvanecimiento */
+  /* Transición suave al cargar la página */
+  opacity: 0; 
+  transition: opacity 0.3s ease-in-out; 
 }
 
-/* Esta clase se la pondrá JavaScript cuando todo esté listo */
 body.page-loaded {
   opacity: 1;
-}
-header {
-  background-color: var(--primary-purple);
-  padding: 15px 5%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 3px solid #000;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-#header-placeholder {
-  position: sticky;
-  top: 0;
-  z-index: 999; /* Asegura que pase por encima de los juegos al hacer scroll */
-  display: block;
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.logo {
-  color: var(--text-light);
-  font-size: 36px;
-  font-weight: 700;
-  text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: -1px;
-  text-shadow: 2px 2px #000;
-}
-.meme-icon {
-  font-size: 36px;
-  color: var(--accent-yellow);
-}
-
-.search-container {
-  flex-grow: 1;
-  max-width: 600px;
-  margin: 0 30px;
-  display: flex;
-  border: 2px solid #000;
-  border-radius: 8px;
-  overflow: hidden;
-}
-.search-container input {
-  width: 100%;
-  padding: 12px 20px;
-  border: none;
-  font-size: 15px;
-  outline: none;
-  font-family: "Fredoka", sans-serif;
-}
-.search-container button {
-  padding: 12px 20px;
-  background-color: var(--accent-yellow);
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  color: #000;
-  transition: background 0.2s;
-}
-.search-container button:hover {
-  background-color: #e6a600;
-}
-
-.header-actions {
-  display: flex;
-  gap: 25px;
-  align-items: center;
-}
-.action-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: var(--text-light);
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.action-group i {
-  font-size: 24px;
-  margin-bottom: 5px;
-  position: relative;
-}
-.action-group span {
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-.action-group:hover i {
-  color: var(--accent-yellow);
-}
-.cart-count {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  background-color: var(--price-green);
-  color: #fff;
-  border-radius: 50%;
-  padding: 2px 6px;
-  font-size: 12px;
-  font-weight: 700;
-  border: 1px solid #000;
-  transition: transform 0.2s;
-}
-.cart-count.bump {
-  transform: scale(1.5);
 }
 
 main {
@@ -155,6 +49,7 @@ main {
   margin: 0 auto;
 }
 
+/* --- HERO (Banner principal) --- */
 .hero {
   background: linear-gradient(90deg, #1a0b2e 0%, #4a148c 100%);
   border-radius: 12px;
@@ -167,16 +62,19 @@ main {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   border: 2px solid #000;
 }
+
 .hero h1 {
   font-size: 3rem;
   margin: 0 0 15px 0;
   text-shadow: 2px 2px #000;
 }
+
 .hero p {
   font-size: 1.4rem;
   margin-bottom: 25px;
   color: #e0e0e0;
 }
+
 .btn-primary {
   background-color: var(--accent-yellow);
   color: #000;
@@ -186,35 +84,38 @@ main {
   font-weight: 700;
   border-radius: 8px;
   display: inline-block;
-  transition:
-    background 0.2s,
-    transform 0.2s;
+  transition: background 0.2s, transform 0.2s;
   border: 2px solid #000;
 }
+
 .btn-primary:hover {
   background-color: #e6a600;
   transform: scale(1.05);
 }
 
+/* --- CONTENEDOR DE LA TIENDA --- */
 .store-container {
   display: flex;
   gap: 30px;
   align-items: flex-start;
 }
 
+/* --- FILTROS (Sidebar) --- */
 .sidebar-filters {
   width: 250px;
   flex-shrink: 0;
   position: sticky;
   top: 100px;
 }
+
 .filter-box {
   background: #fff;
   padding: 20px;
   border-radius: 12px;
   border: 2px solid #000;
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
 }
+
 .filter-box h3 {
   margin-top: 0;
   font-size: 20px;
@@ -222,32 +123,257 @@ main {
   border-bottom: 2px dashed #ccc;
   padding-bottom: 10px;
 }
+
 .filter-group {
   margin-bottom: 20px;
 }
+
 .filter-group h4 {
   margin: 0 0 10px 0;
   font-size: 16px;
 }
+
 .filter-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   cursor: pointer;
   font-size: 15px;
 }
+
+/* CHECKBOXES PERSONALIZADOS (Estilo Cómic a prueba de navegadores) */
 .filter-group input[type="checkbox"] {
-  accent-color: var(--primary-purple);
-  transform: scale(1.2);
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  border: 2px solid #000;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
   margin-right: 8px;
-}
-.price-slider {
-  width: 100%;
-  accent-color: var(--price-green);
+  margin-bottom: 2px;
+  transition: all 0.1s ease;
 }
 
+.filter-group input[type="checkbox"]:hover {
+  transform: scale(1.1);
+}
+
+.filter-group input[type="checkbox"]:checked {
+  background-color: var(--primary-purple);
+}
+
+.filter-group input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+/* --- SLIDER DE PRECIO PERFECTO V2 --- */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  margin: 15px 0;
+  background: transparent;
+  padding: 0; 
+}
+
+input[type="range"]:focus {
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 12px; /* La hacemos un poquito más alta para que luzca bien */
+  cursor: pointer;
+  background: var(--price-green);
+  border-radius: 10px;
+  /* ¡EL TRUCO! Fuera border, hola sombra interior */
+  border: none;
+  box-shadow: inset 0 0 0 2px #000; 
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  height: 26px; 
+  width: 26px;
+  border-radius: 50%;
+  background: var(--primary-purple);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  /* Ajustamos el margen para que vuelva a quedar perfectamente centrado */
+  margin-top: -7px; 
+  border: 3px solid #000;
+  transition: transform 0.1s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15); /* Efecto hover adaptado al nuevo tamaño */
+}
+
+/* --- ESTILOS DE LOS ACORDEONES (Header de Filtros) --- */
+details.filter-group {
+    margin-bottom: 15px;
+    border-bottom: 2px dashed #ccc; /* Volvemos al dashed gris, es más sutil */
+    padding-bottom: 10px;
+}
+
+details.filter-group:last-child {
+    border-bottom: none;
+}
+
+/* Ocultamos la flecha fea que traen por defecto los navegadores */
+summary {
+    cursor: pointer;
+    list-style: none; /* Estándar */
+    outline: none;
+}
+summary::-webkit-details-marker {
+    display: none !important; /* Webkit/Blink (Chrome, Edge, Safari) */
+}
+summary::marker {
+    display: none; /* Firefox */
+}
+
+/* Reestilizamos el h4 para tener la flecha a la izquierda */
+summary h4 {
+    display: flex;
+    justify-content: flex-start; /* Flecha a la izquierda, texto a continuación */
+    align-items: center;
+    gap: 12px; /* Espacio entre flecha y texto */
+    margin: 0;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+/* La flecha morada a la izquierda (cubic-bezier para efecto rebote) */
+summary h4::before {
+    content: '\f107'; /* Icono de flecha de ángulo de FontAwesome */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 18px;
+    color: var(--primary-purple); /* El moradito característico */
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s;
+    display: inline-block;
+}
+
+summary h4:hover {
+    color: var(--primary-purple);
+}
+summary h4:hover::before {
+    color: var(--accent-yellow); /* Al pasar el ratón, la flecha se vuelve amarilla */
+}
+
+/* Cuando el acordeón se abre, la flecha gira 180 grados */
+details[open] summary h4::before {
+    transform: rotate(180deg);
+}
+
+.filter-content {
+    padding-top: 15px;
+}
+
+/* --- ESTILO DEL SELECTOR DE ORDENAR (Rediseño total) --- */
+.custom-select {
+    width: 100%;
+    padding: 12px 15px;
+    font-family: "Fredoka", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-dark);
+    
+    /* 1. Destruimos el diseño nativo */
+    appearance: none;
+    -webkit-appearance: none;
+    
+    /* 2. Dibujamos nuestro diseño "bombástico" estilo cómic */
+    background-color: #fffacd; /* Fondo amarillo pálido del body */
+    border: 3px solid #000; /* Borde negro grueso */
+    border-radius: 8px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+    box-shadow: 4px 4px 0px rgba(0,0,0,1); /* Sombra dura */
+    
+    /* 3. Añadimos una flecha personalizada morada con imagen de fondo */
+    /* (Copiado de una flecha de ángulo morado #3b125f codificada en base64) */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%233b125f'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 15px) center;
+    background-size: 20px 20px;
+    padding-right: 45px; /* Espacio para la flecha */
+}
+
+/* Efectos al pasar el ratón y focus */
+.custom-select:hover {
+    background-color: #ffe066; /* Un amarillo más fuerte */
+    transform: translateY(-2px); /* Pequeño levante */
+    box-shadow: 6px 6px 0px rgba(0,0,0,1);
+}
+
+.custom-select:focus {
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 2px var(--primary-purple), 4px 4px 0px rgba(0,0,0,1);
+}
+
+/* Estilo para las opciones del desplegable */
+.custom-select option {
+    font-weight: 600;
+    color: var(--text-dark);
+    background-color: #fffacd;
+}
+.custom-select option:checked {
+    background-color: var(--primary-purple);
+    color: white;
+}
+
+/* --- BOTÓN DE RESTABLECER FILTROS --- */
+.btn-reset {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background-color: #ff4444;
+    color: white;
+    border: 3px solid #000;
+    border-radius: 8px;
+    font-family: "Fredoka", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    box-shadow: 4px 4px 0px rgba(0,0,0,1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-reset:hover {
+    background-color: #ff2222;
+    transform: translateY(-2px);
+    box-shadow: 6px 6px 0px rgba(0,0,0,1);
+}
+
+.btn-reset:active {
+    transform: translateY(4px);
+    box-shadow: 0px 0px 0px rgba(0,0,0,1); /* Efecto de ser aplastado */
+}
+
+/* --- CATÁLOGO DE JUEGOS --- */
 .product-section {
   flex-grow: 1;
 }
+
 .section-title {
   font-size: 28px;
   margin-top: 0;
@@ -257,6 +383,7 @@ main {
   align-items: center;
   gap: 10px;
 }
+
 .section-title i {
   color: #ff4500;
 }
@@ -267,6 +394,7 @@ main {
   gap: 20px;
 }
 
+/* TARJETAS DE JUEGO */
 .card {
   background: #fff;
   border-radius: 12px;
@@ -278,15 +406,14 @@ main {
   border: 2px solid #000;
   opacity: 0;
   transform: translateY(40px);
-  transition:
-    opacity 0.5s ease-out,
-    transform 0.5s ease-out,
-    box-shadow 0.2s;
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out, box-shadow 0.2s;
 }
+
 .card.visible {
   opacity: 1;
   transform: translateY(0);
 }
+
 .card.visible:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
@@ -313,6 +440,7 @@ main {
   border: 1px solid #000;
   box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
 }
+
 .platform-tag {
   color: #fff;
   padding: 4px 10px;
@@ -322,18 +450,11 @@ main {
   border: 1px solid rgba(255, 255, 255, 0.4);
   text-transform: uppercase;
 }
-.tag-pc {
-  background-color: var(--color-pc);
-}
-.tag-playstation {
-  background-color: var(--color-ps);
-}
-.tag-xbox {
-  background-color: var(--color-xbox);
-}
-.tag-nintendo {
-  background-color: var(--color-nintendo);
-}
+
+.tag-pc { background-color: var(--color-pc); }
+.tag-playstation { background-color: var(--color-ps); }
+.tag-xbox { background-color: var(--color-xbox); }
+.tag-nintendo { background-color: var(--color-nintendo); }
 
 .card-body {
   padding: 15px;
@@ -341,6 +462,7 @@ main {
   flex-direction: column;
   flex-grow: 1;
 }
+
 .card-title {
   font-size: 17px;
   font-weight: 700;
@@ -348,7 +470,6 @@ main {
   line-height: 1.2;
 }
 
-/* NUEVA DISPOSICIÓN DEL FOOTER (Precio a la derecha, botones a la izquierda) */
 .card-footer {
   margin-top: auto;
   display: flex;
@@ -356,12 +477,12 @@ main {
   align-items: flex-end;
 }
 
-/* Botones de acción (Carrito y Favorito) */
 .card-actions {
   display: flex;
   gap: 8px;
   align-items: center;
 }
+
 .action-btn {
   background: #f3f4f6;
   border: 2px solid #ccc;
@@ -376,17 +497,21 @@ main {
   justify-content: center;
   align-items: center;
 }
+
 .action-btn:hover {
   transform: scale(1.1);
 }
+
 .cart-btn:hover {
   border-color: var(--price-green);
   color: var(--price-green);
 }
+
 .like-btn:hover {
   border-color: #ff0044;
   color: #ff0044;
 }
+
 .like-btn.liked {
   color: #ff0044;
   border-color: #ff0044;
@@ -402,39 +527,21 @@ main {
   border-radius: 8px;
   border: 1px solid #ccc;
 }
+
 .old-price {
   font-size: 14px;
   text-decoration: line-through;
   color: #888;
   font-weight: 600;
 }
+
 .new-price {
   color: var(--price-green);
   font-size: 22px;
   font-weight: 800;
 }
 
-@media (max-width: 900px) {
-  .store-container {
-    flex-direction: column;
-  }
-  .sidebar-filters {
-    width: 100%;
-    position: static;
-    margin-bottom: 20px;
-  }
-  header {
-    flex-direction: column;
-    gap: 15px;
-    position: static;
-  }
-  .search-container {
-    margin: 0;
-    width: 100%;
-  }
-}
-
-/* --- ESTILOS DE LA VENTANA MODAL --- */
+/* --- MODAL (Ventana emergente) --- */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -442,14 +549,16 @@ main {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.7);
-  z-index: 1000;
+  z-index: 10000;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .hidden {
   display: none !important;
 }
+
 .modal-content {
   background: #fff;
   padding: 30px;
@@ -459,6 +568,7 @@ main {
   width: 300px;
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 1);
 }
+
 .qty-controls {
   display: flex;
   justify-content: center;
@@ -466,6 +576,7 @@ main {
   gap: 10px;
   margin: 20px 0;
 }
+
 .qty-btn {
   width: 40px;
   height: 40px;
@@ -476,6 +587,7 @@ main {
   border-radius: 8px;
   cursor: pointer;
 }
+
 #qty-input {
   width: 60px;
   height: 40px;
@@ -485,6 +597,7 @@ main {
   border-radius: 8px;
   font-family: "Fredoka";
 }
+
 .btn-secondary {
   background: #eee;
   border: 2px solid #000;
@@ -492,15 +605,16 @@ main {
   font-weight: bold;
 }
 
-/* --- ESTILOS DE LA PÁGINA DEL CARRITO --- */
+/* --- CARRITO DE COMPRAS --- */
 .cart-container {
   background: #fff;
   border: 2px solid #000;
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
 }
+
 .cart-item {
   display: flex;
   align-items: center;
@@ -508,9 +622,11 @@ main {
   border-bottom: 2px dashed #ccc;
   padding: 15px 0;
 }
+
 .cart-item:last-child {
   border-bottom: none;
 }
+
 .cart-item img {
   width: 120px;
   height: 70px;
@@ -518,19 +634,23 @@ main {
   border-radius: 8px;
   border: 1px solid #000;
 }
+
 .cart-item-details {
   flex-grow: 1;
 }
+
 .cart-item-title {
   margin: 0;
   font-size: 18px;
   font-weight: 700;
 }
+
 .cart-item-price {
   font-size: 18px;
   font-weight: 800;
   color: var(--price-green);
 }
+
 .remove-btn {
   background: #ff4444;
   color: #fff;
@@ -540,90 +660,72 @@ main {
   cursor: pointer;
   font-weight: bold;
 }
+
 .cart-summary {
   background: #fff;
   border: 2px solid #000;
   border-radius: 12px;
-  padding: 20px;
-  text-align: right;
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
 }
 
-/* --- CAJITAS PARA LOS TÍTULOS DE LAS PÁGINAS --- */
+/*-------------------------------*/
+
+/* =========================================
+   RECUPERACIÓN DE LAS CAJITAS PERDIDAS 
+   ========================================= */
+
+/* 1. EL BANNER GIGANTE DEL INICIO (Hero) */
+.hero {
+    background: linear-gradient(90deg, #1a0b2e 0%, #4a148c 100%);
+    border-radius: 12px;
+    padding: 50px;
+    color: var(--text-light);
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    border: 2px solid #000;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin: 0 0 15px 0;
+    text-shadow: 2px 2px #000;
+}
+
+.hero p {
+    font-size: 1.4rem;
+    margin-bottom: 25px;
+    color: #e0e0e0;
+}
+
+/* 2. LAS CAJITAS BLANCAS DE TÍTULO (Favoritos, Loot, Carrito) */
 .page-header-box {
-  background: #fff;
-  border: 2px solid #000;
-  border-radius: 12px;
-  padding: 20px 30px;
-  margin-bottom: 30px;
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+    background: #fff;
+    border: 2px solid #000;
+    border-radius: 12px;
+    padding: 20px 30px;
+    margin-bottom: 30px;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .page-header-box .section-title {
-  margin-bottom: 0; /* Quitamos el margen porque la caja ya le da espacio */
+    margin-bottom: 0; 
 }
 
 .page-header-box p {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #555;
-  font-weight: 600;
+    margin: 0;
+    font-size: 1.1rem;
+    color: #555;
+    font-weight: 600;
 }
 
-/* --- ESTILOS DE LOGIN Y REGISTRO --- */
-.auth-container {
-  max-width: 400px;
-  margin: 40px auto;
-}
-
-.auth-box {
-  background: #fff;
-  border: 3px solid #000;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 8px 8px 0px rgba(0, 0, 0, 1);
-  text-align: center;
-}
-
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.auth-input {
-  width: 100%;
-  padding: 12px 15px;
-  border: 2px solid #000;
-  border-radius: 8px;
-  font-size: 16px;
-  font-family: "Fredoka", sans-serif;
-  outline: none;
-  box-sizing: border-box; /* Para que no se salgan de la caja */
-}
-
-.auth-input:focus {
-  border-color: var(--primary-purple);
-  box-shadow: 0 0 5px var(--primary-purple);
-}
-
-.auth-link {
-  display: block;
-  margin-top: 15px;
-  color: var(--primary-purple);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.auth-link:hover {
-  text-decoration: underline;
-}
-
-/* --- TOAST NOTIFICATIONS (Alertas chulas) --- */
+/* =========================================
+   SISTEMA DE NOTIFICACIONES (TOASTS)
+   ========================================= */
 #toast-container {
   position: fixed;
   bottom: 20px;
@@ -652,132 +754,80 @@ main {
   transform: translateX(100%);
 }
 
-.toast.error {
-  border-left: 8px solid #ff0044;
-}
-.toast.success {
-  border-left: 8px solid var(--price-green);
-}
+/* Colores según el tipo de alerta */
+.toast.error { border-left: 8px solid #ff0044; }
+.toast.success { border-left: 8px solid var(--price-green); }
 
+/* Animación de salida */
 .toast.fade-out {
   animation: fadeOutToast 0.3s ease-out forwards;
 }
 
+/* Las animaciones clave (Keyframes) */
 @keyframes slideInRight {
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes fadeOutToast {
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
+  to { transform: translateX(100%); opacity: 0; }
 }
 
-/* --- ESTILOS DEL FOOTER --- */
-.site-footer {
-  background-color: var(--dark-purple);
-  color: var(--text-light);
-  margin-top: 60px;
-  border-top: 4px solid #000;
+/* =========================================
+   MÓVILES: TIENDA, FILTROS Y CARRITO
+   ========================================= */
+@media (max-width: 900px) {
+    /* Reducimos el padding lateral de la página */
+    main { padding: 20px 5%; }
+
+    /* El banner gigante se apila y se centra */
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+        gap: 20px;
+    }
+    .hero h1 { font-size: 2.2rem; }
+
+    /* Los filtros se ponen encima de los juegos y ocupan todo el ancho */
+    .store-container {
+        flex-direction: column;
+    }
+    .sidebar-filters {
+        width: 100%;
+        position: static; /* Ya no flota al hacer scroll */
+        margin-bottom: 20px;
+    }
+
+    /* Las cajitas de título se centran */
+    .page-header-box {
+        text-align: center;
+        padding: 15px 20px;
+    }
+
+    /* Arreglamos los items del carrito para que no se aplasten */
+    .cart-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    .cart-item img {
+        width: 100%;
+        max-width: 250px;
+        height: auto;
+    }
+    .cart-item > div:last-child {
+        width: 100%;
+        display: flex;
+        justify-content: space-between; /* Precio a un lado, botón al otro */
+        align-items: center;
+        margin-top: 10px;
+    }
 }
 
-.footer-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 40px 5%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 40px;
-}
-
-.footer-column h4 {
-  color: var(--accent-yellow);
-  font-size: 18px;
-  margin-top: 0;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-}
-
-.footer-column p {
-  color: #ccc;
-  line-height: 1.6;
-}
-
-.footer-column ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.footer-column ul a {
-  color: #ccc;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.footer-column ul a:hover {
-  color: var(--accent-yellow);
-}
-
-.social-links {
-  display: flex;
-  gap: 15px;
-}
-
-.social-links a {
-  color: var(--text-light);
-  background: rgba(255, 255, 255, 0.1);
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  font-size: 18px;
-  transition: all 0.2s;
-}
-
-.social-links a:hover {
-  background: var(--accent-yellow);
-  color: #000;
-  transform: translateY(-3px);
-}
-
-.footer-bottom {
-  background-color: #1a0b2e;
-  text-align: center;
-  padding: 15px;
-  font-size: 14px;
-  color: #888;
-}
-
-/* --- EFECTO CHULO PARA EL LOGO DE MEMENEBA --- */
-.logo-container {
-  /* Le damos una transición con efecto "rebote" (cubic-bezier) */
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* Lo que pasa con todo el contenedor al pasar el ratón */
-.logo-container:hover {
-  transform: scale(1.08) rotate(-3deg);
-}
-
-/* Le ponemos transición también al icono de la carita */
-.logo-container .meme-icon {
-  transition:
-    transform 0.3s ease,
-    color 0.3s ease;
-}
-
-/* Lo que pasa solo con la carita al pasar el ratón */
-.logo-container:hover .meme-icon {
-  color: var(--accent-yellow);
-  transform: scale(1.2) rotate(15deg);
+/* Pantallas MUY pequeñas (Teléfonos en vertical) */
+@media (max-width: 480px) {
+    .product-grid {
+        /* En móviles pequeños, forzamos 1 sola columna de juegos grandes */
+        grid-template-columns: 1fr; 
+    }
 }

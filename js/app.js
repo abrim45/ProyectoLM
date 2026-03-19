@@ -1,812 +1,44 @@
-const gamesDatabase = [
-  // PC (Steam)
-  {
-    id: 1,
-    title: "Elden Ring",
-    platform: "PC",
-    oldPrice: 59.99,
-    newPrice: 35.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg",
-  },
-  {
-    id: 2,
-    title: "Cyberpunk 2077",
-    platform: "PC",
-    oldPrice: 59.99,
-    newPrice: 22.45,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1091500/header.jpg",
-  },
-  {
-    id: 3,
-    title: "Baldur's Gate 3",
-    platform: "PC",
-    oldPrice: 59.99,
-    newPrice: 48.1,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
-  },
-  {
-    id: 4,
-    title: "Lethal Company",
-    platform: "PC",
-    oldPrice: 9.75,
-    newPrice: 6.2,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1966720/header.jpg",
-  },
-  {
-    id: 5,
-    title: "Palworld",
-    platform: "PC",
-    oldPrice: 28.99,
-    newPrice: 20.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1623730/header.jpg",
-  },
-  {
-    id: 6,
-    title: "Counter-Strike 2 Prime",
-    platform: "PC",
-    oldPrice: 14.99,
-    newPrice: 14.2,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/730/header.jpg",
-  },
-  {
-    id: 7,
-    title: "Terraria",
-    platform: "PC",
-    oldPrice: 9.99,
-    newPrice: 4.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/105600/header.jpg",
-  },
-  {
-    id: 8,
-    title: "Half-Life 2",
-    platform: "PC",
-    oldPrice: 9.99,
-    newPrice: 0.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/220/header.jpg",
-  },
-  {
-    id: 9,
-    title: "Portal 2",
-    platform: "PC",
-    oldPrice: 9.99,
-    newPrice: 1.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/620/header.jpg",
-  },
-  {
-    id: 10,
-    title: "Left 4 Dead 2",
-    platform: "PC",
-    oldPrice: 9.99,
-    newPrice: 1.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/550/header.jpg",
-  },
-  {
-    id: 11,
-    title: "Rust",
-    platform: "PC",
-    oldPrice: 39.99,
-    newPrice: 20.0,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/252490/header.jpg",
-  },
-  {
-    id: 12,
-    title: "DOOM Eternal",
-    platform: "PC",
-    oldPrice: 39.99,
-    newPrice: 9.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/782330/header.jpg",
-  },
-  {
-    id: 13,
-    title: "Red Dead Redemption 2",
-    platform: "PC",
-    oldPrice: 59.99,
-    newPrice: 19.79,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1174180/header.jpg",
-  },
-  {
-    id: 14,
-    title: "Garry's Mod",
-    platform: "PC",
-    oldPrice: 9.99,
-    newPrice: 4.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4000/header.jpg",
-  },
-  {
-    id: 15,
-    title: "DayZ",
-    platform: "PC",
-    oldPrice: 44.99,
-    newPrice: 22.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/221100/header.jpg",
-  },
-  {
-    id: 16,
-    title: "Phasmophobia",
-    platform: "PC",
-    oldPrice: 13.99,
-    newPrice: 9.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/739630/header.jpg",
-  },
-  {
-    id: 17,
-    title: "Among Us",
-    platform: "PC",
-    oldPrice: 3.99,
-    newPrice: 1.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/945360/header.jpg",
-  },
-  {
-    id: 18,
-    title: "Fall Guys",
-    platform: "PC",
-    oldPrice: 19.99,
-    newPrice: 5.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1097150/header.jpg",
-  },
-  {
-    id: 19,
-    title: "Rocket League",
-    platform: "PC",
-    oldPrice: 19.99,
-    newPrice: 5.0,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/252950/header.jpg",
-  },
-  {
-    id: 20,
-    title: "Skyrim Special Edition",
-    platform: "PC",
-    oldPrice: 39.99,
-    newPrice: 9.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/489830/header.jpg",
-  },
-  {
-    id: 21,
-    title: "Fallout 4",
-    platform: "PC",
-    oldPrice: 19.99,
-    newPrice: 4.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/377160/header.jpg",
-  },
-  {
-    id: 22,
-    title: "Mass Effect Legendary",
-    platform: "PC",
-    oldPrice: 59.99,
-    newPrice: 15.0,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1328670/header.jpg",
-  },
-  {
-    id: 23,
-    title: "Dead Space Remake",
-    platform: "PC",
-    oldPrice: 59.99,
-    newPrice: 25.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1693980/header.jpg",
-  },
-  {
-    id: 24,
-    title: "Resident Evil Village",
-    platform: "PC",
-    oldPrice: 39.99,
-    newPrice: 15.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1196590/header.jpg",
-  },
-  {
-    id: 25,
-    title: "Stardew Valley",
-    platform: "PC",
-    oldPrice: 13.99,
-    newPrice: 8.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/413150/header.jpg",
-  },
+// 1. Ahora nuestra base de datos empieza vacía
+let gamesDatabase = []; 
 
-  // PlayStation (Usamos Steam para los ports, y YouTube para exclusivos puros)
-  {
-    id: 26,
-    title: "Bloodborne",
-    platform: "PlayStation",
-    oldPrice: 19.99,
-    newPrice: 9.99,
-    img: "https://img.youtube.com/vi/G203e1HhixY/maxresdefault.jpg",
-  }, // YT
-  {
-    id: 27,
-    title: "Uncharted 4",
-    platform: "PlayStation",
-    oldPrice: 19.99,
-    newPrice: 9.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1659420/header.jpg",
-  }, // Steam
-  {
-    id: 28,
-    title: "The Last of Us Part II",
-    platform: "PlayStation",
-    oldPrice: 39.99,
-    newPrice: 19.99,
-    img: "https://img.youtube.com/vi/qPNiIeKMHrc/maxresdefault.jpg",
-  }, // YT
-  {
-    id: 29,
-    title: "Demon's Souls Remake",
-    platform: "PlayStation",
-    oldPrice: 69.99,
-    newPrice: 39.99,
-    img: "https://img.youtube.com/vi/jGttlMAQxF0/maxresdefault.jpg",
-  }, // YT
-  {
-    id: 30,
-    title: "Ratchet & Clank: Rift Apart",
-    platform: "PlayStation",
-    oldPrice: 69.99,
-    newPrice: 35.0,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1895880/header.jpg",
-  }, // Steam
-  {
-    id: 31,
-    title: "Returnal",
-    platform: "PlayStation",
-    oldPrice: 69.99,
-    newPrice: 34.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1649240/header.jpg",
-  }, // Steam
-  {
-    id: 32,
-    title: "Final Fantasy VII Remake",
-    platform: "PlayStation",
-    oldPrice: 59.99,
-    newPrice: 20.0,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1462040/header.jpg",
-  }, // Steam
-  {
-    id: 33,
-    title: "Persona 5 Royal",
-    platform: "PlayStation",
-    oldPrice: 59.99,
-    newPrice: 29.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1687950/header.jpg",
-  }, // Steam
-  {
-    id: 34,
-    title: "Gran Turismo 7",
-    platform: "PlayStation",
-    oldPrice: 69.99,
-    newPrice: 45.0,
-    img: "https://img.youtube.com/vi/1tBUsXIkG1A/maxresdefault.jpg",
-  }, // YT
-  {
-    id: 35,
-    title: "Horizon Forbidden West",
-    platform: "PlayStation",
-    oldPrice: 69.99,
-    newPrice: 39.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2420110/header.jpg",
-  }, // Steam
-  {
-    id: 36,
-    title: "God of War Ragnarök",
-    platform: "PlayStation",
-    oldPrice: 69.99,
-    newPrice: 45.0,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2322010/header.jpg",
-  }, // Steam
-  {
-    id: 37,
-    title: "Spider-Man Remastered",
-    platform: "PlayStation",
-    oldPrice: 59.99,
-    newPrice: 29.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1817070/header.jpg",
-  }, // Steam
-  {
-    id: 38,
-    title: "Ghost of Tsushima",
-    platform: "PlayStation",
-    oldPrice: 59.99,
-    newPrice: 39.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2215430/header.jpg",
-  }, // Steam
-  {
-    id: 39,
-    title: "The Last of Us Part I",
-    platform: "PlayStation",
-    oldPrice: 69.99,
-    newPrice: 41.9,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1888930/header.jpg",
-  }, // Steam
-  {
-    id: 40,
-    title: "Helldivers 2",
-    platform: "PlayStation",
-    oldPrice: 39.99,
-    newPrice: 31.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2054970/header.jpg",
-  }, // Steam
-  {
-    id: 41,
-    title: "Horizon Zero Dawn",
-    platform: "PlayStation",
-    oldPrice: 49.99,
-    newPrice: 15.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1151640/header.jpg",
-  }, // Steam
-  {
-    id: 42,
-    title: "Days Gone",
-    platform: "PlayStation",
-    oldPrice: 39.99,
-    newPrice: 15.0,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1259420/header.jpg",
-  }, // Steam
-  {
-    id: 43,
-    title: "Detroit: Become Human",
-    platform: "PlayStation",
-    oldPrice: 29.99,
-    newPrice: 14.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1222140/header.jpg",
-  }, // Steam
-  {
-    id: 44,
-    title: "Shadow of the Colossus",
-    platform: "PlayStation",
-    oldPrice: 19.99,
-    newPrice: 9.99,
-    img: "https://img.youtube.com/vi/pdZQ98mWeto/maxresdefault.jpg",
-  }, // YT
-  {
-    id: 45,
-    title: "Death Stranding",
-    platform: "PlayStation",
-    oldPrice: 39.99,
-    newPrice: 19.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1850570/header.jpg",
-  }, // Steam
-  {
-    id: 46,
-    title: "Uncharted: Lost Legacy",
-    platform: "PlayStation",
-    oldPrice: 19.99,
-    newPrice: 9.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1659420/header.jpg",
-  }, // Steam
-  {
-    id: 47,
-    title: "The Last Guardian",
-    platform: "PlayStation",
-    oldPrice: 19.99,
-    newPrice: 9.99,
-    img: "https://img.youtube.com/vi/4cNJQwYTgRU/maxresdefault.jpg",
-  }, // YT
-  {
-    id: 48,
-    title: "Nioh 2",
-    platform: "PlayStation",
-    oldPrice: 39.99,
-    newPrice: 15.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1325200/header.jpg",
-  }, // Steam
-  {
-    id: 49,
-    title: "Until Dawn",
-    platform: "PlayStation",
-    oldPrice: 19.99,
-    newPrice: 9.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2172010/header.jpg",
-  }, // Steam
-  {
-    id: 50,
-    title: "Infamous Second Son",
-    platform: "PlayStation",
-    oldPrice: 19.99,
-    newPrice: 9.99,
-    img: "https://img.youtube.com/vi/MlNfqPDjcJU/maxresdefault.jpg",
-  }, // YT
+// 2. Función asíncrona para ir a buscar los juegos al servidor
+async function fetchGames() {
+    try {
+        // Hacemos la llamada al json-server
+        const response = await fetch('http://localhost:3000/gamesDatabase');
+        
+        // Si el servidor responde bien, guardamos los juegos
+        if (response.ok) {
+            gamesDatabase = await response.json();
+            
+            // ¡AHORA SÍ! Como ya tenemos los juegos, pintamos las pantallas
+            initShop();
+        } else {
+            console.error("Error al cargar la base de datos");
+        }
+    } catch (error) {
+        console.error("El servidor json-server está apagado:", error);
+    }
+}
 
-  // Xbox (Steam)
-  {
-    id: 51,
-    title: "Halo MCC",
-    platform: "Xbox",
-    oldPrice: 39.99,
-    newPrice: 19.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/976730/header.jpg",
-  },
-  {
-    id: 52,
-    title: "Forza Motorsport",
-    platform: "Xbox",
-    oldPrice: 69.99,
-    newPrice: 49.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2440510/header.jpg",
-  },
-  {
-    id: 53,
-    title: "State of Decay 2",
-    platform: "Xbox",
-    oldPrice: 29.99,
-    newPrice: 14.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1086470/header.jpg",
-  },
-  {
-    id: 54,
-    title: "Ori and the Blind Forest",
-    platform: "Xbox",
-    oldPrice: 19.99,
-    newPrice: 4.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/261570/header.jpg",
-  },
-  {
-    id: 55,
-    title: "Sunset Overdrive",
-    platform: "Xbox",
-    oldPrice: 19.99,
-    newPrice: 4.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/847370/header.jpg",
-  },
-  {
-    id: 56,
-    title: "Quantum Break",
-    platform: "Xbox",
-    oldPrice: 39.99,
-    newPrice: 9.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/474960/header.jpg",
-  },
-  {
-    id: 57,
-    title: "Microsoft Flight Simulator",
-    platform: "Xbox",
-    oldPrice: 59.99,
-    newPrice: 39.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1250410/header.jpg",
-  },
-  {
-    id: 58,
-    title: "Pentiment",
-    platform: "Xbox",
-    oldPrice: 19.99,
-    newPrice: 12.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1205520/header.jpg",
-  },
-  {
-    id: 59,
-    title: "Hi-Fi Rush",
-    platform: "Xbox",
-    oldPrice: 29.99,
-    newPrice: 19.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1817230/header.jpg",
-  },
-  {
-    id: 60,
-    title: "Grounded",
-    platform: "Xbox",
-    oldPrice: 39.99,
-    newPrice: 25.0,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/962130/header.jpg",
-  },
-  {
-    id: 61,
-    title: "Sea of Thieves",
-    platform: "Xbox",
-    oldPrice: 39.99,
-    newPrice: 19.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1172620/header.jpg",
-  },
-  {
-    id: 62,
-    title: "Fable Anniversary",
-    platform: "Xbox",
-    oldPrice: 19.99,
-    newPrice: 9.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/288470/header.jpg",
-  },
-  {
-    id: 63,
-    title: "Gears 5",
-    platform: "Xbox",
-    oldPrice: 39.99,
-    newPrice: 9.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1097840/header.jpg",
-  },
-  {
-    id: 64,
-    title: "Bleeding Edge",
-    platform: "Xbox",
-    oldPrice: 29.99,
-    newPrice: 5.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1189840/header.jpg",
-  },
-  {
-    id: 65,
-    title: "Ryse: Son of Rome",
-    platform: "Xbox",
-    oldPrice: 19.99,
-    newPrice: 4.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/302510/header.jpg",
-  },
-  {
-    id: 66,
-    title: "Killer Instinct",
-    platform: "Xbox",
-    oldPrice: 39.99,
-    newPrice: 15.0,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/577940/header.jpg",
-  },
-  {
-    id: 67,
-    title: "Dead Rising 3",
-    platform: "Xbox",
-    oldPrice: 29.99,
-    newPrice: 7.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/265550/header.jpg",
-  },
-  {
-    id: 68,
-    title: "ReCore",
-    platform: "Xbox",
-    oldPrice: 19.99,
-    newPrice: 4.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/537450/header.jpg",
-  },
-  {
-    id: 69,
-    title: "Forza Horizon 5",
-    platform: "Xbox",
-    oldPrice: 59.99,
-    newPrice: 28.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1551360/header.jpg",
-  },
-  {
-    id: 70,
-    title: "Halo Infinite",
-    platform: "Xbox",
-    oldPrice: 59.99,
-    newPrice: 19.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1240440/header.jpg",
-  },
-  {
-    id: 71,
-    title: "Starfield",
-    platform: "Xbox",
-    oldPrice: 69.99,
-    newPrice: 35.0,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1716740/header.jpg",
-  },
-  {
-    id: 72,
-    title: "Grand Theft Auto V",
-    platform: "Xbox",
-    oldPrice: 29.99,
-    newPrice: 8.95,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/271590/header.jpg",
-  },
-  {
-    id: 73,
-    title: "Ori and the Will of the Wisps",
-    platform: "Xbox",
-    oldPrice: 29.99,
-    newPrice: 9.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1057090/header.jpg",
-  },
-  {
-    id: 74,
-    title: "Psychonauts 2",
-    platform: "Xbox",
-    oldPrice: 59.99,
-    newPrice: 15.0,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/607080/header.jpg",
-  },
-  {
-    id: 75,
-    title: "Age of Empires IV",
-    platform: "Xbox",
-    oldPrice: 39.99,
-    newPrice: 19.99,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1466860/header.jpg",
-  },
+// 3. Función para arrancar la tienda una vez tenemos los datos
+function initShop() {
+    const homeGrid = document.getElementById('game-grid');
+    if (homeGrid) {
+        // Pintamos el catálogo completo en el inicio
+        renderGameCards(gamesDatabase, homeGrid);
+    }
 
-  // Nintendo (Todo con YouTube Thumbnails - 100% Antifallos)
-  {
-    id: 76,
-    title: "Zelda: Tears Kingdom",
-    platform: "Nintendo",
-    oldPrice: 69.99,
-    newPrice: 55.0,
-    img: "https://img.youtube.com/vi/uHGShqcAHlQ/maxresdefault.jpg",
-  },
-  {
-    id: 77,
-    title: "Breath of the Wild",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 39.99,
-    img: "https://img.youtube.com/vi/zw47_q9wbBE/maxresdefault.jpg",
-  },
-  {
-    id: 78,
-    title: "Super Mario Odyssey",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 35.0,
-    img: "https://img.youtube.com/vi/wGQHQc_3ycE/maxresdefault.jpg",
-  },
-  {
-    id: 79,
-    title: "Mario Kart 8 Deluxe",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 45.99,
-    img: "https://img.youtube.com/vi/tKlRN2YpxRE/maxresdefault.jpg",
-  },
-  {
-    id: 80,
-    title: "Animal Crossing: NH",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 39.9,
-    img: "https://img.youtube.com/vi/_3YNL0OWio0/maxresdefault.jpg",
-  },
-  {
-    id: 81,
-    title: "Splatoon 3",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 45.0,
-    img: "https://img.youtube.com/vi/bE8tGf-YfGA/maxresdefault.jpg",
-  },
-  {
-    id: 82,
-    title: "Super Smash Bros Ult",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 48.5,
-    img: "https://img.youtube.com/vi/WShCN-AYHqA/maxresdefault.jpg",
-  },
-  {
-    id: 83,
-    title: "Luigi's Mansion 3",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 39.9,
-    img: "https://img.youtube.com/vi/RSGgCfbYrg0/maxresdefault.jpg",
-  },
-  {
-    id: 84,
-    title: "Pokémon Scarlet",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 49.99,
-    img: "https://img.youtube.com/vi/bedkV-JqYvQ/maxresdefault.jpg",
-  },
-  {
-    id: 85,
-    title: "Metroid Dread",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 39.99,
-    img: "https://img.youtube.com/vi/8NjEIhehrP4/maxresdefault.jpg",
-  },
-  {
-    id: 86,
-    title: "Kirby Forgotten Land",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 45.0,
-    img: "https://img.youtube.com/vi/H3LA_VkKEAA/maxresdefault.jpg",
-  },
-  {
-    id: 87,
-    title: "Bayonetta 3",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 42.0,
-    img: "https://img.youtube.com/vi/xH2TjW5rY_8/maxresdefault.jpg",
-  },
-  {
-    id: 88,
-    title: "Fire Emblem Three Houses",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 45.5,
-    img: "https://img.youtube.com/vi/rkux5h0PeXo/maxresdefault.jpg",
-  },
-  {
-    id: 89,
-    title: "Xenoblade Chronicles 3",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 49.9,
-    img: "https://img.youtube.com/vi/t-iSqnc5Tz4/maxresdefault.jpg",
-  },
-  {
-    id: 90,
-    title: "Pikmin 4",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 49.99,
-    img: "https://img.youtube.com/vi/1_M0UaAmsWc/maxresdefault.jpg",
-  },
-  {
-    id: 91,
-    title: "Donkey Kong: TF",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 39.99,
-    img: "https://img.youtube.com/vi/mIEnL_Kx6kI/maxresdefault.jpg",
-  },
-  {
-    id: 92,
-    title: "Super Mario Maker 2",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 39.9,
-    img: "https://img.youtube.com/vi/j5JAdB26u3s/maxresdefault.jpg",
-  },
-  {
-    id: 93,
-    title: "Hollow Knight",
-    platform: "Nintendo",
-    oldPrice: 14.99,
-    newPrice: 7.5,
-    img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/367520/header.jpg",
-  },
-  {
-    id: 94,
-    title: "Mario + Rabbids Sparks",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 29.99,
-    img: "https://img.youtube.com/vi/w9kXv1l0hAM/maxresdefault.jpg",
-  },
-  {
-    id: 95,
-    title: "Astral Chain",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 45.0,
-    img: "https://img.youtube.com/vi/vC_p-Kq3Hn8/maxresdefault.jpg",
-  },
-  {
-    id: 96,
-    title: "Hyrule Warriors: AoC",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 39.99,
-    img: "https://img.youtube.com/vi/2_N1v77H05U/maxresdefault.jpg",
-  },
-  {
-    id: 97,
-    title: "Mario Strikers Battle",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 39.9,
-    img: "https://img.youtube.com/vi/Y5E4B2lFq3w/maxresdefault.jpg",
-  },
-  {
-    id: 98,
-    title: "Yoshi's Crafted World",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 35.0,
-    img: "https://img.youtube.com/vi/1x4wQItX6b0/maxresdefault.jpg",
-  },
-  {
-    id: 99,
-    title: "Paper Mario: Origami King",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 35.0,
-    img: "https://img.youtube.com/vi/n-x4V0D5vrs/maxresdefault.jpg",
-  },
-  {
-    id: 100,
-    title: "Advance Wars 1+2 Re-Boot",
-    platform: "Nintendo",
-    oldPrice: 59.99,
-    newPrice: 45.0,
-    img: "https://img.youtube.com/vi/uXpS-T2Y5mI/maxresdefault.jpg",
-  },
-];
+    const lootGrid = document.getElementById('loot-grid');
+    if (lootGrid) {
+        // Pintamos solo los que tienen descuento >= 40%
+        let lootGames = gamesDatabase.filter(game => {
+            const discount = Math.round(((game.oldPrice - game.newPrice) / game.oldPrice) * 100);
+            return discount >= 40;
+        });
+        renderGameCards(lootGames, lootGrid);
+    }
+}
 
 // --- SISTEMA DE TOAST NOTIFICATIONS ---
 function showToast(message, type = "error") {
@@ -835,7 +67,7 @@ function showToast(message, type = "error") {
 
 // --- SISTEMA DE SESIONES ---
 function getCurrentUser() {
-  return localStorage.getItem("memeneba_currentUser");
+  return localStorage.getItem("memeba_currentUser");
 }
 
 function requireLogin(shouldRedirect = false) {
@@ -855,13 +87,13 @@ function requireLogin(shouldRedirect = false) {
 function getCart() {
   const user = getCurrentUser();
   return user
-    ? JSON.parse(localStorage.getItem(`memeneba_cart_${user}`)) || []
+    ? JSON.parse(localStorage.getItem(`memeba_cart_${user}`)) || []
     : [];
 }
 function setCart(cart) {
   const user = getCurrentUser();
   if (user) {
-    localStorage.setItem(`memeneba_cart_${user}`, JSON.stringify(cart));
+    localStorage.setItem(`memeba_cart_${user}`, JSON.stringify(cart));
     updateCartBadge();
   }
 }
@@ -869,12 +101,12 @@ function setCart(cart) {
 function getFavorites() {
   const user = getCurrentUser();
   return user
-    ? JSON.parse(localStorage.getItem(`memeneba_favs_${user}`)) || []
+    ? JSON.parse(localStorage.getItem(`memeba_favs_${user}`)) || []
     : [];
 }
 function setFavorites(favs) {
   const user = getCurrentUser();
-  if (user) localStorage.setItem(`memeneba_favs_${user}`, JSON.stringify(favs));
+  if (user) localStorage.setItem(`memeba_favs_${user}`, JSON.stringify(favs));
 }
 
 function updateCartBadge() {
@@ -1019,39 +251,55 @@ if (qtyModal) {
   });
 }
 
-// --- FILTROS GLOBALES ---
-window.applyFiltersGlobal = function () {
-  const searchBar = document.getElementById("search-bar");
-  const search = searchBar ? searchBar.value.toLowerCase() : "";
+fetchGames();
 
-  const homeGrid = document.getElementById("game-grid");
-  if (homeGrid) {
-    const checkboxes = document.querySelectorAll(".filter-platform");
-    const selectedPlatforms = Array.from(checkboxes)
-      .filter((c) => c.checked)
-      .map((c) => c.value);
-    const priceFilter = document.getElementById("price-filter");
-    const maxPrice = priceFilter ? parseFloat(priceFilter.value) : 80;
+// --- FILTROS GLOBALES Y ORDENACIÓN ---
+window.applyFiltersGlobal = function() {
+    const searchBar = document.getElementById('search-bar');
+    const search = searchBar ? searchBar.value.toLowerCase() : '';
 
-    const filtered = gamesDatabase.filter(
-      (g) =>
-        selectedPlatforms.includes(g.platform) &&
-        g.newPrice <= maxPrice &&
-        g.title.toLowerCase().includes(search),
-    );
-    renderGameCards(filtered, homeGrid);
-  }
+    const homeGrid = document.getElementById('game-grid');
+    if (homeGrid) {
+        const checkboxes = document.querySelectorAll('.filter-platform');
+        const selectedPlatforms = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+        
+        const priceFilter = document.getElementById('price-filter');
+        const maxPrice = priceFilter ? parseFloat(priceFilter.value) : 80;
 
-  const lootGrid = document.getElementById("loot-grid");
-  if (lootGrid) {
-    const lootGames = gamesDatabase.filter((game) => {
-      const discount = Math.round(
-        ((game.oldPrice - game.newPrice) / game.oldPrice) * 100,
-      );
-      return discount >= 40 && game.title.toLowerCase().includes(search);
-    });
-    renderGameCards(lootGames, lootGrid);
-  }
+        // Leer el valor del nuevo desplegable de ordenar
+        const sortFilter = document.getElementById('sort-filter');
+        const sortValue = sortFilter ? sortFilter.value : 'default';
+
+        // 1. Filtrar los juegos
+        let filtered = gamesDatabase.filter(g => 
+            selectedPlatforms.includes(g.platform) && 
+            g.newPrice <= maxPrice && 
+            g.title.toLowerCase().includes(search)
+        );
+
+        // 2. Ordenar los juegos
+        if (sortValue === 'price-asc') {
+            filtered.sort((a, b) => a.newPrice - b.newPrice); // Más barato primero
+        } else if (sortValue === 'price-desc') {
+            filtered.sort((a, b) => b.newPrice - a.newPrice); // Más caro primero
+        } else if (sortValue === 'alpha-asc') {
+            filtered.sort((a, b) => a.title.localeCompare(b.title)); // A-Z
+        } else if (sortValue === 'alpha-desc') {
+            filtered.sort((a, b) => b.title.localeCompare(a.title)); // Z-A
+        }
+
+        // 3. Dibujarlos
+        renderGameCards(filtered, homeGrid);
+    }
+
+    const lootGrid = document.getElementById('loot-grid');
+    if(lootGrid) {
+        let lootGames = gamesDatabase.filter(game => {
+            const discount = Math.round(((game.oldPrice - game.newPrice) / game.oldPrice) * 100);
+            return discount >= 40 && game.title.toLowerCase().includes(search);
+        });
+        renderGameCards(lootGames, lootGrid);
+    }
 };
 
 // --- INICIALIZACIÓN PRINCIPAL ---
@@ -1072,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
         accountBtn.title = `Sesión iniciada como: ${user}`;
         accountBtn.addEventListener("click", (e) => {
           e.preventDefault();
-          localStorage.removeItem("memeneba_currentUser");
+          localStorage.removeItem("memeba_currentUser");
           window.location.reload();
         });
       }
@@ -1108,7 +356,7 @@ document.addEventListener("DOMContentLoaded", () => {
             jokeTitle.innerHTML =
               '<i class="fas fa-file-contract"></i> Términos de Risa';
             jokeText.innerHTML =
-              "Al usar Memeneba, aceptas <b>cedernos tu alma</b>, tu historial de búsqueda (sí, sabemos lo que miras a las 3 AM) y prometes no jugar Yasuo en el LoL nunca más. <br><br>Ah, y no hacemos devoluciones ni aunque el juego sea un .txt vacío. ¡Gracias por tu dinero!";
+              "Al usar Memeba, aceptas cedernos tu alma, tu historial de búsqueda (sí, sabemos lo que miras a las 3 AM) y prometes no jugar Yasuo en el LoL nunca más. <br><br>Ah, y no hacemos devoluciones ni aunque el juego sea un .txt vacío. ¡Gracias por tu dinero!";
             jokeModal.classList.remove("hidden");
           });
 
@@ -1117,7 +365,7 @@ document.addEventListener("DOMContentLoaded", () => {
             jokeTitle.innerHTML =
               '<i class="fas fa-user-secret"></i> Política de Espionaje';
             jokeText.innerHTML =
-              "Tus datos están 100% seguros... de ser <b>vendidos al mejor postor</b>. Compartimos tu info con megacorporaciones, tu vecina la cotilla y con alienígenas.<br><br>Usamos cookies, pero de las que llevan pepitas de chocolate y engordan. Al seguir aquí, nos das permiso para espiarte.";
+              "Tus datos están 100% seguros... de ser vendidos al primero que nos de algo. Compartimos tu info con Jefrey Epstein, tu padre y con alienígenas.<br><br>Usamos cookies, pero de las que llevan pepitas de chocolate y engordan. Al seguir aquí, nos das permiso para espiarte y vender tus organos.";
             jokeModal.classList.remove("hidden");
           });
 
@@ -1129,21 +377,48 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   // 3. LÓGICA DE PÁGINAS
-  const homeGrid = document.getElementById("game-grid");
-  if (homeGrid) {
-    renderGameCards(gamesDatabase, homeGrid);
-    document
-      .querySelectorAll(".filter-platform")
-      .forEach((cb) => cb.addEventListener("change", applyFiltersGlobal));
-    const priceFilter = document.getElementById("price-filter");
-    if (priceFilter) {
-      priceFilter.addEventListener("input", (e) => {
-        document.getElementById("price-display").textContent =
-          e.target.value + "€";
-        applyFiltersGlobal();
-      });
+    const homeGrid = document.getElementById('game-grid');
+    if (homeGrid) {
+        renderGameCards(gamesDatabase, homeGrid);
+        
+        document.querySelectorAll('.filter-platform').forEach(cb => cb.addEventListener('change', applyFiltersGlobal));
+        
+        const sortFilter = document.getElementById('sort-filter');
+        if (sortFilter) sortFilter.addEventListener('change', applyFiltersGlobal);
+
+        const priceFilter = document.getElementById('price-filter');
+        if(priceFilter) {
+            priceFilter.addEventListener('input', (e) => {
+                document.getElementById('price-display').textContent = e.target.value + '€';
+                applyFiltersGlobal();
+            });
+        }
+
+        // --- ¡NUEVO! LÓGICA DEL BOTÓN RESTABLECER ---
+        const resetBtn = document.getElementById('reset-filters-btn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                // 1. Marcar todos los checkboxes
+                document.querySelectorAll('.filter-platform').forEach(cb => cb.checked = true);
+                
+                // 2. Restaurar la barra de precio al máximo
+                if (priceFilter) {
+                    priceFilter.value = 80;
+                    document.getElementById('price-display').textContent = '80€';
+                }
+                
+                // 3. Restaurar el selector de orden al valor por defecto
+                if (sortFilter) sortFilter.value = 'default';
+                
+                // 4. Limpiar la barra de búsqueda si había algo escrito
+                const searchBar = document.getElementById('search-bar');
+                if (searchBar) searchBar.value = '';
+
+                // 5. Aplicar los filtros de nuevo para mostrar todos los juegos
+                applyFiltersGlobal();
+            });
+        }
     }
-  }
 
   const favGrid = document.getElementById("favorites-grid");
   if (favGrid) loadFavoritesPage();
@@ -1161,16 +436,16 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const user = document.getElementById("reg-user").value.trim();
       const pass = document.getElementById("reg-pass").value;
-      const users = JSON.parse(localStorage.getItem("memeneba_users")) || [];
+      const users = JSON.parse(localStorage.getItem("memeba_users")) || [];
 
       if (users.find((u) => u.username === user)) {
-        showToast("Ese nombre ya está pillado. Sé más original.", "error");
+        showToast("Ese nombre ya está pillado. Espabila.", "error");
         return;
       }
       users.push({ username: user, password: pass });
-      localStorage.setItem("memeneba_users", JSON.stringify(users));
+      localStorage.setItem("memeba_users", JSON.stringify(users));
 
-      showToast("¡Cuenta creada! Prepárate para iniciar sesión...", "success");
+      showToast("¡Cuenta creada! Prepárate para la mandanga...", "success");
       setTimeout(() => {
         window.location.href = "login.html";
       }, 1500);
@@ -1181,25 +456,35 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginForm) {
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
+
       const user = document.getElementById("login-user").value.trim();
-      const pass = document.getElementById("login-pass").value;
-      const users = JSON.parse(localStorage.getItem("memeneba_users")) || [];
-      const foundUser = users.find(
-        (u) => u.username === user && u.password === pass,
-      );
+      const pass = document.getElementById("login-pass").value.trim();
+      
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem("memeba_users")) || [];
+        if (!Array.isArray(users)) {
+            users = [];
+        }
+      } catch (error) {
+        console.error("Memoria corrupta detectada. Reseteando usuarios...");
+        users = [];
+      }
+
+      const foundUser = users.find(u => u.username === user && u.password === pass);
 
       if (foundUser) {
-        localStorage.setItem("memeneba_currentUser", foundUser.username);
-        window.location.href = "index.html";
+        localStorage.setItem("memeba_currentUser", foundUser.username);
+        showToast("¡Pa' dentro! Sacando el botín...", "success");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1000);
       } else {
-        showToast(
-          "Datos incorrectos. ¿Te has olvidado o me estás hackeando?",
-          "error",
-        );
+        showToast("Datos incorrectos. ¿Tienes demencia?", "error");
       }
     });
   }
-});
+}); // <--- ¡ESTA ES LA LÍNEA QUE TE FALTABA Y ROMPÍA TODO!
 
 function loadFavoritesPage() {
   if (!requireLogin(true)) {
