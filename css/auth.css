@@ -1,5 +1,5 @@
 .auth-container {
-  max-width: 400px;
+  max-width: 40rem;
   margin: 40px auto;
 }
 
@@ -51,11 +51,11 @@
    MÓVILES: LOGIN Y REGISTRO
    ========================================= */
 @media (max-width: 480px) {
-    .auth-container {
-        width: 90%; /* Deja un poco de margen a los lados */
-        margin: 20px auto;
-    }
-    .auth-box {
-        padding: 20px; /* Reducimos el padding interior */
-    }
+  .auth-container {
+    width: 90%; /* Deja un poco de margen a los lados */
+    margin: 20px auto;
+  }
+  .auth-box {
+    padding: 20px; /* Reducimos el padding interior */
+  }
 }

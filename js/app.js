@@ -1,40 +1,42 @@
 // 1. Ahora nuestra base de datos empieza vacía
-let gamesDatabase = []; 
+let gamesDatabase = [];
 
 // 2. Función asíncrona para ir a buscar los juegos al servidor
 async function fetchGames() {
-    try {
-        const response = await fetch('http://localhost:3000/gamesDatabase');
-        if (response.ok) {
-            gamesDatabase = await response.json();
-            initShop();
-        } else {
-            console.error("Error al cargar la base de datos");
-        }
-    } catch (error) {
-        console.error("El servidor json-server está apagado:", error);
+  try {
+    const response = await fetch("http://localhost:3000/gamesDatabase");
+    if (response.ok) {
+      gamesDatabase = await response.json();
+      initShop();
+    } else {
+      console.error("Error al cargar la base de datos");
     }
+  } catch (error) {
+    console.error("El servidor json-server está apagado:", error);
+  }
 }
 
 // 3. Función para arrancar la tienda una vez tenemos los datos
 function initShop() {
-    const homeGrid = document.getElementById('game-grid');
-    if (homeGrid) renderGameCards(gamesDatabase, homeGrid);
+  const homeGrid = document.getElementById("game-grid");
+  if (homeGrid) renderGameCards(gamesDatabase, homeGrid);
 
-    const lootGrid = document.getElementById('loot-grid');
-    if (lootGrid) {
-        let lootGames = gamesDatabase.filter(game => {
-            const discount = Math.round(((game.oldPrice - game.newPrice) / game.oldPrice) * 100);
-            return discount >= 40;
-        });
-        renderGameCards(lootGames, lootGrid);
-    }
+  const lootGrid = document.getElementById("loot-grid");
+  if (lootGrid) {
+    let lootGames = gamesDatabase.filter((game) => {
+      const discount = Math.round(
+        ((game.oldPrice - game.newPrice) / game.oldPrice) * 100,
+      );
+      return discount >= 40;
+    });
+    renderGameCards(lootGames, lootGrid);
+  }
 
-    const favGrid = document.getElementById("favorites-grid");
-    if (favGrid) loadFavoritesPage();
+  const favGrid = document.getElementById("favorites-grid");
+  if (favGrid) loadFavoritesPage();
 
-    const cartContainer = document.getElementById("cart-items-container");
-    if (cartContainer) loadCartPage();
+  const cartContainer = document.getElementById("cart-items-container");
+  if (cartContainer) loadCartPage();
 }
 
 // --- SISTEMA DE TOAST NOTIFICATIONS ---
@@ -129,7 +131,7 @@ function updateCartBadge() {
 function renderGameCards(gamesToRender, containerElement) {
   containerElement.innerHTML = "";
   // Forzamos que todos los IDs guardados se lean como Texto (String)
-  const favsStr = getFavorites().map(String); 
+  const favsStr = getFavorites().map(String);
 
   if (gamesToRender.length === 0) {
     containerElement.innerHTML =
@@ -142,11 +144,14 @@ function renderGameCards(gamesToRender, containerElement) {
       ((game.oldPrice - game.newPrice) / game.oldPrice) * 100,
     );
     let tagClass =
-      game.platform === "PC" ? "tag-pc"
-        : game.platform === "PlayStation" ? "tag-playstation"
-        : game.platform === "Xbox" ? "tag-xbox"
-        : "tag-nintendo";
-    
+      game.platform === "PC"
+        ? "tag-pc"
+        : game.platform === "PlayStation"
+          ? "tag-playstation"
+          : game.platform === "Xbox"
+            ? "tag-xbox"
+            : "tag-nintendo";
+
     // Comparamos Texto con Texto
     const heartClass = favsStr.includes(String(game.id)) ? "liked" : "";
     const bgSize = game.platform === "Nintendo" ? "contain" : "cover";
@@ -192,7 +197,7 @@ let gameToAddToCart = null;
 document.addEventListener("click", (e) => {
   const cartBtn = e.target.closest(".cart-btn");
   const likeBtn = e.target.closest(".like-btn");
-  
+
   // Botones del interior del Modal
   const btnPlus = e.target.closest("#qty-plus");
   const btnMinus = e.target.closest("#qty-minus");
@@ -202,15 +207,15 @@ document.addEventListener("click", (e) => {
   // 1. Abrir Modal del Carrito
   if (cartBtn) {
     if (!requireLogin(false)) return;
-    
+
     gameToAddToCart = String(cartBtn.dataset.id);
     const gameObj = gamesDatabase.find((g) => String(g.id) === gameToAddToCart);
     if (!gameObj) return;
 
     let qtyModal = document.getElementById("qty-modal");
     if (!qtyModal) {
-        // Si no existe, lo creamos
-        const modalHTML = `
+      // Si no existe, lo creamos
+      const modalHTML = `
         <div id="qty-modal" class="modal-overlay">
             <div class="modal-content">
                 <h3 id="modal-game-title">Juego</h3>
@@ -224,8 +229,8 @@ document.addEventListener("click", (e) => {
                 <button class="btn-secondary" id="modal-cancel" style="width: 100%; padding: 10px; cursor: pointer;">Cancelar</button>
             </div>
         </div>`;
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-        qtyModal = document.getElementById("qty-modal");
+      document.body.insertAdjacentHTML("beforeend", modalHTML);
+      qtyModal = document.getElementById("qty-modal");
     }
 
     document.getElementById("modal-game-title").textContent = gameObj.title;
@@ -235,40 +240,42 @@ document.addEventListener("click", (e) => {
 
   // 2. Controles de Cantidad (+ y -)
   if (btnPlus) {
-      const input = document.getElementById("qty-input");
-      input.value = parseInt(input.value) + 1;
+    const input = document.getElementById("qty-input");
+    input.value = parseInt(input.value) + 1;
   }
   if (btnMinus) {
-      const input = document.getElementById("qty-input");
-      if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1;
+    const input = document.getElementById("qty-input");
+    if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1;
   }
 
   // 3. Botón de Cancelar
   if (btnCancel) {
-      document.getElementById("qty-modal").classList.add("hidden");
+    document.getElementById("qty-modal").classList.add("hidden");
   }
 
   // 4. Botón de Confirmar (Añadir al Botín)
   if (btnConfirm) {
-      const qty = parseInt(document.getElementById("qty-input").value);
-      let cart = getCart();
-      const existingItemIndex = cart.findIndex(item => String(item.id) === gameToAddToCart);
-      
-      if (existingItemIndex > -1) {
-          cart[existingItemIndex].quantity += qty;
-      } else {
-          cart.push({ id: gameToAddToCart, quantity: qty });
-      }
-      
-      setCart(cart);
-      document.getElementById("qty-modal").classList.add("hidden");
-      showToast("¡Añadido al carrito con éxito!", "success");
+    const qty = parseInt(document.getElementById("qty-input").value);
+    let cart = getCart();
+    const existingItemIndex = cart.findIndex(
+      (item) => String(item.id) === gameToAddToCart,
+    );
+
+    if (existingItemIndex > -1) {
+      cart[existingItemIndex].quantity += qty;
+    } else {
+      cart.push({ id: gameToAddToCart, quantity: qty });
+    }
+
+    setCart(cart);
+    document.getElementById("qty-modal").classList.add("hidden");
+    showToast("¡Añadido al carrito con éxito!", "success");
   }
 
   // 5. Lógica de Favoritos
   if (likeBtn) {
     if (!requireLogin(false)) return;
-    
+
     const gameId = String(likeBtn.dataset.id);
     let favs = getFavorites().map(String);
 
@@ -276,7 +283,7 @@ document.addEventListener("click", (e) => {
       favs = favs.filter((id) => String(id) !== gameId);
       likeBtn.classList.remove("liked");
       showToast("Eliminado de deseados 💔", "error");
-      
+
       const favGrid = document.getElementById("favorites-grid");
       if (favGrid) setTimeout(() => loadFavoritesPage(), 200);
     } else {
@@ -294,48 +301,53 @@ document.addEventListener("click", (e) => {
 fetchGames();
 
 // --- FILTROS GLOBALES Y ORDENACIÓN ---
-window.applyFiltersGlobal = function() {
-    const searchBar = document.getElementById('search-bar');
-    const search = searchBar ? searchBar.value.toLowerCase() : '';
+window.applyFiltersGlobal = function () {
+  const searchBar = document.getElementById("search-bar");
+  const search = searchBar ? searchBar.value.toLowerCase() : "";
 
-    const homeGrid = document.getElementById('game-grid');
-    if (homeGrid) {
-        const checkboxes = document.querySelectorAll('.filter-platform');
-        const selectedPlatforms = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
-        
-        const priceFilter = document.getElementById('price-filter');
-        const maxPrice = priceFilter ? parseFloat(priceFilter.value) : 80;
+  const homeGrid = document.getElementById("game-grid");
+  if (homeGrid) {
+    const checkboxes = document.querySelectorAll(".filter-platform");
+    const selectedPlatforms = Array.from(checkboxes)
+      .filter((c) => c.checked)
+      .map((c) => c.value);
 
-        const sortFilter = document.getElementById('sort-filter');
-        const sortValue = sortFilter ? sortFilter.value : 'default';
+    const priceFilter = document.getElementById("price-filter");
+    const maxPrice = priceFilter ? parseFloat(priceFilter.value) : 80;
 
-        let filtered = gamesDatabase.filter(g => 
-            selectedPlatforms.includes(g.platform) && 
-            g.newPrice <= maxPrice && 
-            g.title.toLowerCase().includes(search)
-        );
+    const sortFilter = document.getElementById("sort-filter");
+    const sortValue = sortFilter ? sortFilter.value : "default";
 
-        if (sortValue === 'price-asc') {
-            filtered.sort((a, b) => a.newPrice - b.newPrice);
-        } else if (sortValue === 'price-desc') {
-            filtered.sort((a, b) => b.newPrice - a.newPrice);
-        } else if (sortValue === 'alpha-asc') {
-            filtered.sort((a, b) => a.title.localeCompare(b.title));
-        } else if (sortValue === 'alpha-desc') {
-            filtered.sort((a, b) => b.title.localeCompare(a.title));
-        }
+    let filtered = gamesDatabase.filter(
+      (g) =>
+        selectedPlatforms.includes(g.platform) &&
+        g.newPrice <= maxPrice &&
+        g.title.toLowerCase().includes(search),
+    );
 
-        renderGameCards(filtered, homeGrid);
+    if (sortValue === "price-asc") {
+      filtered.sort((a, b) => a.newPrice - b.newPrice);
+    } else if (sortValue === "price-desc") {
+      filtered.sort((a, b) => b.newPrice - a.newPrice);
+    } else if (sortValue === "alpha-asc") {
+      filtered.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortValue === "alpha-desc") {
+      filtered.sort((a, b) => b.title.localeCompare(a.title));
     }
 
-    const lootGrid = document.getElementById('loot-grid');
-    if(lootGrid) {
-        let lootGames = gamesDatabase.filter(game => {
-            const discount = Math.round(((game.oldPrice - game.newPrice) / game.oldPrice) * 100);
-            return discount >= 40 && game.title.toLowerCase().includes(search);
-        });
-        renderGameCards(lootGames, lootGrid);
-    }
+    renderGameCards(filtered, homeGrid);
+  }
+
+  const lootGrid = document.getElementById("loot-grid");
+  if (lootGrid) {
+    let lootGames = gamesDatabase.filter((game) => {
+      const discount = Math.round(
+        ((game.oldPrice - game.newPrice) / game.oldPrice) * 100,
+      );
+      return discount >= 40 && game.title.toLowerCase().includes(search);
+    });
+    renderGameCards(lootGames, lootGrid);
+  }
 };
 
 // --- INICIALIZACIÓN PRINCIPAL ---
@@ -387,15 +399,19 @@ document.addEventListener("DOMContentLoaded", () => {
         if (linkTerms && linkPrivacy && jokeModal) {
           linkTerms.addEventListener("click", (e) => {
             e.preventDefault();
-            jokeTitle.innerHTML = '<i class="fas fa-file-contract"></i> Términos de Risa';
-            jokeText.innerHTML = "Al usar Memeba, aceptas cedernos tu alma, tu historial de búsqueda (sí, sabemos lo que miras a las 3 AM) y prometes no jugar Yasuo en el LoL nunca más. <br><br>Ah, y no hacemos devoluciones ni aunque el juego sea un .txt vacío. ¡Gracias por tu dinero!";
+            jokeTitle.innerHTML =
+              '<i class="fas fa-file-contract"></i> Términos de Risa';
+            jokeText.innerHTML =
+              "Al usar Memeba, aceptas cedernos tu alma, tu historial de búsqueda (sí, sabemos lo que miras a las 3 AM) y prometes no jugar Yasuo en el LoL nunca más. <br><br>Ah, y no hacemos devoluciones ni aunque el juego sea un .txt vacío. ¡Gracias por tu dinero!";
             jokeModal.classList.remove("hidden");
           });
 
           linkPrivacy.addEventListener("click", (e) => {
             e.preventDefault();
-            jokeTitle.innerHTML = '<i class="fas fa-user-secret"></i> Política de Espionaje';
-            jokeText.innerHTML = "Tus datos están 100% seguros... de ser vendidos al primero que nos de algo. Compartimos tu info con Jefrey Epstein, tu padre y con alienígenas.<br><br>Usamos cookies, pero de las que llevan pepitas de chocolate y engordan. Al seguir aquí, nos das permiso para espiarte y vender tus organos.";
+            jokeTitle.innerHTML =
+              '<i class="fas fa-user-secret"></i> Política de Espionaje';
+            jokeText.innerHTML =
+              "Tus datos están 100% seguros... de ser vendidos al primero que nos de algo. Compartimos tu info con Jefrey Epstein, tu padre y con alienígenas.<br><br>Usamos cookies, pero de las que llevan pepitas de chocolate y engordan. Al seguir aquí, nos das permiso para espiarte y vender tus organos.";
             jokeModal.classList.remove("hidden");
           });
 
@@ -406,83 +422,139 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-  const homeGrid = document.getElementById('game-grid');
+  const homeGrid = document.getElementById("game-grid");
   if (homeGrid) {
-      document.querySelectorAll('.filter-platform').forEach(cb => cb.addEventListener('change', applyFiltersGlobal));
-      const sortFilter = document.getElementById('sort-filter');
-      if (sortFilter) sortFilter.addEventListener('change', applyFiltersGlobal);
+    document
+      .querySelectorAll(".filter-platform")
+      .forEach((cb) => cb.addEventListener("change", applyFiltersGlobal));
+    const sortFilter = document.getElementById("sort-filter");
+    if (sortFilter) sortFilter.addEventListener("change", applyFiltersGlobal);
 
-      const priceFilter = document.getElementById('price-filter');
-      if(priceFilter) {
-          priceFilter.addEventListener('input', (e) => {
-              document.getElementById('price-display').textContent = e.target.value + '€';
-              applyFiltersGlobal();
-          });
-      }
+    const priceFilter = document.getElementById("price-filter");
+    if (priceFilter) {
+      priceFilter.addEventListener("input", (e) => {
+        document.getElementById("price-display").textContent =
+          e.target.value + "€";
+        applyFiltersGlobal();
+      });
+    }
 
-      const resetBtn = document.getElementById('reset-filters-btn');
-      if (resetBtn) {
-          resetBtn.addEventListener('click', () => {
-              document.querySelectorAll('.filter-platform').forEach(cb => cb.checked = true);
-              if (priceFilter) {
-                  priceFilter.value = 80;
-                  document.getElementById('price-display').textContent = '80€';
-              }
-              if (sortFilter) sortFilter.value = 'default';
-              const searchBar = document.getElementById('search-bar');
-              if (searchBar) searchBar.value = '';
-              applyFiltersGlobal();
-          });
-      }
+    const resetBtn = document.getElementById("reset-filters-btn");
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        document
+          .querySelectorAll(".filter-platform")
+          .forEach((cb) => (cb.checked = true));
+        if (priceFilter) {
+          priceFilter.value = 80;
+          document.getElementById("price-display").textContent = "80€";
+        }
+        if (sortFilter) sortFilter.value = "default";
+        const searchBar = document.getElementById("search-bar");
+        if (searchBar) searchBar.value = "";
+        applyFiltersGlobal();
+      });
+    }
   }
 
+  // ==========================================
+  // 1. NUEVO REGISTRO (CONECTADO AL SERVIDOR)
+  // ==========================================
   const registerForm = document.getElementById("register-form");
   if (registerForm) {
-    registerForm.addEventListener("submit", (e) => {
+    registerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const user = document.getElementById("reg-user").value.trim();
       const pass = document.getElementById("reg-pass").value;
-      const users = JSON.parse(localStorage.getItem("memeba_users")) || [];
 
-      if (users.find((u) => u.username === user)) {
-        showToast("Ese nombre ya está pillado. Espabila.", "error");
-        return;
+      try {
+        // Preguntamos al servidor si ese nombre ya existe (?username=...)
+        const checkRes = await fetch(
+          `http://localhost:3000/users?username=${user}`,
+        );
+        const existingUsers = await checkRes.json();
+
+        if (existingUsers.length > 0) {
+          showToast("Ese nombre ya está pillado. Espabila.", "error");
+          return;
+        }
+
+        // Si no existe, preparamos el nuevo jugador con los bolsillos vacíos
+        const newUser = {
+          username: user,
+          password: pass,
+          cart: [],
+          favorites: [],
+        };
+
+        // Lo enviamos a la base de datos (POST)
+        const postRes = await fetch("http://localhost:3000/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newUser),
+        });
+
+        if (postRes.ok) {
+          showToast("¡Cuenta creada! Prepárate para la mandanga...", "success");
+          setTimeout(() => {
+            window.location.href = "login.html";
+          }, 1500);
+        }
+      } catch (error) {
+        console.error("Error al registrar:", error);
+        showToast(
+          "Error de conexión. ¿Tienes el json-server encendido?",
+          "error",
+        );
       }
-      users.push({ username: user, password: pass });
-      localStorage.setItem("memeba_users", JSON.stringify(users));
-
-      showToast("¡Cuenta creada! Prepárate para la mandanga...", "success");
-      setTimeout(() => {
-        window.location.href = "login.html";
-      }, 1500);
     });
   }
 
+  // ==========================================
+  // 2. NUEVO LOGIN (CONECTADO AL SERVIDOR)
+  // ==========================================
   const loginForm = document.getElementById("login-form");
   if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
+    loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const user = document.getElementById("login-user").value.trim();
       const pass = document.getElementById("login-pass").value.trim();
-      
-      let users = [];
+
       try {
-        users = JSON.parse(localStorage.getItem("memeba_users")) || [];
-        if (!Array.isArray(users)) users = [];
+        // Buscamos a un usuario que coincida exactamente con ese nombre Y contraseña
+        const res = await fetch(
+          `http://localhost:3000/users?username=${user}&password=${pass}`,
+        );
+        const foundUsers = await res.json();
+
+        if (foundUsers.length > 0) {
+          const loggedUser = foundUsers[0]; // El servidor nos devuelve un array, pillamos el primero
+
+          // 1. Guardamos quién es (La "Sesión")
+          localStorage.setItem("memeba_currentUser", loggedUser.username);
+          // ¡NUEVO! Guardamos su ID de la base de datos para saber a quién actualizarle el carrito luego
+          localStorage.setItem("memeba_currentUserId", loggedUser.id);
+
+          // 2. Sincronizamos su botín del servidor al navegador (para que la tienda lo lea al instante)
+          localStorage.setItem(
+            `memeba_cart_${loggedUser.username}`,
+            JSON.stringify(loggedUser.cart || []),
+          );
+          localStorage.setItem(
+            `memeba_favs_${loggedUser.username}`,
+            JSON.stringify(loggedUser.favorites || []),
+          );
+
+          showToast("¡Pa' dentro! Sacando el botín...", "success");
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1000);
+        } else {
+          showToast("Datos incorrectos. ¿Tienes demencia?", "error");
+        }
       } catch (error) {
-        users = [];
-      }
-
-      const foundUser = users.find(u => u.username === user && u.password === pass);
-
-      if (foundUser) {
-        localStorage.setItem("memeba_currentUser", foundUser.username);
-        showToast("¡Pa' dentro! Sacando el botín...", "success");
-        setTimeout(() => {
-          window.location.href = "index.html";
-        }, 1000);
-      } else {
-        showToast("Datos incorrectos. ¿Tienes demencia?", "error");
+        console.error("Error al iniciar sesión:", error);
+        showToast("Error de conexión. El servidor no responde.", "error");
       }
     });
   }
@@ -495,7 +567,9 @@ function loadFavoritesPage() {
     return;
   }
   const favsStr = getFavorites().map(String);
-  const favoriteGames = gamesDatabase.filter((game) => favsStr.includes(String(game.id)));
+  const favoriteGames = gamesDatabase.filter((game) =>
+    favsStr.includes(String(game.id)),
+  );
   const favGrid = document.getElementById("favorites-grid");
   if (favGrid) renderGameCards(favoriteGames, favGrid);
 }
@@ -526,12 +600,14 @@ function loadCartPage() {
 
   cart.forEach((cartItem) => {
     // Buscar comparando Textos
-    const game = gamesDatabase.find((g) => String(g.id) === String(cartItem.id));
+    const game = gamesDatabase.find(
+      (g) => String(g.id) === String(cartItem.id),
+    );
     if (!game) return;
     const subtotal = game.newPrice * cartItem.quantity;
     total += subtotal;
 
-   const itemHTML = `
+    const itemHTML = `
             <div class="cart-item">
                 <a href="game.html?id=${game.id}">
                     <img src="${game.img}" alt="${game.title}" style="object-fit: contain; background: #222; cursor: pointer; transition: 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
@@ -569,7 +645,12 @@ function enableSmoothNavigation() {
     link.addEventListener("click", (e) => {
       const targetUrl = link.getAttribute("href");
       // Evitamos interceptar el link si tiene "?id=" para que navegue correctamente al game.html
-      if (targetUrl && targetUrl !== "#" && !targetUrl.startsWith("http") && !targetUrl.includes("?id=")) {
+      if (
+        targetUrl &&
+        targetUrl !== "#" &&
+        !targetUrl.startsWith("http") &&
+        !targetUrl.includes("?id=")
+      ) {
         e.preventDefault();
         document.body.classList.remove("page-loaded");
         setTimeout(() => {
@@ -609,37 +690,41 @@ async function loadGamePage() {
     const response = await fetch("db.json");
     if (!response.ok) throw new Error("No se pudo leer el archivo db.json");
     const data = await response.json();
-    
+
     // Extraemos los juegos (ya sea que tu json tenga "gamesDatabase" o sea directamente un array)
     const juegosArray = data.gamesDatabase ? data.gamesDatabase : data;
-    
+
     // Buscamos el juego
-    const game = juegosArray.find(g => g.id === gameId);
+    const game = juegosArray.find((g) => g.id === gameId);
 
     if (!game) {
-      container.innerHTML = "<h2 style='text-align:center; padding: 50px; color: white;'>Error: El juego no existe en la base de datos 🥲</h2>";
+      container.innerHTML =
+        "<h2 style='text-align:center; padding: 50px; color: white;'>Error: El juego no existe en la base de datos 🥲</h2>";
       return;
     }
 
     // Rellenamos datos
-    document.title = `${game.title} | Memeba`; 
+    document.title = `${game.title} | Memeba`;
     document.getElementById("g-title").textContent = game.title;
     document.getElementById("g-img").src = game.img;
     document.getElementById("g-platform").textContent = game.platform || "N/A";
-    document.getElementById("g-old-price").textContent = `${game.oldPrice.toFixed(2)}€`;
-    document.getElementById("g-new-price").textContent = `${game.newPrice.toFixed(2)}€`;
-    document.getElementById("g-desc").textContent = game.description || "Descripción no disponible.";
-    
+    document.getElementById("g-old-price").textContent =
+      `${game.oldPrice.toFixed(2)}€`;
+    document.getElementById("g-new-price").textContent =
+      `${game.newPrice.toFixed(2)}€`;
+    document.getElementById("g-desc").textContent =
+      game.description || "Descripción no disponible.";
+
     // --- CÁLCULO DE MEDIA DE ESTRELLAS REAL ---
     let avgRating = 0;
     if (game.reviews && game.reviews.length > 0) {
-        // Sumamos todas las puntuaciones
-        const totalScore = game.reviews.reduce((sum, rev) => sum + rev.score, 0);
-        // Dividimos entre la cantidad de reseñas y redondeamos a 2 decimales
-        avgRating = (totalScore / game.reviews.length).toFixed(2);
-        avgRating = parseFloat(avgRating); // Le quita los ceros inútiles (ej: 4.00 pasa a 4)
+      // Sumamos todas las puntuaciones
+      const totalScore = game.reviews.reduce((sum, rev) => sum + rev.score, 0);
+      // Dividimos entre la cantidad de reseñas y redondeamos a 2 decimales
+      avgRating = (totalScore / game.reviews.length).toFixed(2);
+      avgRating = parseFloat(avgRating); // Le quita los ceros inútiles (ej: 4.00 pasa a 4)
     } else {
-        avgRating = parseFloat(game.rating) || 0; // Si no hay reseñas, coge la nota por defecto
+      avgRating = parseFloat(game.rating) || 0; // Si no hay reseñas, coge la nota por defecto
     }
 
     // Calculamos qué porcentaje de relleno amarillo tendrán las estrellas
@@ -648,7 +733,7 @@ async function loadGamePage() {
     // Pintamos las estrellas fraccionadas y el número
     const ratingContainer = document.querySelector(".average-rating");
     if (ratingContainer) {
-        ratingContainer.innerHTML = `
+      ratingContainer.innerHTML = `
             <div class="stars-outer">
                 <div class="stars-inner" style="width: ${starPercentage}%"></div>
             </div>
@@ -659,26 +744,29 @@ async function loadGamePage() {
     // Conectamos botones
     const btnCart = document.getElementById("g-btn-cart");
     const btnFav = document.getElementById("g-btn-fav");
-    if(btnCart) btnCart.dataset.id = game.id;
-    if(btnFav) btnFav.dataset.id = game.id;
+    if (btnCart) btnCart.dataset.id = game.id;
+    if (btnFav) btnFav.dataset.id = game.id;
 
     // Pintar corazón
     const favsStr = getFavorites().map(String);
     if (btnFav && favsStr.includes(String(game.id))) {
-        btnFav.classList.add("liked");
+      btnFav.classList.add("liked");
     }
 
     // Pintar reseñas
     const reviewsBox = document.getElementById("g-reviews-list");
-    reviewsBox.innerHTML = ""; 
+    reviewsBox.innerHTML = "";
 
     if (game.reviews && game.reviews.length > 0) {
-        game.reviews.forEach(review => {
-          let starsHTML = "";
-          for (let i = 1; i <= 5; i++) {
-            starsHTML += i <= review.score ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>'; 
-          }
-          reviewsBox.innerHTML += `
+      game.reviews.forEach((review) => {
+        let starsHTML = "";
+        for (let i = 1; i <= 5; i++) {
+          starsHTML +=
+            i <= review.score
+              ? '<i class="fas fa-star"></i>'
+              : '<i class="far fa-star"></i>';
+        }
+        reviewsBox.innerHTML += `
             <div class="review-card">
               <div class="review-meta">
                   <span class="review-user"><i class="fas fa-user-circle"></i> ${review.user}</span>
@@ -686,11 +774,11 @@ async function loadGamePage() {
               </div>
               <p class="review-comment">"${review.comment}"</p>
             </div>`;
-        });
+      });
     } else {
-        reviewsBox.innerHTML = "<p style='color: white;'>Aún no hay reseñas para este juego.</p>";
+      reviewsBox.innerHTML =
+        "<p style='color: white;'>Aún no hay reseñas para este juego.</p>";
     }
-
   } catch (error) {
     console.error("Error al cargar los detalles del juego:", error);
     document.querySelector(".game-page-container").innerHTML = `
