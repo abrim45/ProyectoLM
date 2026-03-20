@@ -81,7 +81,7 @@
       "oldPrice": 59.99,
       "newPrice": 48.1,
       "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1086940/header.jpg",
-      "description": "El juego de rol definitivo. Tira los dados, toma decisiones terribles y asume las consecuencias. Puedes ser un héroe noble o empujar a la gente por los barrancos. Ah, y puedes tener un romance con un oso.",
+      "description": "El juego de rol definitivo. Tira los dados, toma decisiones terribles y asume las consecuencias. Puedes ser un héroe noble o empujar a la gente por los barrancos. Ah, y puedes detonarte un oso si tienes fetiches con los therians.",
       "rating": 5,
       "reviews": [
         {
@@ -1366,6 +1366,11 @@
           "user": "SuitCollector",
           "score": 5,
           "comment": "Hay como 40 trajes distintos y el del cómic cell-shaded es una maldita locura visual."
+        },
+        {
+          "user": "ManoloSoyTuAno",
+          "score": 1,
+          "comment": "Hola, soy pro en spideman y he descubierto que mi hermana tambien me hace soltar telarañas, le doy 1 estrella porque ahora estoy en el calabozo."
         }
       ]
     },
@@ -3670,7 +3675,61 @@
       "username": "abraham",
       "password": "usuario",
       "cart": [],
-      "favorites": []
+      "favorites": [],
+      "balance": 17.549999999999997,
+      "totalDeposited": 60,
+      "totalSpent": 42.45,
+      "savings": 57.53000000000001,
+      "purchases": [
+        {
+          "gameId": "11",
+          "title": "Rust",
+          "pricePaid": 20,
+          "quantity": 1,
+          "date": "2026-03-20T15:30:16.222Z"
+        },
+        {
+          "gameId": "2",
+          "title": "Cyberpunk 2077",
+          "pricePaid": 22.45,
+          "quantity": 1,
+          "date": "2026-03-20T15:30:16.222Z"
+        }
+      ]
+    },
+    {
+      "id": "5b4c",
+      "username": "prueba",
+      "password": "usuario",
+      "cart": [],
+      "favorites": [],
+      "balance": 27.849999999999994,
+      "totalDeposited": 100,
+      "totalSpent": 72.15,
+      "savings": 62.82000000000001,
+      "purchases": [
+        {
+          "gameId": "6",
+          "title": "Counter-Strike 2 Prime",
+          "pricePaid": 14.2,
+          "quantity": 1,
+          "date": "2026-03-20T15:32:31.504Z"
+        },
+        {
+          "gameId": "2",
+          "title": "Cyberpunk 2077",
+          "pricePaid": 22.45,
+          "quantity": 1,
+          "date": "2026-03-20T15:33:42.086Z"
+        },
+        {
+          "gameId": "1",
+          "title": "Elden Ring",
+          "pricePaid": 35.5,
+          "quantity": 1,
+          "date": "2026-03-20T15:41:57.898Z"
+        }
+      ]
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

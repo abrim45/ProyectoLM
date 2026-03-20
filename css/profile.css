@@ -1,0 +1,233 @@
+/* =========================================
+   CONTENEDOR A DOS COLUMNAS
+   ========================================= */
+.profile-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px; /* Separación entre el menú y la tarjeta */
+  min-height: 60vh;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 50px 20px;
+}
+
+/* =========================================
+   NUEVO: MENÚ LATERAL (SIDEBAR)
+   ========================================= */
+.profile-sidebar {
+  background: #ffffff;
+  border: 3px solid #000;
+  border-radius: 15px;
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 1);
+  width: 280px;
+  flex-shrink: 0; /* Para que no se aplaste */
+  overflow: hidden;
+}
+
+.sidebar-title {
+  background: var(--primary-purple);
+  color: white;
+  margin: 0;
+  padding: 20px;
+  font-size: 22px;
+  text-align: center;
+  border-bottom: 3px solid #000;
+  text-shadow: 1px 1px 0px #000;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-item {
+  padding: 16px 20px;
+  color: var(--text-dark);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 16px;
+  border-bottom: 2px dashed #ccc;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.2s ease;
+}
+
+.sidebar-item:last-child {
+  border-bottom: none;
+}
+
+.sidebar-item:hover {
+  background: #fffacd;
+  color: var(--primary-purple);
+  padding-left: 25px; /* Pequeño efecto de desplazamiento al pasar el ratón */
+}
+
+.sidebar-item i {
+  font-size: 20px;
+  width: 25px;
+  text-align: center;
+  color: var(--primary-purple);
+}
+
+/* --- Ajuste para móviles: apilamos las columnas --- */
+@media (max-width: 850px) {
+  .profile-page-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .profile-sidebar {
+    width: 100%;
+    max-width: 600px;
+  }
+}
+
+.profile-card {
+  background: #ffffff;
+  border: 3px solid #000;
+  border-radius: 15px;
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 1);
+  padding: 40px;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+}
+
+/* Avatar del usuario */
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 3px dashed #000;
+  padding-bottom: 30px;
+}
+
+.avatar-box {
+  width: 120px;
+  height: 120px;
+  background: var(--accent-yellow);
+  border: 3px solid #000;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 60px;
+  color: #000;
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  margin-bottom: 20px;
+}
+
+#p-username {
+  font-size: 36px;
+  color: var(--primary-purple);
+  margin: 0 0 10px 0;
+  text-shadow: 1px 1px 0px #000;
+}
+
+.profile-badge {
+  background: #000;
+  color: #fff;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+/* Estadísticas (Deseados y Carrito) */
+.profile-stats {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-box {
+  background: #fffacd;
+  border: 3px solid #000;
+  border-radius: 12px;
+  padding: 20px;
+  flex: 1;
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+}
+
+.stat-box i {
+  font-size: 32px;
+  color: #ff0044;
+  margin-bottom: 10px;
+}
+.stat-box:last-child i {
+  color: var(--price-green);
+}
+
+.stat-box h3 {
+  font-size: 38px;
+  margin: 0;
+  color: var(--text-dark);
+}
+
+.stat-box p {
+  margin: 5px 0 0 0;
+  font-weight: 600;
+  color: #555;
+}
+
+/* Botones */
+.profile-actions {
+  display: flex;
+  gap: 15px;
+}
+
+@media (max-width: 600px) {
+  .profile-stats { flex-direction: column; }
+  .profile-actions { flex-direction: column; }
+}
+
+
+/* =========================================
+   NUEVO: CAJA DE AHORRO (CERDITO)
+   ========================================= */
+.stat-box.savings-box {
+  background: #e6ffed; /* Un fondo verde muy clarito */
+  border-color: #000;
+}
+
+.stat-box.savings-box i {
+  color: var(--price-green); /* Cerdito verde dinero */
+}
+
+.stat-box.savings-box h3 {
+  color: var(--price-green);
+}
+
+/* Ajustes en móvil para que quepan las 3 cajas */
+@media (max-width: 600px) {
+  .profile-stats {
+    flex-direction: column;
+  }
+}
+
+/* =========================================
+   INPUTS DE EDICIÓN DE PERFIL (Estilo Cómic)
+   ========================================= */
+.comic-input {
+  width: 100%;
+  padding: 12px;
+  border: 3px solid #000;
+  border-radius: 8px;
+  font-family: "Fredoka", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s;
+  background-color: #f9f9f9;
+}
+
+.comic-input:focus {
+  border-color: var(--primary-purple);
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  background-color: #fff;
+}

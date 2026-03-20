@@ -93,11 +93,27 @@ function getCart() {
     return [];
   }
 }
-function setCart(cart) {
+async function setCart(cart) {
   const user = getCurrentUser();
+  const userId = localStorage.getItem("memeba_currentUserId"); // Recuperamos su ID
+
   if (user) {
+    // 1. Guardamos en el navegador (para que la web vaya rapidísima sin recargar)
     localStorage.setItem(`memeba_cart_${user}`, JSON.stringify(cart));
     updateCartBadge();
+
+    // 2. Lo guardamos en tu base de datos (json-server)
+    if (userId) {
+      try {
+        await fetch(`http://localhost:3000/users/${userId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cart: cart }) // Le pasamos el nuevo carrito
+        });
+      } catch (error) {
+        console.error("Error al sincronizar carrito con la base de datos:", error);
+      }
+    }
   }
 }
 
@@ -111,9 +127,27 @@ function getFavorites() {
     return [];
   }
 }
-function setFavorites(favs) {
+async function setFavorites(favs) {
   const user = getCurrentUser();
-  if (user) localStorage.setItem(`memeba_favs_${user}`, JSON.stringify(favs));
+  const userId = localStorage.getItem("memeba_currentUserId");
+
+  if (user) {
+    // 1. Al navegador
+    localStorage.setItem(`memeba_favs_${user}`, JSON.stringify(favs));
+
+    // 2. A la base de datos
+    if (userId) {
+      try {
+        await fetch(`http://localhost:3000/users/${userId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ favorites: favs }) // Le pasamos los nuevos favoritos
+        });
+      } catch (error) {
+        console.error("Error al sincronizar favoritos con la base de datos:", error);
+      }
+    }
+  }
 }
 
 function updateCartBadge() {
@@ -203,6 +237,16 @@ document.addEventListener("click", (e) => {
   const btnMinus = e.target.closest("#qty-minus");
   const btnCancel = e.target.closest("#modal-cancel");
   const btnConfirm = e.target.closest("#modal-confirm");
+
+  // --- LO NUEVO: DETECTAR EL BOTÓN DE PAGAR ---
+  const btnCheckout = e.target.closest("#btn-checkout");
+  if (btnCheckout) {
+      if (typeof processCheckout === "function") {
+          processCheckout();
+      } else {
+          console.error("Falta la función processCheckout()");
+      }
+  }
 
   // 1. Abrir Modal del Carrito
   if (cartBtn) {
@@ -350,6 +394,107 @@ window.applyFiltersGlobal = function () {
   }
 };
 
+// --- FUNCIÓN DE CHECKOUT (PAGAR EL CARRITO) ---
+async function processCheckout() {
+    const userId = localStorage.getItem("memeba_currentUserId");
+    const cart = getCart();
+
+    if (!userId || cart.length === 0) {
+        showToast("Tu carrito está vacío. ¡Añade algo primero!", "error");
+        return;
+    }
+
+    try {
+        // 1. Descargamos los datos más recientes del usuario y de la base de datos de juegos
+        const userRes = await fetch(`http://localhost:3000/users/${userId}`);
+        const user = await userRes.json();
+        const gamesRes = await fetch(`http://localhost:3000/gamesDatabase`);
+        const gamesDb = await gamesRes.json();
+
+        // 2. Calculamos el total a pagar y el ahorro total del carrito actual
+        let totalCosto = 0;
+        let totalAhorro = 0;
+        const comprasNuevas = [];
+
+        cart.forEach(cartItem => {
+            const game = gamesDb.find(g => String(g.id) === String(cartItem.id));
+            if (game) {
+                totalCosto += (game.newPrice * cartItem.quantity);
+                totalAhorro += ((game.oldPrice - game.newPrice) * cartItem.quantity);
+                
+                // Preparamos el registro para el historial de compras
+                comprasNuevas.push({
+                    gameId: game.id,
+                    title: game.title,
+                    pricePaid: game.newPrice,
+                    quantity: cartItem.quantity,
+                    date: new Date().toISOString()
+                });
+            }
+        });
+
+        const saldoActual = user.balance || 0;
+
+        // 3. Comprobamos si hay suficiente guita
+        if (saldoActual < totalCosto) {
+            showToast(`¡Pobreza detectada! Te faltan ${(totalCosto - saldoActual).toFixed(2)}€`, "error");
+            // Aquí podríamos redirigir a añadir fondos, o abrir el modal de fondos
+            return;
+        }
+
+        // 4. Si hay dinero, realizamos la transacción
+        const nuevoSaldo = saldoActual - totalCosto;
+        const nuevoGastoTotal = (user.totalSpent || 0) + totalCosto;
+        const nuevoAhorroTotal = (user.savings || 0) + totalAhorro;
+        
+        // Unimos las compras antiguas con las nuevas
+        const historialCompras = user.purchases ? [...user.purchases, ...comprasNuevas] : comprasNuevas;
+
+        // 5. Actualizamos el servidor
+        const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                balance: nuevoSaldo,
+                totalSpent: nuevoGastoTotal,
+                savings: nuevoAhorroTotal,
+                purchases: historialCompras,
+                cart: [] // ¡Vaciamos el carrito en el servidor!
+            })
+        });
+
+        if (patchRes.ok) {
+            // 6. Si el servidor dice OK, actualizamos el navegador
+            localStorage.setItem(`memeba_cart_${user.username}`, JSON.stringify([])); // Vaciamos local
+            updateCartBadge(); // Resetea el numerito a 0
+            
+            // Efecto visual épico de compra
+            document.getElementById("cart-items-container").innerHTML = `
+                <div style="text-align: center; padding: 50px;">
+                    <i class="fas fa-check-circle" style="font-size: 80px; color: var(--price-green); margin-bottom: 20px;"></i>
+                    <h2 style="color: var(--primary-purple); font-size: 32px; margin-top: 0;">¡Compra Exitosa!</h2>
+                    <p style="font-size: 18px; font-weight: 600;">Te has ahorrado ${totalAhorro.toFixed(2)}€ en esta compra.</p>
+                    <a href="index.html" class="btn-primary" style="margin-top: 20px;">Seguir Saqueando</a>
+                </div>
+            `;
+            
+            // Ocultamos el bloque de pagar
+            const summaryBox = document.querySelector(".cart-summary");
+            if(summaryBox) summaryBox.style.display = "none";
+            
+            // Actualizamos el saldo del header al instante
+            const headerBal = document.getElementById("global-balance-text");
+            if (headerBal) headerBal.textContent = `${nuevoSaldo.toFixed(2)}€`;
+            
+            showToast("¡Pago completado! Disfruta de los juegazos.", "success");
+        }
+
+    } catch (error) {
+        console.error("Error durante el checkout:", error);
+        showToast("Error conectando con el banco de Memeba.", "error");
+    }
+}
+
 // --- INICIALIZACIÓN PRINCIPAL ---
 document.addEventListener("DOMContentLoaded", () => {
   fetch("components/header.html")
@@ -360,16 +505,87 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const user = getCurrentUser();
       const accountBtn = document.getElementById("account-btn");
-
-      if (user && accountBtn) {
-        accountBtn.innerHTML = `<i class="fas fa-sign-out-alt"></i><span>SALIR</span>`;
-        accountBtn.href = "#";
+    if (user && accountBtn) {
+        accountBtn.innerHTML = `<i class="fas fa-user-circle"></i><span>PERFIL</span>`;
+        accountBtn.href = "profile.html"; 
         accountBtn.title = `Sesión iniciada como: ${user}`;
-        accountBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          localStorage.removeItem("memeba_currentUser");
-          window.location.reload();
-        });
+
+        // --- 1. INYECTAR BOTÓN DE SALDO ARREGLADO ---
+        const navContainer = accountBtn.parentNode; 
+        
+        if (navContainer && !document.getElementById("header-wallet-btn")) {
+            const walletBtn = document.createElement("a");
+            walletBtn.href = "#";
+            walletBtn.id = "header-wallet-btn";
+            walletBtn.className = accountBtn.className; 
+            walletBtn.style.textDecoration = "none"; 
+            
+            // --- SIN COLORES FORZADOS: Dejamos que el CSS haga su magia ---
+            walletBtn.innerHTML = `
+                <i class="fas fa-wallet"></i>
+                <span id="global-balance-text" style="font-weight: 900; font-size: 14px;">0.00€</span>
+            `;
+            
+            // Lo insertamos UNA sola vez
+            navContainer.insertBefore(walletBtn, accountBtn);
+
+            // Cargar saldo al iniciar
+            const userId = localStorage.getItem("memeba_currentUserId");
+            fetch(`http://localhost:3000/users/${userId}`)
+              .then(res => res.json())
+              .then(userData => {
+                  const balance = userData.balance || 0;
+                  document.getElementById("global-balance-text").textContent = `${balance.toFixed(2)}€`;
+              });
+
+            // --- 2. CREAR EL MODAL CÓMIC DE INGRESO (Se inyecta en el body) ---
+            let fundsModal = document.getElementById("quick-funds-modal");
+            if (!fundsModal) {
+                fundsModal = document.createElement("div");
+                fundsModal.id = "quick-funds-modal";
+                fundsModal.className = "modal-overlay hidden"; // Reutilizamos tu clase de modal oscuro
+                fundsModal.innerHTML = `
+                  <div class="modal-content" style="max-width: 400px;">
+                    <h3 style="color: var(--price-green); font-size: 26px; margin-top: 0; margin-bottom: 10px;">
+                      <i class="fas fa-money-bill-wave"></i> Ingreso Rápido
+                    </h3>
+                    <p style="font-weight: 600; color: #555; margin-bottom: 20px; font-size: 16px;">
+                      ¿Cuánta mandanga quieres meter? (Max. 1000€)
+                    </p>
+                    <input type="number" id="quick-funds-input" class="comic-input" placeholder="Ej: 50" min="1" max="1000" style="width: 100%; margin-bottom: 20px; text-align: center; font-size: 24px;">
+                    
+                    <button id="btn-confirm-funds" class="btn-buy" style="width: 100%; margin-bottom: 10px; background: var(--price-green); color: white; border-color: #000;">Inyectar Saldo</button>
+                    <button id="btn-cancel-funds" class="btn-secondary" style="width: 100%; padding: 10px; cursor: pointer;">Cancelar</button>
+                  </div>
+                `;
+                document.body.appendChild(fundsModal);
+
+                // Lógica de los botones del modal
+                document.getElementById("btn-cancel-funds").addEventListener("click", () => {
+                    fundsModal.classList.add("hidden");
+                });
+
+                document.getElementById("btn-confirm-funds").addEventListener("click", async () => {
+                    const inputVal = document.getElementById("quick-funds-input").value;
+                    const num = parseFloat(inputVal);
+                    
+                    if (num > 0 && num <= 1000) {
+                        await processAddFunds(num); // Usa la función global que creamos antes
+                        fundsModal.classList.add("hidden");
+                        document.getElementById("quick-funds-input").value = ""; // Limpia el input
+                    } else {
+                        showToast("Cantidad inválida. Máximo 1000€.", "error");
+                    }
+                });
+            }
+
+            // --- 3. ABRIR EL MODAL AL HACER CLIC EN EL HEADER ---
+            walletBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                document.getElementById("quick-funds-modal").classList.remove("hidden");
+                document.getElementById("quick-funds-input").focus(); // Pone el cursor directo para escribir
+            });
+        }
       }
 
       updateCartBadge();
@@ -581,6 +797,15 @@ function loadCartPage() {
     const summary = document.querySelector(".cart-summary");
     if (summary) summary.style.display = "none";
     return;
+    const btnCheckout = document.getElementById("btn-checkout");
+    if (btnCheckout) {
+      const newBtn = btnCheckout.cloneNode(true);
+      btnCheckout.parentNode.replaceChild(newBtn, btnCheckout);
+
+      newBtn.addEventListener("click", () => {
+        processCheckout();
+      });
+    }
   }
 
   const cart = getCart();
@@ -593,9 +818,18 @@ function loadCartPage() {
 
   if (cart.length === 0) {
     cartContainer.innerHTML =
-      '<h3 style="text-align: center;">Tu carrito está más vacío que mi cartera 🥲</h3>';
+      '<h3 style="text-align: center; padding: 40px;">Tu carrito está más vacío que mi cartera 🥲</h3>';
     totalPriceEl.textContent = "0.00€";
+    
+    // --- NUEVO: Ocultamos la caja de pagar si no hay juegos ---
+    const summaryBox = document.querySelector(".cart-summary");
+    if (summaryBox) summaryBox.style.display = "none";
+    
     return;
+  } else {
+    // --- NUEVO: Nos aseguramos de que se vea si SÍ hay juegos ---
+    const summaryBox = document.querySelector(".cart-summary");
+    if (summaryBox) summaryBox.style.display = "block";
   }
 
   cart.forEach((cartItem) => {
@@ -662,78 +896,60 @@ function enableSmoothNavigation() {
 }
 
 // --- FUNCIÓN PARA CARGAR LA PÁGINA INDIVIDUAL DEL JUEGO ---
+// --- FUNCIÓN PARA CARGAR LA PÁGINA INDIVIDUAL DEL JUEGO ---
 async function loadGamePage() {
   if (!window.location.pathname.includes("game.html")) return;
 
   const params = new URLSearchParams(window.location.search);
-  const gameId = parseInt(params.get("id"));
-
+  // CLAVE: No usamos parseInt, lo dejamos como texto por si json-server usa IDs de texto ("1")
+  const gameId = params.get("id");
   const container = document.querySelector(".game-page-container");
 
-  if (!gameId) {
-    document.querySelector(".game-page-container").innerHTML = `
+  // Plantilla para errores bonita y estilo cómic
+  const showError = (mensaje) => {
+    container.innerHTML = `
       <div style="background: #ffffff; border: 3px solid #000; border-radius: 12px; padding: 40px; text-align: center; max-width: 600px; margin: 40px auto; box-shadow: 8px 8px 0px rgba(0,0,0,1);">
-        <h2 style="color: var(--primary-purple); font-size: 28px; margin-top: 0;">
-          <i class="fas fa-search" style="color: #ffb700;"></i> ¡Juego no encontrado!
-        </h2>
-        <p style="font-size: 18px; font-weight: 600; color: var(--text-dark);">
-          Necesitas hacer clic en un juego desde la tienda para ver sus detalles.
-        </p>
+        <h2 style="color: var(--primary-purple); font-size: 28px; margin-top: 0;"><i class="fas fa-exclamation-triangle" style="color: #ff0044;"></i> ¡Fallo Crítico!</h2>
+        <p style="font-size: 18px; font-weight: 600; color: #333;">${mensaje}</p>
         <a href="index.html" class="btn-buy" style="display: inline-block; margin-top: 20px; text-decoration: none; color: #000;">Volver a la tienda</a>
-      </div>
-    `;
+      </div>`;
+  };
+
+  if (!gameId) {
+    showError("Necesitas hacer clic en un juego desde la tienda.");
     return;
   }
 
   try {
-    // Intentamos cargar la BD leyendo tu db.json local
-    const response = await fetch("db.json");
-    if (!response.ok) throw new Error("No se pudo leer el archivo db.json");
-    const data = await response.json();
+    // Le pedimos los datos directamente a tu json-server (Puerto 3000)
+    const response = await fetch(`http://localhost:3000/gamesDatabase/${gameId}`);
 
-    // Extraemos los juegos (ya sea que tu json tenga "gamesDatabase" o sea directamente un array)
-    const juegosArray = data.gamesDatabase ? data.gamesDatabase : data;
+    if (!response.ok) throw new Error("Juego no encontrado en el servidor");
 
-    // Buscamos el juego
-    const game = juegosArray.find((g) => g.id === gameId);
+    const game = await response.json();
 
-    if (!game) {
-      container.innerHTML =
-        "<h2 style='text-align:center; padding: 50px; color: white;'>Error: El juego no existe en la base de datos 🥲</h2>";
-      return;
-    }
-
-    // Rellenamos datos
+    // 1. Rellenamos datos básicos
     document.title = `${game.title} | Memeba`;
     document.getElementById("g-title").textContent = game.title;
     document.getElementById("g-img").src = game.img;
     document.getElementById("g-platform").textContent = game.platform || "N/A";
-    document.getElementById("g-old-price").textContent =
-      `${game.oldPrice.toFixed(2)}€`;
-    document.getElementById("g-new-price").textContent =
-      `${game.newPrice.toFixed(2)}€`;
-    document.getElementById("g-desc").textContent =
-      game.description || "Descripción no disponible.";
+    document.getElementById("g-old-price").textContent = `${parseFloat(game.oldPrice).toFixed(2)}€`;
+    document.getElementById("g-new-price").textContent = `${parseFloat(game.newPrice).toFixed(2)}€`;
+    document.getElementById("g-desc").textContent = game.description || "Descripción no disponible.";
 
-    // --- CÁLCULO DE MEDIA DE ESTRELLAS REAL ---
+    // 2. Cálculo de media de estrellas REAL
     let avgRating = 0;
     if (game.reviews && game.reviews.length > 0) {
-      // Sumamos todas las puntuaciones
-      const totalScore = game.reviews.reduce((sum, rev) => sum + rev.score, 0);
-      // Dividimos entre la cantidad de reseñas y redondeamos a 2 decimales
-      avgRating = (totalScore / game.reviews.length).toFixed(2);
-      avgRating = parseFloat(avgRating); // Le quita los ceros inútiles (ej: 4.00 pasa a 4)
+        const totalScore = game.reviews.reduce((sum, rev) => sum + rev.score, 0);
+        avgRating = parseFloat((totalScore / game.reviews.length).toFixed(2));
     } else {
-      avgRating = parseFloat(game.rating) || 0; // Si no hay reseñas, coge la nota por defecto
+        avgRating = parseFloat(game.rating) || 0;
     }
 
-    // Calculamos qué porcentaje de relleno amarillo tendrán las estrellas
     const starPercentage = (avgRating / 5) * 100;
-
-    // Pintamos las estrellas fraccionadas y el número
     const ratingContainer = document.querySelector(".average-rating");
     if (ratingContainer) {
-      ratingContainer.innerHTML = `
+        ratingContainer.innerHTML = `
             <div class="stars-outer">
                 <div class="stars-inner" style="width: ${starPercentage}%"></div>
             </div>
@@ -741,32 +957,28 @@ async function loadGamePage() {
         `;
     }
 
-    // Conectamos botones
+    // 3. Conectamos botones
     const btnCart = document.getElementById("g-btn-cart");
     const btnFav = document.getElementById("g-btn-fav");
-    if (btnCart) btnCart.dataset.id = game.id;
-    if (btnFav) btnFav.dataset.id = game.id;
+    if(btnCart) btnCart.dataset.id = game.id;
+    if(btnFav) btnFav.dataset.id = game.id;
 
-    // Pintar corazón
     const favsStr = getFavorites().map(String);
     if (btnFav && favsStr.includes(String(game.id))) {
-      btnFav.classList.add("liked");
+        btnFav.classList.add("liked");
     }
 
-    // Pintar reseñas
+    // 4. Pintar reseñas
     const reviewsBox = document.getElementById("g-reviews-list");
     reviewsBox.innerHTML = "";
 
     if (game.reviews && game.reviews.length > 0) {
-      game.reviews.forEach((review) => {
-        let starsHTML = "";
-        for (let i = 1; i <= 5; i++) {
-          starsHTML +=
-            i <= review.score
-              ? '<i class="fas fa-star"></i>'
-              : '<i class="far fa-star"></i>';
-        }
-        reviewsBox.innerHTML += `
+        game.reviews.forEach(review => {
+          let starsHTML = "";
+          for (let i = 1; i <= 5; i++) {
+            starsHTML += i <= review.score ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+          }
+          reviewsBox.innerHTML += `
             <div class="review-card">
               <div class="review-meta">
                   <span class="review-user"><i class="fas fa-user-circle"></i> ${review.user}</span>
@@ -774,27 +986,316 @@ async function loadGamePage() {
               </div>
               <p class="review-comment">"${review.comment}"</p>
             </div>`;
-      });
+        });
     } else {
-      reviewsBox.innerHTML =
-        "<p style='color: white;'>Aún no hay reseñas para este juego.</p>";
+        reviewsBox.innerHTML = "<p style='font-weight: 800; font-size: 18px;'>Aún no hay reseñas para este juego. ¡Sé el primero!</p>";
     }
+
   } catch (error) {
-    console.error("Error al cargar los detalles del juego:", error);
-    document.querySelector(".game-page-container").innerHTML = `
-      <div style="background: #ffffff; border: 3px solid #000; border-radius: 12px; padding: 40px; text-align: center; max-width: 600px; margin: 40px auto; box-shadow: 8px 8px 0px rgba(0,0,0,1);">
-        <h2 style="color: var(--primary-purple); font-size: 28px; margin-top: 0;">
-          <i class="fas fa-exclamation-triangle" style="color: #ff0044;"></i> ¡Fallo Crítico!
-        </h2>
-        <p style="font-size: 18px; font-weight: 600; color: var(--text-dark);">
-          El servidor json-server no responde o el juego ha desaparecido en un agujero negro. ¡Comprueba tu terminal!
-        </p>
-        <a href="index.html" class="btn-buy" style="display: inline-block; margin-top: 20px; text-decoration: none; color: #000;">Volver a la tienda</a>
-      </div>
-    `;
+    console.error("Error al cargar los detalles:", error);
+    showError("El servidor json-server no responde o el juego ha desaparecido en un agujero negro.");
   }
 }
-// Ejecutamos la función de la página de producto
+
+
+// --- FUNCIÓN PARA CARGAR LA PÁGINA DE PERFIL ---
+async function loadProfilePage() {
+  if (!window.location.pathname.includes("profile.html")) return;
+
+  if (!requireLogin(true)) return; 
+
+  // Intentamos recuperar el ID
+  const userId = localStorage.getItem("memeba_currentUserId");
+  const container = document.querySelector(".profile-card");
+
+  // Si no hay ID (es un usuario fantasma del código viejo), lo echamos al login
+  if (!userId) {
+      showToast("Sesión caducada. Por favor, vuelve a entrar.", "error");
+      localStorage.removeItem("memeba_currentUser");
+      setTimeout(() => { window.location.href = "login.html"; }, 1500);
+      return;
+  }
+
+  try {
+    // Le pedimos al servidor los datos frescos de este usuario
+    const response = await fetch(`http://localhost:3000/users/${userId}`);
+    if (!response.ok) throw new Error("Usuario no encontrado en la BD");
+    
+    const userData = await response.json();
+
+    // Pintamos sus datos en el HTML
+    document.getElementById("p-username").textContent = userData.username;
+    
+    // Contamos cuántos favoritos y juegos en el carrito tiene
+    const favCount = userData.favorites ? userData.favorites.length : 0;
+    const cartCount = userData.cart ? userData.cart.reduce((sum, item) => sum + item.quantity, 0) : 0;
+
+    document.getElementById("p-fav-count").textContent = favCount;
+    document.getElementById("p-cart-count").textContent = cartCount;
+    document.getElementById("w-current-balance").textContent = `${(userData.balance || 0).toFixed(2)}€`;
+    document.getElementById("w-total-deposited").textContent = `${(userData.totalDeposited || 0).toFixed(2)}€`;
+    document.getElementById("w-total-spent").textContent = `${(userData.totalSpent || 0).toFixed(2)}€`;
+
+    // Configurar el botón de Cerrar Sesión
+    const btnLogout = document.getElementById("btn-logout");
+    if(btnLogout) {
+        btnLogout.addEventListener("click", () => {
+          localStorage.removeItem("memeba_currentUser");
+          localStorage.removeItem("memeba_currentUserId");
+          showToast("¡Sesión cerrada! Vuelve pronto.", "success");
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1000);
+        });
+    }
+
+    // --- NUEVO: Rellenar el Ahorro Total ---
+    // En el futuro, sumaremos (oldPrice - newPrice) de los juegos en "userData.purchases".
+    // Por ahora, simulamos 0.00€ o lo que tenga la base de datos en "savings".
+    const totalSavings = userData.savings ? userData.savings : 0;
+    document.getElementById("p-saved-money").textContent = `${totalSavings.toFixed(2)}€`;
+
+    // --- NUEVO: Lógica del Modal de Ajustes de Perfil ---
+    const linkEditProfile = document.getElementById("link-edit-profile");
+    const settingsModal = document.getElementById("settings-modal");
+    const btnCancelSettings = document.getElementById("btn-cancel-settings");
+    const btnSaveSettings = document.getElementById("btn-save-settings");
+    const inputEditUser = document.getElementById("edit-username");
+    const inputEditPass = document.getElementById("edit-password");
+
+    if (linkEditProfile && settingsModal) {
+      // 1. Abrir Modal y rellenar con los datos actuales
+      linkEditProfile.addEventListener("click", (e) => {
+        e.preventDefault();
+        inputEditUser.value = userData.username; // Precargamos su nombre
+        inputEditPass.value = userData.password; // Precargamos su contraseña
+        settingsModal.classList.remove("hidden");
+      });
+
+      // 2. Cancelar y cerrar
+      btnCancelSettings.addEventListener("click", () => {
+        settingsModal.classList.add("hidden");
+      });
+
+      // 3. Guardar cambios en el servidor
+      btnSaveSettings.addEventListener("click", async () => {
+        const newUsername = inputEditUser.value.trim();
+        const newPassword = inputEditPass.value.trim();
+
+        if (!newUsername || !newPassword) {
+          showToast("¡Eh! No dejes campos vacíos.", "error");
+          return;
+        }
+
+        try {
+          // Comprobamos si el nuevo nombre ya está pillado (solo si lo ha cambiado)
+          if (newUsername !== userData.username) {
+            const checkRes = await fetch(`http://localhost:3000/users?username=${newUsername}`);
+            const existingUsers = await checkRes.json();
+            if (existingUsers.length > 0) {
+              showToast("Ese nombre ya está pillado. Sé más original.", "error");
+              return;
+            }
+          }
+
+          // Enviamos la actualización (PATCH) a la base de datos
+          const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: newUsername, password: newPassword })
+          });
+
+          if (patchRes.ok) {
+            showToast("¡Perfil actualizado con éxito!", "success");
+            
+            // EL TRUCO SENIOR: Migramos las claves del localStorage si cambió el nombre
+            if (newUsername !== userData.username) {
+              localStorage.removeItem(`memeba_cart_${userData.username}`);
+              localStorage.removeItem(`memeba_favs_${userData.username}`);
+              
+              localStorage.setItem("memeba_currentUser", newUsername);
+              localStorage.setItem(`memeba_cart_${newUsername}`, JSON.stringify(userData.cart || []));
+              localStorage.setItem(`memeba_favs_${newUsername}`, JSON.stringify(userData.favorites || []));
+            }
+            
+            // Actualizamos la pantalla y cerramos el modal sin tener que recargar
+            document.getElementById("p-username").textContent = newUsername;
+            userData.username = newUsername; 
+            userData.password = newPassword;
+            settingsModal.classList.add("hidden");
+          }
+        } catch (error) {
+          console.error("Error al actualizar perfil:", error);
+          showToast("Error al conectar con la base de datos.", "error");
+        }
+      });
+    }
+
+    // --- NAVEGACIÓN ENTRE VISTAS (PESTAÑAS) ---
+    const linkSummary = document.getElementById("link-summary");
+    const linkWallet = document.getElementById("link-wallet");
+    const linkPurchases = document.getElementById("link-purchases"); // NUEVO
+    
+    const viewSummary = document.getElementById("view-summary");
+    const viewWallet = document.getElementById("view-wallet");
+    const viewPurchases = document.getElementById("view-purchases"); // NUEVO
+
+    // Función auxiliar para limpiar colores del menú y ocultar todas las vistas
+    const resetViews = () => {
+        if(linkSummary) linkSummary.style.background = "transparent";
+        if(linkWallet) linkWallet.style.background = "transparent";
+        if(linkPurchases) linkPurchases.style.background = "transparent";
+        
+        if(viewSummary) viewSummary.classList.add("hidden");
+        if(viewWallet) viewWallet.classList.add("hidden");
+        if(viewPurchases) viewPurchases.classList.add("hidden");
+    };
+
+    if (linkSummary && linkWallet && linkPurchases) {
+        linkSummary.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetViews();
+            linkSummary.style.background = "#fffacd";
+            viewSummary.classList.remove("hidden");
+        });
+
+        linkWallet.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetViews();
+            linkWallet.style.background = "#fffacd";
+            viewWallet.classList.remove("hidden");
+        });
+
+        // NUEVO EVENTO PARA LA PESTAÑA COMPRAS
+        linkPurchases.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetViews();
+            linkPurchases.style.background = "#fffacd";
+            viewPurchases.classList.remove("hidden");
+        });
+    }
+
+    // --- PINTAR EL HISTORIAL DE COMPRAS ---
+    const purchasesList = document.getElementById("purchases-list");
+    if (purchasesList) {
+        // Comprobamos si el usuario tiene compras en la base de datos
+        if (userData.purchases && userData.purchases.length > 0) {
+            // Le damos la vuelta (reverse) para que las compras más recientes salgan arriba del todo
+            purchasesList.innerHTML = userData.purchases.reverse().map(p => `
+                <div style="background: #fff; border: 2px solid #000; border-radius: 8px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 3px 3px 0px rgba(0,0,0,1);">
+                    <div>
+                        <h4 style="margin: 0; font-size: 18px; color: var(--primary-purple);">${p.title}</h4>
+                        <p style="margin: 5px 0 0 0; font-size: 14px; color: #555;">
+                            <i class="far fa-calendar-alt"></i> ${new Date(p.date).toLocaleDateString()}
+                        </p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="display: block; font-weight: 900; color: var(--price-green); font-size: 18px;">${parseFloat(p.pricePaid).toFixed(2)}€</span>
+                        <span style="font-size: 13px; font-weight: 600; color: #666;">Copias: ${p.quantity}</span>
+                    </div>
+                </div>
+            `).join("");
+        } else {
+            // Diseño por si el historial está vacío
+            purchasesList.innerHTML = `
+                <div style="text-align: center; padding: 30px; background: #fffacd; border: 2px dashed #000; border-radius: 12px;">
+                    <i class="fas fa-ghost" style="font-size: 40px; color: var(--primary-purple); margin-bottom: 10px;"></i>
+                    <h3 style="margin: 0; color: #333;">Aún no has saqueado nada</h3>
+                    <p style="color: #666; font-weight: 600;">¿A qué esperas para vaciar la tienda?</p>
+                </div>
+            `;
+        }
+    }
+
+    // --- BOTÓN DE AÑADIR SALDO DESDE LA VISTA CARTERA ---
+    const btnAddFunds = document.getElementById("btn-add-funds");
+    const inputFunds = document.getElementById("input-add-funds");
+
+    if (btnAddFunds) {
+        btnAddFunds.addEventListener("click", async () => {
+            const amount = parseFloat(inputFunds.value);
+            if (amount > 0 && amount <= 1000) {
+                await processAddFunds(amount);
+                inputFunds.value = ""; // Limpiar el input
+            } else {
+                showToast("Introduce una cantidad válida (Max: 1000€)", "error");
+            }
+        });
+    }
+
+  } catch (error) {
+    console.error("Error al cargar el perfil:", error);
+    // Caja de error con opción a forzar cierre de sesión
+    container.innerHTML = `
+      <h2 style='color: #ff0044; font-size: 28px; margin-bottom: 20px;'>
+        <i class="fas fa-exclamation-triangle"></i> Error de Conexión
+      </h2>
+      <p style='color: #333; font-weight: 600; font-size: 18px; margin-bottom: 30px;'>
+        Tu sesión es antigua o el servidor de base de datos está apagado.
+      </p>
+      <button id="btn-force-logout" class="btn-reset" style="width: 100%; margin-top: 0;">
+        <i class="fas fa-sign-out-alt"></i> Forzar Cierre de Sesión
+      </button>
+    `;
+    
+    document.getElementById("btn-force-logout").addEventListener("click", () => {
+        localStorage.removeItem("memeba_currentUser");
+        localStorage.removeItem("memeba_currentUserId");
+        window.location.href = "login.html";
+    });
+  }
+}
+
+// --- FUNCIÓN GLOBAL PARA INYECTAR DINERO EN LA BD ---
+async function processAddFunds(amount) {
+  const userId = localStorage.getItem("memeba_currentUserId");
+  if (!userId) return;
+
+  try {
+      // 1. Descargamos los datos actuales
+      const res = await fetch(`http://localhost:3000/users/${userId}`);
+      const user = await res.json();
+
+      // 2. Calculamos los nuevos totales (si no existen en la BD, empiezan en 0)
+      const newBalance = (user.balance || 0) + amount;
+      const newDeposited = (user.totalDeposited || 0) + amount;
+
+      // 3. Subimos los datos al servidor (PATCH)
+      const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ balance: newBalance, totalDeposited: newDeposited })
+      });
+
+      if (patchRes.ok) {
+          showToast(`¡Has añadido ${amount.toFixed(2)}€ a tu cartera! 💸`, "success");
+          
+          // 4. Actualizamos el número del Header
+          const headerBal = document.getElementById("global-balance-text");
+          if (headerBal) headerBal.textContent = `${newBalance.toFixed(2)}€`;
+
+          // 5. Si estamos en la página de perfil, actualizamos las cajas también
+          const profileBal = document.getElementById("w-current-balance");
+          if (profileBal) {
+              profileBal.textContent = `${newBalance.toFixed(2)}€`;
+              document.getElementById("w-total-deposited").textContent = `${newDeposited.toFixed(2)}€`;
+          }
+      }
+  } catch (error) {
+      console.error("Error al añadir fondos:", error);
+      showToast("No tienes ni un duro cabron, no podemos añadir saldo", "error");
+  }
+}
+
+// --- ARRANQUE DE PÁGINAS INDIVIDUALES ---
 document.addEventListener("DOMContentLoaded", () => {
-  if (typeof loadGamePage === "function") loadGamePage();
+  // Arranca la lógica de la página del juego (si estamos en game.html)
+  if (typeof loadGamePage === "function") {
+      loadGamePage();
+  }
+  
+  // Arranca la lógica de la página de perfil (si estamos en profile.html)
+  if (typeof loadProfilePage === "function") {
+      loadProfilePage();
+  }
 });
