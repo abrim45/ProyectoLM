@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cargando juego... | Memeba</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/game.css" />
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+
+    <main class="game-page-container">
+      <div class="game-top-section">
+        <div class="game-image-box">
+          <img id="g-img" src="" alt="Portada del juego" />
+        </div>
+
+        <div class="game-info-box">
+          <span id="g-platform" class="platform-badge">PC</span>
+          <h1 id="g-title">Cargando...</h1>
+          
+          <div class="game-price-box">
+            <span id="g-old-price" class="old-price"></span>
+            <span id="g-new-price" class="new-price"></span>
+          </div>
+
+          <p id="g-desc" class="game-description">Cargando descripción...</p>
+
+          <div class="game-actions">
+            <button id="g-btn-cart" class="btn-buy">Añadir al carrito <i class="fas fa-shopping-cart"></i></button>
+            <button id="g-btn-fav" class="btn-fav"><i class="far fa-heart"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-reviews-section">
+        <div class="reviews-header">
+          <h2>Reseñas de la comunidad</h2>
+          <div class="average-rating">
+            <i class="fas fa-star"></i> <span id="g-rating-avg">0.0</span>/5
+          </div>
+        </div>
+        
+        <div id="g-reviews-list" class="reviews-grid">
+          </div>
+      </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>

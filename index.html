@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Memeba | ¡Juegos reales, precios de risa!</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png"/>
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
@@ -133,7 +134,23 @@
         </div>
       </div>
     </div>
+<div id="qty-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 id="modal-game-title">Juego</h3>
+            <p>¿Cuántas copias quieres saquear?</p>
+            <div class="qty-controls">
+                <button class="qty-btn" id="qty-minus">-</button>
+                <input type="number" id="qty-input" value="1" min="1" readonly>
+                <button class="qty-btn" id="qty-plus">+</button>
+            </div>
+            <button class="btn-primary" id="modal-confirm" style="width: 100%; margin-bottom: 10px;">¡Añadir al Botín!</button>
+            <button class="btn-secondary" id="modal-cancel" style="width: 100%; padding: 10px; cursor: pointer;">Cancelar</button>
+        </div>
+    </div>
 
+    <script src="js/app.js"></script>
+</body>
+</html>
     <div id="footer-placeholder"></div>
     <script src="js/app.js"></script>
   </body>
