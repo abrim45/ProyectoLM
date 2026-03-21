@@ -7,7 +7,7 @@
       "oldPrice": 59.99,
       "newPrice": 35.5,
       "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1245620/header.jpg",
-      "description": "El simulador de rodar por el suelo más premiado de la historia. Explora las Tierras Intermedias, un lugar precioso donde absolutamente todo, desde los dragones hasta las cabras, quiere asesinarte brutalmente. Prepara tilas, vas a morir mucho.",
+      "description": "El simulador de rodar por el suelo más premiado de la historia. Explora las Tierras Intermedias, un lugar precioso donde absolutamente todo, desde los dragones hasta las cabras, quiere asesinarte brutalmente. Prepara valerianas, porque vas a morir mucho.",
       "rating": 4.8,
       "reviews": [
         {
@@ -44,7 +44,7 @@
       "oldPrice": 59.99,
       "newPrice": 22.45,
       "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1091500/header.jpg",
-      "description": "Bienvenido a Night City, la ciudad de los sueños rotos y los implantes cromados. Tras 3 años de parches, el juego por fin es lo que prometieron. Dispara, hackea y pasea con Keanu Reeves en tu cabeza.",
+      "description": "Bienvenido a Night City, la ciudad de los sueños rotos y los implantes cerebrales de elon musk. Tras 3 años de parches, el juego por fin es lo que prometieron (mas o menos). Dispara, hackea y pasea con Keanu Reeves en tu cabeza.",
       "rating": 4.2,
       "reviews": [
         {
@@ -91,13 +91,13 @@
         },
         {
           "user": "AstarionSimp",
-          "score": 5,
-          "comment": "Me dejé morder y me robó todo, pero le perdono porque es guapo."
+          "score": 3,
+          "comment": "Un vampiro con pluma se te mete en el campamento y intenta morderte el cuello sin si quiera preguntarte, este tio no sabe que no es no?."
         },
         {
           "user": "DiceRoller",
           "score": 5,
-          "comment": "Saqué un 1 crítico intentando abrir una puerta y mi equipo explotó. GOTY."
+          "comment": "Saqué una pifia intentando abrir una puerta y mi equipo explotó. GOTY."
         },
         {
           "user": "BearLover",
@@ -118,7 +118,7 @@
       "oldPrice": 9.75,
       "newPrice": 6.2,
       "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1966720/header.jpg",
-      "description": "Trabajas para una corporación sin escrúpulos recogiendo chatarra espacial en lunas infestadas de monstruos. Ideal para jugar con amigos y escuchar cómo gritan de terror por el chat de voz mientras tú huyes con un tostador.",
+      "description": "Simulador de rumano interespacial. Trabajas recogiendo chatarra en lunas infestadas de bichos raros. Ideal para jugar con amigos y escuchar cómo gritan desconsoladamente por el chat de voz mientras tú huyes a la nave con un fusible de 2 metros a la nave por 10 pelas.",
       "rating": 4.6,
       "reviews": [
         {
@@ -198,7 +198,7 @@
         {
           "user": "RushB_Cyka",
           "score": 1,
-          "comment": "Me matan a través de la pared. Este juego está lleno de hackers o yo soy malísimo. Seguramente lo primero."
+          "comment": "No se si estoy jugando al counter-strike o a un juego de bley-bley con fusiles de asaltos, cada dos partidas hay una peonza pegando pelotazos por el mapa."
         },
         {
           "user": "CaseOpener",
@@ -3703,10 +3703,10 @@
       "password": "usuario",
       "cart": [],
       "favorites": [],
-      "balance": 27.849999999999994,
-      "totalDeposited": 100,
-      "totalSpent": 72.15,
-      "savings": 62.82000000000001,
+      "balance": 971.36,
+      "totalDeposited": 1100,
+      "totalSpent": 128.64,
+      "savings": 95.31,
       "purchases": [
         {
           "gameId": "6",
@@ -3728,6 +3728,20 @@
           "pricePaid": 35.5,
           "quantity": 1,
           "date": "2026-03-20T15:41:57.898Z"
+        },
+        {
+          "gameId": "5",
+          "title": "Palworld",
+          "pricePaid": 20.99,
+          "quantity": 1,
+          "date": "2026-03-21T12:13:14.090Z"
+        },
+        {
+          "gameId": "1",
+          "title": "Elden Ring",
+          "pricePaid": 35.5,
+          "quantity": 1,
+          "date": "2026-03-21T12:13:56.775Z"
         }
       ]
     }
