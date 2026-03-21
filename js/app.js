@@ -1,6 +1,50 @@
 // 1. Ahora nuestra base de datos empieza vacía
 let gamesDatabase = [];
 
+// --- DICCIONARIO DE ETIQUETAS (TAGS OCULTOS) ---
+// Le añadimos palabras clave "invisibles" a los juegos para que coincidan con siglas y alias.
+const searchTags = {
+    "grand theft auto": "gta gta5 gta v gta 5",
+    "baldur": "bg3",
+    "league of legends": "lol",
+    "call of duty": "cod",
+    "ea sports": "fifa fc24",
+    "rocket league": "rl",
+    "zelda": "the legend of zelda totk botw",
+    "cyberpunk": "cbp",
+    "red dead": "rdr2 rdr",
+    "counter-strike": "csgo cs2 cs",
+    "resident evil": "re",
+    "final fantasy": "ff"
+};
+
+// Función de búsqueda avanzada (Ignora acentos, busca palabras sueltas y usa tags)
+function checkSearchMatch(gameTitle, searchTerm) {
+    // 1. Quitar acentos y pasar a minúsculas
+    const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    
+    const normTitle = normalize(gameTitle);
+    const normSearch = normalize(searchTerm.trim());
+
+    if (!normSearch) return true;
+
+    // 2. Expandir el título con etiquetas ocultas si procede
+    let expandedTitle = normTitle;
+    for (const [key, tags] of Object.entries(searchTags)) {
+        // Si el título contiene la clave (ej: "zelda"), le añadimos sus tags
+        if (normTitle.includes(key)) {
+            expandedTitle += " " + tags;
+        }
+    }
+
+    // 3. Dividir la búsqueda del usuario en palabras sueltas
+    // (Ej: "zelda kingdom" se divide en ["zelda", "kingdom"])
+    const searchWords = normSearch.split(/\s+/).filter(word => word.length > 0);
+
+    // 4. Match perfecto: TODAS las palabras que ha escrito el usuario deben estar en el título expandido
+    return searchWords.every(word => expandedTitle.includes(word));
+}
+
 // 2. Función asíncrona para ir a buscar los juegos al servidor
 async function fetchGames() {
   try {
@@ -339,6 +383,13 @@ document.addEventListener("click", (e) => {
     }
     setFavorites(favs);
   }
+  // --- DETECCIÓN DEL GACHA ---
+  const btnGacha = e.target.closest("#btn-gacha");
+  
+  if (btnGacha) {
+      if (!requireLogin(false)) return; // Obligamos a estar logueado
+      tirarGacha();
+  }
 });
 
 // Llamada para arrancar la base de datos
@@ -366,7 +417,7 @@ window.applyFiltersGlobal = function () {
       (g) =>
         selectedPlatforms.includes(g.platform) &&
         g.newPrice <= maxPrice &&
-        g.title.toLowerCase().includes(search),
+        checkSearchMatch(g.title, search)
     );
 
     if (sortValue === "price-asc") {
@@ -385,10 +436,8 @@ window.applyFiltersGlobal = function () {
   const lootGrid = document.getElementById("loot-grid");
   if (lootGrid) {
     let lootGames = gamesDatabase.filter((game) => {
-      const discount = Math.round(
-        ((game.oldPrice - game.newPrice) / game.oldPrice) * 100,
-      );
-      return discount >= 40 && game.title.toLowerCase().includes(search);
+      const discount = Math.round(((game.oldPrice - game.newPrice) / game.oldPrice) * 100);
+      return discount >= 40 && checkSearchMatch(game.title, search); // <--- Y AQUÍ
     });
     renderGameCards(lootGames, lootGrid);
   }
@@ -589,9 +638,98 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       updateCartBadge();
+      
+      // ==========================================
+      // MOTOR DE BÚSQUEDA INTERACTIVO Y GLOBAL
+      // ==========================================
       const searchBar = document.getElementById("search-bar");
-      if (searchBar) {
-        searchBar.addEventListener("keyup", applyFiltersGlobal);
+      const searchContainer = searchBar ? searchBar.closest('.search-container') : null;
+
+      if (searchBar && searchContainer) {
+          // 1. Inyectamos la cajita de sugerencias en el HTML
+          const suggestionsBox = document.createElement("div");
+          suggestionsBox.className = "search-suggestions";
+          searchContainer.appendChild(suggestionsBox);
+
+          // 2. Al escribir, mostramos sugerencias en vivo
+          searchBar.addEventListener("input", (e) => {
+              const term = e.target.value.trim();
+              
+              // Si está en el index, aplicamos el filtro normal debajo también
+              if (window.location.pathname.includes("index.html") || window.location.pathname === "/") {
+                  applyFiltersGlobal();
+              }
+
+              if (term.length < 2) {
+                  suggestionsBox.style.display = "none";
+                  return;
+              }
+
+              // Buscamos coincidencias inteligentes
+              const matches = gamesDatabase.filter(g => checkSearchMatch(g.title, term)).slice(0, 5); // Máximo 5 resultados
+
+              if (matches.length > 0) {
+                  suggestionsBox.innerHTML = matches.map(g => `
+                      <a href="game.html?id=${g.id}" class="suggestion-item">
+                          <img src="${g.img}" alt="${g.title}">
+                          <div>
+                              <div style="font-weight: 800; font-size: 16px;">${g.title}</div>
+                              <div style="font-size: 14px; color: var(--price-green); font-weight: 900;">${parseFloat(g.newPrice).toFixed(2)}€</div>
+                          </div>
+                      </a>
+                  `).join("");
+              } else {
+                  suggestionsBox.innerHTML = `<div style="padding: 15px; text-align: center; color: #666; font-weight: 600;">No hay rastro de "${term}" 🕵️‍♂️</div>`;
+              }
+              suggestionsBox.style.display = "block";
+          });
+
+          // 3. Ocultar sugerencias si pinchamos fuera
+          document.addEventListener("click", (evt) => {
+              if (!searchContainer.contains(evt.target)) {
+                  suggestionsBox.style.display = "none";
+              }
+          });
+
+          // 4. Lógica de Redirección (Al pulsar Enter o hacer click en la Lupa)
+          const executeSearchRedirect = () => {
+              const term = searchBar.value.trim();
+              if (term) {
+                  if (window.location.pathname.includes("index.html") || window.location.pathname === "/") {
+                      applyFiltersGlobal();
+                      suggestionsBox.style.display = "none";
+                  } else {
+                      // Si no estamos en el Index, saltamos hacia allá pasándole la búsqueda por la URL
+                      window.location.href = `index.html?search=${encodeURIComponent(term)}`;
+                  }
+              }
+          };
+
+          searchBar.addEventListener("keypress", (e) => {
+              if (e.key === "Enter") {
+                  e.preventDefault();
+                  executeSearchRedirect();
+              }
+          });
+
+          const searchButton = searchContainer.querySelector("button");
+          if (searchButton) {
+              searchButton.addEventListener("click", (e) => {
+                  e.preventDefault();
+                  executeSearchRedirect();
+              });
+          }
+          
+          // 5. Autocompletar la barra si venimos rebotados de otra página con búsqueda
+          const urlParams = new URLSearchParams(window.location.search);
+          const searchQuery = urlParams.get("search");
+          if (searchQuery) {
+              searchBar.value = searchQuery;
+              // Le damos un respiro al DOM para cargar y aplicamos el filtro
+              if (window.location.pathname.includes("index.html") || window.location.pathname === "/") {
+                  setTimeout(applyFiltersGlobal, 200);
+              }
+          }
       }
 
       document.body.classList.add("page-loaded");
@@ -1025,6 +1163,36 @@ async function loadProfilePage() {
 
     // Pintamos sus datos en el HTML
     document.getElementById("p-username").textContent = userData.username;
+
+    // --- NUEVO: SISTEMA DE TÍTULOS DINÁMICOS ---
+    const totalGastado = userData.totalSpent || 0;
+    let tituloRango = "Rata de Alcantarilla 🐀"; // Rango base (0€)
+
+    if (totalGastado >= 1000) {
+        tituloRango = "Amigo Personal de Abraham Reyes Nuñez";
+    } else if (totalGastado >= 500) {
+        tituloRango = "VIP de Memeba";
+    } else if (totalGastado >= 200) {
+        tituloRango = "Ludópata en Potencia";
+    } else if (totalGastado >= 50) {
+        tituloRango = "Gamer Promedio";
+    } else if (totalGastado > 0) {
+        tituloRango = "Tieso absoluto";
+    }
+
+    const titleElement = document.getElementById("p-title");
+    if (titleElement) {
+        titleElement.textContent = tituloRango;
+        
+        // Le damos un color especial si es muy rico
+        if (totalGastado >= 500) {
+            titleElement.style.color = "#ff0044"; // Rojo mítico para los VIP
+            titleElement.style.textShadow = "1px 1px 0px #000";
+        } else {
+            titleElement.style.color = "var(--accent-yellow)"; // Amarillo normal
+            titleElement.style.textShadow = "none";
+        }
+    }
     
     // Contamos cuántos favoritos y juegos en el carrito tiene
     const favCount = userData.favorites ? userData.favorites.length : 0;
@@ -1299,3 +1467,187 @@ document.addEventListener("DOMContentLoaded", () => {
       loadProfilePage();
   }
 });
+
+// ==========================================
+// 🎰 SISTEMA GACHA (LA CAJA DE BOTÍN)
+// ==========================================
+async function tirarGacha() {
+    const userId = localStorage.getItem("memeba_currentUserId");
+    if (!userId) return;
+
+    if (!gamesDatabase || gamesDatabase.length === 0) {
+        showToast("La tienda está vacía. Vuelve luego.", "error");
+        return;
+    }
+
+    try {
+        // 1. Miramos la cartera del usuario
+        const userRes = await fetch(`http://localhost:3000/users/${userId}`);
+        const user = await userRes.json();
+        const PRECIO_GACHA = 15;
+
+        const saldoActual = user.balance || 0;
+        if (saldoActual < PRECIO_GACHA) {
+            showToast("¡No tienes 15€! Deja de mendigar y añade saldo.", "error");
+            return;
+        }
+
+        // 2. LA RULETA: Elegimos un juego aleatorio
+        const randomIndex = Math.floor(Math.random() * gamesDatabase.length);
+        const premio = gamesDatabase[randomIndex];
+
+        // 3. Cobramos los 15€ y guardamos la compra en el historial
+        const nuevoSaldo = saldoActual - PRECIO_GACHA;
+        const nuevoGastoTotal = (user.totalSpent || 0) + PRECIO_GACHA;
+        
+        const nuevaCompra = {
+            gameId: premio.id,
+            title: `[GACHA] ${premio.title}`, // Le ponemos etiqueta Gacha
+            pricePaid: PRECIO_GACHA, // Pagó 15€ por él
+            quantity: 1,
+            date: new Date().toISOString()
+        };
+
+        const historialCompras = user.purchases ? [...user.purchases, nuevaCompra] : [nuevaCompra];
+
+        // 4. Actualizamos el servidor
+        const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                balance: nuevoSaldo,
+                totalSpent: nuevoGastoTotal,
+                purchases: historialCompras
+            })
+        });
+
+        if (patchRes.ok) {
+            // Actualizamos la pasta en el Header de inmediato
+            const headerBal = document.getElementById("global-balance-text");
+            if (headerBal) headerBal.textContent = `${nuevoSaldo.toFixed(2)}€`;
+            
+            // ¡Mostramos el pantallazo épico del premio!
+            mostrarPremioGacha(premio);
+        }
+
+    } catch (error) {
+        console.error("Error en el Gacha:", error);
+        showToast("El casino se ha roto. Inténtalo de nuevo.", "error");
+    }
+}
+
+// Ventana emergente estilo cómic para el premio animado (TAMAÑO CINE)
+function mostrarPremioGacha(premio) {
+    let modal = document.getElementById("gacha-modal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "gacha-modal";
+        modal.className = "modal-overlay hidden";
+        document.body.appendChild(modal);
+    }
+    
+    // Calculamos si ha ganado dinero (STONKS) o lo ha perdido (TIMADA)
+    const isStonks = premio.newPrice > 15;
+    const mensajeStonks = isStonks ? "¡GAMBLING ALWAYS WIN! 📈" : "¡TIMADA MESOPOTAMICA! 📉";
+    const colorStonks = isStonks ? "var(--price-green)" : "#ff0044";
+    const bgStonks = isStonks ? "#e6ffed" : "#ffe6e6";
+
+    // Hemos pasado el max-width a 800px y aumentado todos los márgenes y textos
+    modal.innerHTML = `
+        <div class="modal-content" style="text-align: center; max-width: 800px; width: 90%; background: ${bgStonks}; transition: all 0.3s; position: relative; padding: 40px;">
+            <h2 style="color: var(--primary-purple); font-size: 42px; margin-top: 0; text-transform: uppercase; text-shadow: 2px 2px #fff;">
+                <i class="fas fa-gift"></i> ¡GAMBLING A TOPE!
+            </h2>
+            
+            <div id="gacha-roulette-container" style="display: none; position: relative; margin-bottom: 30px; height: 280px; overflow: hidden; background: #1a0b2e; border: 4px solid #000; border-radius: 12px; box-shadow: inset 0px 0px 20px rgba(0,0,0,0.9);">
+                
+                <div style="position: absolute; left: 50%; top: 0; bottom: 0; width: 8px; background: var(--accent-yellow); z-index: 10; transform: translateX(-50%); box-shadow: 0 0 10px #000;"></div>
+                
+                <div id="gacha-roulette" style="display: flex; position: absolute; left: 0; top: 20px; height: 240px; align-items: center;">
+                </div>
+            </div>
+            
+            <img id="gacha-premio-img" src="${premio.img}" style="width: 100%; max-width: 600px; height: 350px; object-fit: cover; border-radius: 12px; border: 4px solid #000; margin: 0 auto 20px auto; box-shadow: 6px 6px 0px rgba(0,0,0,1); display: none;">
+            
+            <h3 id="gacha-premio-title" style="margin: 0 0 15px 0; font-size: 32px; display: none;">${premio.title}</h3>
+            
+            <div id="gacha-stonks-box" style="background: #fff; padding: 20px; border: 3px dashed #000; border-radius: 12px; margin-bottom: 30px; display: none;">
+                <p style="font-size: 28px; font-weight: 900; color: ${colorStonks}; margin: 0;">${mensajeStonks}</p>
+                <p style="font-size: 18px; color: #555; margin: 8px 0 0 0;">Valor en tienda: <strong>${parseFloat(premio.newPrice).toFixed(2)}€</strong></p>
+            </div>
+            
+            <button id="btn-cerrar-gacha" class="btn-primary" style="width: 100%; font-size: 26px; padding: 20px; display: none; cursor: pointer;">ACEPTAR MI DESTINO</button>
+        </div>
+    `;
+    
+    modal.classList.remove("hidden");
+
+    animarRuletaGacha(premio);
+
+    document.getElementById("btn-cerrar-gacha").addEventListener("click", () => {
+        modal.classList.add("hidden");
+    });
+}
+
+// ==========================================
+// 🎲 ANIMACIÓN DE RULETA GACHA (LA DEFINITIVA)
+// ==========================================
+function animarRuletaGacha(premio) {
+    const rouletteContainer = document.getElementById("gacha-roulette-container");
+    const roulette = document.getElementById("gacha-roulette");
+    const premioImg = document.getElementById("gacha-premio-img");
+    const premioTitle = document.getElementById("gacha-premio-title");
+    const stonksBox = document.getElementById("gacha-stonks-box");
+    const btnCerrar = document.getElementById("btn-cerrar-gacha");
+
+    rouletteContainer.style.display = "block"; 
+    roulette.innerHTML = ""; 
+    roulette.style.transition = "none"; 
+    roulette.style.transform = "translateX(0px)";
+
+    const iteraciones = 40; 
+    
+    // --- IMÁGENES TAMAÑO CINE ---
+    const itemWidth = 300; 
+    const spaceBetween = 20; 
+    const fullItemWidth = itemWidth + spaceBetween;
+    const winnerIndex = 32; 
+
+    for (let i = 0; i < iteraciones; i++) {
+        const gameToInsert = (i === winnerIndex) ? premio : gamesDatabase[Math.floor(Math.random() * gamesDatabase.length)];
+        
+        const img = document.createElement("img");
+        img.src = gameToInsert.img;
+        
+        img.style.boxSizing = "border-box"; 
+        img.style.width = `${itemWidth}px`;
+        img.style.height = "220px"; // Mucho más altas
+        img.style.objectFit = "cover";
+        img.style.marginRight = `${spaceBetween}px`;
+        img.style.borderRadius = "10px";
+        img.style.border = "4px solid #fff"; 
+        img.style.flexShrink = "0"; 
+        
+        roulette.appendChild(img);
+    }
+
+    const containerWidth = rouletteContainer.clientWidth; 
+    const offsetToCenter = (containerWidth / 2) - (itemWidth / 2); 
+    
+    const distanceToScroll = (winnerIndex * fullItemWidth) - offsetToCenter;
+
+    setTimeout(() => {
+        roulette.style.transition = "transform 5s cubic-bezier(0.15, 0.85, 0.3, 1)"; 
+        roulette.style.transform = `translateX(-${distanceToScroll}px)`;
+    }, 50);
+
+    roulette.addEventListener("transitionend", () => {
+        setTimeout(() => {
+            rouletteContainer.style.display = "none"; 
+            premioImg.style.display = "block"; 
+            premioTitle.style.display = "block"; 
+            stonksBox.style.display = "block"; 
+            btnCerrar.style.display = "block";
+        }, 600);
+    }, { once: true });
+}

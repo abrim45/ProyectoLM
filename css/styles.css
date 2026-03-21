@@ -838,3 +838,42 @@ details[open] summary h4::before {
         grid-template-columns: 1fr; 
     }
 }
+
+/* =========================================
+   SCROLLBAR PERSONALIZADA (Estilo Cómic)
+   ========================================= */
+
+/* Para Firefox */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #fffacd #1a0b2e; /* Color del pulgar y del carril */
+}
+
+/* Para Chrome, Edge, Safari y Opera */
+::-webkit-scrollbar {
+  width: 16px; /* Ancho de la barra vertical */
+  height: 16px; /* Alto de la barra horizontal (si la hay) */
+}
+
+/* El carril por donde baja la barra */
+::-webkit-scrollbar-track {
+  background: #fffacd; /* Fondo amarillito a juego con la web */
+  border-left: 3px solid #000; /* Línea separadora negra */
+}
+
+/* La barra que agarras con el ratón */
+::-webkit-scrollbar-thumb {
+  background-color: var(--primary-purple);
+  border-radius: 8px;
+  border: 3px solid #000; /* Borde estilo cómic */
+}
+
+/* Efecto hover al pasar el ratón por la barra */
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent-yellow); /* Se vuelve amarilla */
+  cursor: grab;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: #e6a600; /* Un poco más oscura al hacer clic */
+}

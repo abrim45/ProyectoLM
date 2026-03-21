@@ -52,6 +52,7 @@ header {
   transform: scale(1.2) rotate(15deg);
 }
 
+/* --- BUSCADOR CORREGIDO --- */
 .search-container {
   flex-grow: 1;
   max-width: 600px;
@@ -59,7 +60,9 @@ header {
   display: flex;
   border: 2px solid #000;
   border-radius: 8px;
-  overflow: hidden;
+  /* HEMOS QUITADO EL overflow: hidden; y añadido position: relative; */
+  position: relative; 
+  background: #fff;
 }
 
 .search-container input {
@@ -69,6 +72,7 @@ header {
   font-size: 15px;
   outline: none;
   font-family: "Fredoka", sans-serif;
+  border-radius: 6px 0 0 6px; /* Ajuste para las esquinas */
 }
 
 .search-container button {
@@ -79,10 +83,55 @@ header {
   font-size: 16px;
   color: #000;
   transition: background 0.2s;
+  border-radius: 0 6px 6px 0; /* Ajuste para las esquinas */
 }
 
 .search-container button:hover {
   background-color: #e6a600;
+}
+
+/* --- LA NUEVA CAJA DE SUGERENCIAS --- */
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 5px); /* Justo debajo del buscador */
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 3px solid #000;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 4px 4px 0px rgba(0,0,0,1);
+  max-height: 350px;
+  overflow-y: auto;
+  display: none; /* Oculta por defecto */
+}
+
+.suggestion-item {
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  border-bottom: 2px dashed #eee;
+  color: #000;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background-color: #fffacd; /* Amarillito al pasar el ratón */
+}
+
+.suggestion-item img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid #000;
 }
 
 .header-actions {

@@ -3702,11 +3702,14 @@
       "username": "prueba",
       "password": "usuario",
       "cart": [],
-      "favorites": [],
-      "balance": 971.36,
+      "favorites": [
+        "2",
+        "9"
+      ],
+      "balance": 41.26000000000006,
       "totalDeposited": 1100,
-      "totalSpent": 128.64,
-      "savings": 95.31,
+      "totalSpent": 1058.74,
+      "savings": 665.0200000000002,
       "purchases": [
         {
           "gameId": "6",
@@ -3742,6 +3745,195 @@
           "pricePaid": 35.5,
           "quantity": 1,
           "date": "2026-03-21T12:13:56.775Z"
+        },
+        {
+          "gameId": "99",
+          "title": "[GACHA] Paper Mario: The Origami King",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:24:55.805Z"
+        },
+        {
+          "gameId": "32",
+          "title": "[GACHA] Final Fantasy VII Remake",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:27:51.120Z"
+        },
+        {
+          "gameId": "2",
+          "title": "[GACHA] Cyberpunk 2077",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:28:33.795Z"
+        },
+        {
+          "gameId": "3",
+          "title": "[GACHA] Baldur's Gate 3",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:31:52.938Z"
+        },
+        {
+          "gameId": "58",
+          "title": "[GACHA] Pentiment",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:32:05.739Z"
+        },
+        {
+          "gameId": "48",
+          "title": "[GACHA] Nioh 2",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:32:37.099Z"
+        },
+        {
+          "gameId": "91",
+          "title": "[GACHA] Donkey Kong: TF",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:33:31.729Z"
+        },
+        {
+          "gameId": "89",
+          "title": "[GACHA] Xenoblade Chronicles 3",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:37:35.895Z"
+        },
+        {
+          "gameId": "12",
+          "title": "[GACHA] DOOM Eternal",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:37:56.585Z"
+        },
+        {
+          "gameId": "18",
+          "title": "[GACHA] Fall Guys",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:39:51.791Z"
+        },
+        {
+          "gameId": "62",
+          "title": "[GACHA] Fable Anniversary",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:40:03.146Z"
+        },
+        {
+          "gameId": "99",
+          "title": "[GACHA] Paper Mario: The Origami King",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:40:15.025Z"
+        },
+        {
+          "gameId": "15",
+          "title": "[GACHA] DayZ",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:41:59.035Z"
+        },
+        {
+          "gameId": "54",
+          "title": "[GACHA] Ori and the Blind Forest",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:42:48.992Z"
+        },
+        {
+          "gameId": "65",
+          "title": "[GACHA] Ryse: Son of Rome",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:42:57.383Z"
+        },
+        {
+          "gameId": "29",
+          "title": "[GACHA] Demon's Souls Remake",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:43:33.531Z"
+        },
+        {
+          "gameId": "31",
+          "title": "[GACHA] Returnal",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:45:28.922Z"
+        },
+        {
+          "gameId": "72",
+          "title": "[GACHA] Grand Theft Auto V",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:45:40.897Z"
+        },
+        {
+          "gameId": "63",
+          "title": "[GACHA] Gears 5",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:49:31.639Z"
+        },
+        {
+          "gameId": "96",
+          "title": "[GACHA] Hyrule Warriors: Age of Calamity",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:54:39.944Z"
+        },
+        {
+          "gameId": "91",
+          "title": "[GACHA] Donkey Kong: TF",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:56:05.128Z"
+        },
+        {
+          "gameId": "98",
+          "title": "[GACHA] Yoshi's Crafted World",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:57:09.238Z"
+        },
+        {
+          "gameId": "96",
+          "title": "[GACHA] Hyrule Warriors: Age of Calamity",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T14:58:00.689Z"
+        },
+        {
+          "gameId": "60",
+          "title": "[GACHA] Grounded",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-21T15:35:18.594Z"
+        },
+        {
+          "gameId": "2",
+          "title": "Cyberpunk 2077",
+          "pricePaid": 22.45,
+          "quantity": 4,
+          "date": "2026-03-21T15:45:10.762Z"
+        },
+        {
+          "gameId": "1",
+          "title": "Elden Ring",
+          "pricePaid": 35.5,
+          "quantity": 11,
+          "date": "2026-03-21T15:45:27.799Z"
+        },
+        {
+          "gameId": "2",
+          "title": "Cyberpunk 2077",
+          "pricePaid": 22.45,
+          "quantity": 4,
+          "date": "2026-03-21T15:45:38.026Z"
         }
       ]
     }
