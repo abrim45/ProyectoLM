@@ -912,6 +912,58 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // --- LÓGICA DEL DESPLEGABLE ESTILO CÓMIC ---
+  const customSelectWrapper = document.querySelector('.custom-select-wrapper');
+  if (customSelectWrapper) {
+      const trigger = customSelectWrapper.querySelector('.custom-select-trigger');
+      const triggerText = trigger.querySelector('span');
+      const options = customSelectWrapper.querySelectorAll('.custom-option');
+      const hiddenSelect = document.getElementById('sort-filter');
+
+      // Abrir/cerrar al hacer clic
+      trigger.addEventListener('click', function(e) {
+          e.stopPropagation(); // Evita que el clic se propague al document
+          customSelectWrapper.classList.toggle('open');
+      });
+
+      // Seleccionar una opción
+      options.forEach(option => {
+          option.addEventListener('click', function(e) {
+              e.stopPropagation();
+              // Cambiar el texto mostrado
+              triggerText.textContent = this.textContent;
+              
+              // Marcar cuál está seleccionada para el CSS
+              options.forEach(opt => opt.classList.remove('selected'));
+              this.classList.add('selected');
+              
+              // Cerrar el menú
+              customSelectWrapper.classList.remove('open');
+              
+              // Actualizar el select original oculto y disparar la orden de filtrar
+              hiddenSelect.value = this.dataset.value;
+              applyFiltersGlobal(); 
+          });
+      });
+
+      // Cerrar si se hace clic fuera del menú
+      document.addEventListener('click', function(e) {
+          if (!customSelectWrapper.contains(e.target)) {
+              customSelectWrapper.classList.remove('open');
+          }
+      });
+      
+      // Conectar el botón de "Restablecer Filtros" para que también limpie este menú
+      const resetBtn = document.getElementById("reset-filters-btn");
+      if (resetBtn) {
+          resetBtn.addEventListener("click", () => {
+              triggerText.textContent = "Relevancia";
+              options.forEach(opt => opt.classList.remove('selected'));
+              options[0].classList.add('selected'); // Vuelve a marcar el primero
+          });
+      }
+  }
 });
 
 function loadFavoritesPage() {
@@ -1650,4 +1702,79 @@ function animarRuletaGacha(premio) {
             btnCerrar.style.display = "block";
         }, 600);
     }, { once: true });
+}
+
+// ==========================================
+// 🟢⚪ EASTER EGG: EL CÓDIGO BETIS ⚪🟢
+// ==========================================
+
+let teclasPulsadas = "";
+
+document.addEventListener('keydown', function(e) {
+    // Solo guardamos letras normales (ignoramos Shift, Enter, etc.)
+    if (e.key.length > 1) return;
+
+    // Añadimos la tecla pulsada y la pasamos a minúscula
+    teclasPulsadas += e.key.toLowerCase();
+
+    // Solo nos interesan las últimas 5 letras ("betis" tiene 5)
+    if (teclasPulsadas.length > 5) {
+        teclasPulsadas = teclasPulsadas.slice(-5);
+    }
+
+    // Si coincide... ¡DESATAMOS LA LOCURA!
+    if (teclasPulsadas === "betis") {
+        desatarLocuraBetica();
+        teclasPulsadas = ""; // Reseteamos por si lo quiere escribir otra vez
+    }
+});
+
+function desatarLocuraBetica() {
+    // Si ya está abierto, no hacemos nada
+    if (document.getElementById("betis-modal")) return;
+
+    // Creamos la pantalla gigante
+    const modal = document.createElement("div");
+    modal.id = "betis-modal";
+    modal.className = "modal-overlay";
+    modal.style.zIndex = "999999"; // Por encima de todo
+    modal.style.display = "flex";
+    modal.style.flexDirection = "column";
+    modal.style.justifyContent = "center";
+    modal.style.alignItems = "center";
+    modal.style.background = "rgba(0, 154, 68, 0.9)"; // Fondo verde bético transparente
+
+    modal.innerHTML = `
+        <div style="text-align: center; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);" id="betis-content">
+            <img src="assets/BetisMeme.jpg" alt="Logo Betis" style="width: 500betispx; filter: drop-shadow(0px 0px 30px #fff); margin-bottom: 20px;">
+                 <style="width: 300px; filter: drop-shadow(0px 0px 30px #fff); margin-bottom: 20px;">
+            
+            <h1 style="color: #fff; font-size: 60px; text-shadow: 4px 4px 0px #000, -2px -2px 0px #000; margin: 0; font-weight: 900; text-transform: uppercase;">
+                ¡Musho Betis!
+            </h1>
+            <p style="color: #fff; font-size: 24px; font-weight: bold; background: #000; display: inline-block; padding: 10px 20px; border-radius: 8px; margin-top: 10px;">
+                Has desbloqueado el mayor tesoro de la tienda.
+            </p>
+            <br>
+            <button id="cerrar-betis" class="btn-primary" style="margin-top: 30px; font-size: 24px; padding: 15px 40px; background: #fff; color: #009A64; border: 4px solid #000;">
+                Seguir comprando (y sufriendo)
+            </button>
+        </div>
+
+        <audio id="audio-betis" src="assets/himno-betis.mp3" autoplay></audio>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Pequeño truco para que haga el efecto de "explotar" hacia la pantalla
+    setTimeout(() => {
+        document.getElementById("betis-content").style.transform = "scale(1)";
+    }, 50);
+
+    // Botón para cerrar y apagar la música
+    document.getElementById("cerrar-betis").addEventListener("click", () => {
+        const audio = document.getElementById("audio-betis");
+        if(audio) audio.pause(); // Apagamos el himno
+        modal.remove(); // Destruimos la prueba del delito
+    });
 }

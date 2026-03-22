@@ -877,3 +877,76 @@ details[open] summary h4::before {
 ::-webkit-scrollbar-thumb:active {
   background-color: #e6a600; /* Un poco más oscura al hacer clic */
 }
+
+/* =========================================
+   DESPLEGABLE PERSONALIZADO CÓMIC
+   ========================================= */
+.custom-select-wrapper {
+    position: relative;
+    width: 100%;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    user-select: none;
+}
+
+.custom-select-trigger {
+    background-color: var(--accent-yellow); /* Amarillito */
+    border: 3px solid #000;
+    border-radius: 8px;
+    padding: 12px 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #000;
+    font-size: 16px;
+    box-shadow: 4px 4px 0px rgba(0,0,0,1);
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.custom-select-trigger:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px rgba(0,0,0,1);
+}
+
+.custom-options {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border: 3px solid #000;
+    border-radius: 8px;
+    box-shadow: 6px 6px 0px rgba(0,0,0,1);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    overflow: hidden; /* Para que los bordes curvos se respeten */
+}
+
+/* Clase para abrir el menú desde JS */
+.custom-select-wrapper.open .custom-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.custom-option {
+    padding: 12px 15px;
+    cursor: pointer;
+    color: #333;
+    border-bottom: 2px dashed #ccc;
+    transition: background 0.2s;
+}
+
+.custom-option:last-child {
+    border-bottom: none;
+}
+
+.custom-option:hover, .custom-option.selected {
+    background-color: #fffacd;
+    color: var(--primary-purple);
+    font-weight: 900;
+}
