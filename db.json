@@ -34,6 +34,12 @@
           "user": "TryHarder",
           "score": 4,
           "comment": "Es fácil si usas magia, pero yo prefiero sufrir con un garrote de madera."
+        },
+        {
+          "user": "prueba",
+          "score": 1,
+          "comment": "He jugado dos horas y solo me mata un gilipollas con un caballo, vaya basura de juego",
+          "date": "2026-03-22T21:13:16.888Z"
         }
       ]
     },
@@ -3676,7 +3682,7 @@
       "password": "usuario",
       "cart": [],
       "favorites": [],
-      "balance": 17.549999999999997,
+      "balance": 19.549999999999997,
       "totalDeposited": 60,
       "totalSpent": 42.45,
       "savings": 57.53000000000001,
@@ -3695,7 +3701,8 @@
           "quantity": 1,
           "date": "2026-03-20T15:30:16.222Z"
         }
-      ]
+      ],
+      "lastClaimedTime": 1774225257761
     },
     {
       "id": "5b4c",
@@ -3706,10 +3713,10 @@
         "2",
         "9"
       ],
-      "balance": 41.26000000000006,
-      "totalDeposited": 1100,
-      "totalSpent": 1058.74,
-      "savings": 665.0200000000002,
+      "balance": 123.26000000000005,
+      "totalDeposited": 1400,
+      "totalSpent": 1278.74,
+      "savings": 714.0000000000002,
       "purchases": [
         {
           "gameId": "6",
@@ -3934,8 +3941,102 @@
           "pricePaid": 22.45,
           "quantity": 4,
           "date": "2026-03-21T15:45:38.026Z"
+        },
+        {
+          "gameId": "87",
+          "title": "[GACHA] Bayonetta 3",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-22T19:34:25.846Z"
+        },
+        {
+          "gameId": "35",
+          "title": "[GACHA] Horizon Forbidden West",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-22T19:35:30.032Z"
+        },
+        {
+          "gameId": "77",
+          "title": "[GACHA] Breath of the Wild",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-22T19:35:50.639Z"
+        },
+        {
+          "gameId": "97",
+          "title": "[GACHA] Mario Strikers: Battle League",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-22T19:41:33.718Z"
+        },
+        {
+          "gameId": "41",
+          "title": "[GACHA] Horizon Zero Dawn",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-22T19:42:23.347Z"
+        },
+        {
+          "gameId": "28",
+          "title": "[GACHA] The Last of Us Part II",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-22T19:42:37.598Z"
+        },
+        {
+          "gameId": "71",
+          "title": "[GACHA] Starfield",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-22T19:43:26.044Z"
+        },
+        {
+          "gameId": "1",
+          "title": "Elden Ring",
+          "pricePaid": 35.5,
+          "quantity": 1,
+          "date": "2026-03-22T21:41:07.560Z"
+        },
+        {
+          "gameId": "85",
+          "title": "[GACHA] Metroid Dread",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-23T00:30:21.208Z"
+        },
+        {
+          "gameId": "32",
+          "title": "[GACHA] Final Fantasy VII Remake",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-23T00:30:33.510Z"
+        },
+        {
+          "gameId": "1",
+          "title": "Elden Ring",
+          "pricePaid": 35.5,
+          "quantity": 1,
+          "date": "2026-03-23T00:31:18.363Z"
+        },
+        {
+          "gameId": "44",
+          "title": "[GACHA] Shadow of the Colossus",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-23T00:35:51.195Z"
         }
-      ]
+      ],
+      "lastClaimedTime": 1774225528237
+    },
+    {
+      "id": "d7e1",
+      "username": "yea",
+      "password": "usuario",
+      "cart": [],
+      "favorites": [],
+      "balance": 2,
+      "lastClaimedTime": 1774224195577
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

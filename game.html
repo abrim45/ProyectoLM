@@ -57,6 +57,36 @@
 
         <div id="g-reviews-list" class="reviews-grid"></div>
       </div>
+      <div class="review-form-container" style="margin-top: 40px; background: #fffacd; padding: 25px; border: 3px solid #000; border-radius: 12px; box-shadow: 6px 6px 0px rgba(0,0,0,1);">
+            <h3 style="color: var(--primary-purple); margin-top: 0; font-size: 26px;">
+                <i class="fas fa-pen-nib"></i> Deja tu opinión
+            </h3>
+            
+            <form id="review-form">
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: 900; display: block; margin-bottom: 8px; font-size: 18px;">Puntuación:</label>
+                    
+                    <div id="interactive-stars" style="font-size: 32px; cursor: pointer; color: #ccc; display: inline-block;">
+                        <i class="fas fa-star" data-value="1" style="transition: all 0.1s;"></i>
+                        <i class="fas fa-star" data-value="2" style="transition: all 0.1s;"></i>
+                        <i class="fas fa-star" data-value="3" style="transition: all 0.1s;"></i>
+                        <i class="fas fa-star" data-value="4" style="transition: all 0.1s;"></i>
+                        <i class="fas fa-star" data-value="5" style="transition: all 0.1s;"></i>
+                    </div>
+                    
+                    <input type="hidden" id="review-score" value="1">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="font-weight: 900; display: block; margin-bottom: 8px; font-size: 18px;">Tu comentario:</label>
+                    <textarea id="review-comment" rows="4" placeholder="¿Qué te ha parecido el juego? ¡No te cortes!..." style="width: 100%; padding: 12px; border: 3px solid #000; border-radius: 8px; font-size: 16px; font-family: 'Fredoka', sans-serif; resize: vertical;" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="width: 100%; font-size: 22px; padding: 15px;">
+                    <i class="fas fa-paper-plane"></i> Publicar Reseña
+                </button>
+            </form>
+        </div>
     </main>
 
     <div id="footer-placeholder"></div>

@@ -1,5 +1,7 @@
 // 1. Ahora nuestra base de datos empieza vacía
 let gamesDatabase = [];
+let appliedCoupon = null;
+let currentCartTotal = 0; // Guardará el total sin descuentos
 
 // --- DICCIONARIO DE ETIQUETAS (TAGS OCULTOS) ---
 // Le añadimos palabras clave "invisibles" a los juegos para que coincidan con siglas y alias.
@@ -384,11 +386,42 @@ document.addEventListener("click", (e) => {
     setFavorites(favs);
   }
   // --- DETECCIÓN DEL GACHA ---
-  const btnGacha = e.target.closest("#btn-gacha");
+  const btnGacha = e.target.closest("#btn-gacha-new");
   
   if (btnGacha) {
       if (!requireLogin(false)) return; // Obligamos a estar logueado
       tirarGacha();
+  }
+
+  // --- DETECCIÓN DEL BOTÓN DE CUPONES ---
+  const btnApplyCoupon = e.target.closest("#btn-apply-coupon");
+  if (btnApplyCoupon) {
+      e.preventDefault();
+      const input = document.getElementById("coupon-input");
+      if (!input) return;
+      
+      const code = input.value.trim().toUpperCase();
+      if (!code) {
+          showToast("Escribe un código primero, listillo.", "error");
+          return;
+      }
+
+      // 🎟️ NUESTRO DICCIONARIO DE CUPONES
+      const discountCodes = {
+          "MEMEBA10": { type: "percent", value: 0.10, message: "¡10% de descuento aplicado! 💸" },
+          "POBREZA": { type: "fixed", value: 1.00, message: "¡1€ de limosna aplicado! (Puto pobreee) 🐀" },
+          "GABENEWELL": { type: "punish", value: 1.50, message: "¡Gabe te cobra un 50% de impuestos por gracioso! 📈" }
+      };
+
+      if (discountCodes[code]) {
+          appliedCoupon = discountCodes[code];
+          showToast("¡Código canjeado!", "success");
+      } else {
+          appliedCoupon = null;
+          showToast("Ese código no existe o está caducado.", "error");
+      }
+      
+      aplicarDescuentoUI(); // Recalculamos la pantalla
   }
 });
 
@@ -482,6 +515,17 @@ async function processCheckout() {
             }
         });
 
+        // --- APLICAR CUPÓN AL PRECIO FINAL A COBRAR ---
+        if (typeof appliedCoupon !== 'undefined' && appliedCoupon) {
+            if (appliedCoupon.type === "percent") {
+                totalCosto = totalCosto - (totalCosto * appliedCoupon.value);
+            } else if (appliedCoupon.type === "fixed") {
+                totalCosto = Math.max(0, totalCosto - appliedCoupon.value);
+            } else if (appliedCoupon.type === "punish") {
+                totalCosto = totalCosto * appliedCoupon.value;
+            }
+        }
+
         const saldoActual = user.balance || 0;
 
         // 3. Comprobamos si hay suficiente guita
@@ -536,6 +580,7 @@ async function processCheckout() {
             if (headerBal) headerBal.textContent = `${nuevoSaldo.toFixed(2)}€`;
             
             showToast("¡Pago completado! Disfruta de los juegazos.", "success");
+            appliedCoupon = null; // Reseteamos el cupón después de usarlo
         }
 
     } catch (error) {
@@ -765,7 +810,7 @@ document.addEventListener("DOMContentLoaded", () => {
             jokeTitle.innerHTML =
               '<i class="fas fa-user-secret"></i> Política de Espionaje';
             jokeText.innerHTML =
-              "Tus datos están 100% seguros... de ser vendidos al primero que nos de algo. Compartimos tu info con Jefrey Epstein, tu padre y con alienígenas.<br><br>Usamos cookies, pero de las que llevan pepitas de chocolate y engordan. Al seguir aquí, nos das permiso para espiarte y vender tus organos.";
+              "Tus datos están 100% seguros... de ser vendidos al primero que nos de algo. Compartimos tu información personal con Jefrey Epstein, con tu padre y con alienígenas.<br><br>Usamos cookies, pero de las que llevan pepitas de chocolate y engordan. Al seguir aquí, nos das permiso para espiarte y vender tus organos.";
             jokeModal.classList.remove("hidden");
           });
 
@@ -964,6 +1009,11 @@ document.addEventListener("DOMContentLoaded", () => {
           });
       }
   }
+
+  // Llama a la función del bono SOLO CUANDO el HTML esté listo
+  if (document.getElementById('daily-bonus-col-container')) {
+      renderDailyBonus(); 
+  }
 });
 
 function loadFavoritesPage() {
@@ -1053,7 +1103,8 @@ function loadCartPage() {
         `;
     cartContainer.insertAdjacentHTML("beforeend", itemHTML);
   });
-  totalPriceEl.textContent = total.toFixed(2) + "€";
+  currentCartTotal = total; // Guardamos el total en crudo
+  aplicarDescuentoUI();     // Que la función decida si hay que rebajarlo
 }
 
 window.removeFromCart = function (id) {
@@ -1179,6 +1230,99 @@ async function loadGamePage() {
         });
     } else {
         reviewsBox.innerHTML = "<p style='font-weight: 800; font-size: 18px;'>Aún no hay reseñas para este juego. ¡Sé el primero!</p>";
+    }
+    // 5. LÓGICA DEL FORMULARIO DE RESEÑAS (NUEVO)
+    const interactiveStars = document.querySelectorAll("#interactive-stars .fa-star");
+    const scoreInput = document.getElementById("review-score");
+
+    // Función para pintar las estrellas de amarillo
+    function iluminarEstrellas(valor) {
+        interactiveStars.forEach(star => {
+            if (parseInt(star.dataset.value) <= valor) {
+                // Amarillo con borde negro estilo cómic
+                star.style.color = "var(--accent-yellow)";
+                star.style.textShadow = "2px 2px 0px #000"; 
+            } else {
+                // Gris sin borde
+                star.style.color = "#ccc";
+                star.style.textShadow = "none";
+            }
+        });
+    }
+
+    // Iluminar por defecto al valor inicial (1)
+    if (scoreInput && interactiveStars.length > 0) {
+        iluminarEstrellas(scoreInput.value);
+
+        interactiveStars.forEach(star => {
+            // ¡ELIMINADOS LOS EVENTOS MOUSEOVER Y MOUSEOUT!
+            
+            // Al hacer clic (se queda fijado y hace 'pop')
+            star.addEventListener("click", function() {
+                scoreInput.value = this.dataset.value;
+                iluminarEstrellas(this.dataset.value);
+                
+                // Efecto "pop" al hacer clic
+                this.style.transform = "scale(1.4)";
+                setTimeout(() => this.style.transform = "scale(1)", 150);
+            });
+        });
+    }
+    
+    const reviewForm = document.getElementById("review-form");
+    if (reviewForm) {
+        reviewForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // Protegemos el formulario: Solo usuarios logueados pueden comentar
+            if (!requireLogin(false)) return;
+
+            const currentUser = getCurrentUser();
+            const score = parseInt(document.getElementById("review-score").value);
+            const comment = document.getElementById("review-comment").value.trim();
+
+            if (!comment) {
+                showToast("¡Escribe algo, no seas soso!", "error");
+                return;
+            }
+
+            try {
+                // Preparamos el paquete con la nueva reseña
+                const newReview = {
+                    user: currentUser,
+                    score: score,
+                    comment: comment,
+                    date: new Date().toISOString()
+                };
+
+                // Recuperamos las reseñas que ya tenía el juego y le sumamos la nueva
+                const updatedReviews = game.reviews ? [...game.reviews, newReview] : [newReview];
+
+                // Enviamos el parche (PATCH) a tu base de datos para actualizar este juego concreto
+                const patchRes = await fetch(`http://localhost:3000/gamesDatabase/${gameId}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ reviews: updatedReviews })
+                });
+
+                if (patchRes.ok) {
+                    showToast("¡Reseña publicada! Eres un crítico de verdad 📝", "success");
+                    
+                    // Limpiamos el formulario
+                    document.getElementById("review-comment").value = "";
+                    
+                    // Recargamos la página elegantemente para que se vuelva a calcular la media y salga el comentario
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    throw new Error("Fallo al guardar la reseña en el servidor.");
+                }
+            } catch (error) {
+                console.error("Error al publicar la reseña:", error);
+                showToast("El servidor de reseñas está echando humo.", "error");
+            }
+        });
     }
 
   } catch (error) {
@@ -1544,6 +1688,9 @@ async function tirarGacha() {
             return;
         }
 
+        const gachaSound = new Audio('assets/Gacha.mp3');
+        gachaSound.play();
+
         // 2. LA RULETA: Elegimos un juego aleatorio
         const randomIndex = Math.floor(Math.random() * gamesDatabase.length);
         const premio = gamesDatabase[randomIndex];
@@ -1606,7 +1753,7 @@ function mostrarPremioGacha(premio) {
 
     // Hemos pasado el max-width a 800px y aumentado todos los márgenes y textos
     modal.innerHTML = `
-        <div class="modal-content" style="text-align: center; max-width: 800px; width: 90%; background: ${bgStonks}; transition: all 0.3s; position: relative; padding: 40px;">
+        <div class="modal-content" style="text-align: center; max-width: 600px; width: 60%; background: ${bgStonks}; transition: all 0.3s; position: relative; padding: 40px;">
             <h2 style="color: var(--primary-purple); font-size: 42px; margin-top: 0; text-transform: uppercase; text-shadow: 2px 2px #fff;">
                 <i class="fas fa-gift"></i> ¡GAMBLING A TOPE!
             </h2>
@@ -1619,7 +1766,7 @@ function mostrarPremioGacha(premio) {
                 </div>
             </div>
             
-            <img id="gacha-premio-img" src="${premio.img}" style="width: 100%; max-width: 600px; height: 350px; object-fit: cover; border-radius: 12px; border: 4px solid #000; margin: 0 auto 20px auto; box-shadow: 6px 6px 0px rgba(0,0,0,1); display: none;">
+            <img id="gacha-premio-img" src="${premio.img}" style="width: 80%; max-width: 500px; height: 200px; object-fit: cover; border-radius: 12px; border: 4px solid #000; margin: 0 auto 20px auto; box-shadow: 6px 6px 0px rgba(0,0,0,1); display: none;">
             
             <h3 id="gacha-premio-title" style="margin: 0 0 15px 0; font-size: 32px; display: none;">${premio.title}</h3>
             
@@ -1777,4 +1924,193 @@ function desatarLocuraBetica() {
         if(audio) audio.pause(); // Apagamos el himno
         modal.remove(); // Destruimos la prueba del delito
     });
+}
+
+// --- FUNCIÓN PARA RECALCULAR EL CARRITO CON CUPONES ---
+function aplicarDescuentoUI() {
+    const totalPriceEl = document.getElementById("cart-total-price");
+    const msgEl = document.getElementById("coupon-msg");
+    if (!totalPriceEl) return;
+
+    let finalTotal = currentCartTotal;
+
+    if (appliedCoupon) {
+        // Matemáticas del descuento
+        if (appliedCoupon.type === "percent") {
+            finalTotal = finalTotal - (finalTotal * appliedCoupon.value);
+        } else if (appliedCoupon.type === "fixed") {
+            finalTotal = Math.max(0, finalTotal - appliedCoupon.value); // Evita que baje de 0€
+        } else if (appliedCoupon.type === "punish") {
+            finalTotal = finalTotal * appliedCoupon.value; // El castigo de Gabe
+        }
+
+        // Mostrar el mensajito
+        if (msgEl) {
+            msgEl.textContent = appliedCoupon.message;
+            msgEl.style.color = appliedCoupon.type === "punish" ? "#ff0044" : "var(--price-green)";
+            msgEl.style.display = "block";
+        }
+    } else {
+        if (msgEl) msgEl.style.display = "none";
+    }
+
+    totalPriceEl.textContent = finalTotal.toFixed(2) + "€";
+}
+
+// ==========================================
+// 🪙 LÓGICA DE BONO DIARIO CON CUENTA ATRÁS (DISEÑO UNIFICADO)
+// ==========================================
+
+async function renderDailyBonus() {
+    const container = document.getElementById('daily-bonus-col-container');
+    if (!container) return; 
+
+    // Limpiamos intervalos anteriores
+    if (window.countdownInterval) clearInterval(window.countdownInterval);
+
+    // Recuperamos el ID del usuario real
+    const userId = localStorage.getItem("memeba_currentUserId");
+
+    // 1. SI NO ESTÁS LOGUEADO
+    if (!userId) {
+        container.innerHTML = `
+            <h2>RASCADA DIARIA</h2>
+            <p><strong>¿De verdad eres tan rata compadre?</strong></p>
+            <p>Mira como aqui en memeba somos empaticos con los pobres como tu, si nos haces el favor de loguearte una vez al dia (Lo que hace que nosotros ganemos un paston por vender tu informacion personal) te daremos <br>UN MISERO EURO</p>
+            <p>Enga no te hagas el duro, haz click en el boton de abajo y deja de ser tan miserable</p>
+            <button class="btn-claim-new" style="background: var(--primary-purple); color: white; margin-top: auto;" onclick="window.location.href='login.html'">
+                <i class="fas fa-lock"></i> INICIAR SESIÓN
+            </button>
+        `;
+        return;
+    }
+
+    // 2. SI ESTÁS LOGUEADO
+    const todayStr = new Date().toISOString().split('T')[0];
+    const lastClaimedStr = localStorage.getItem(`daily_bonus_${userId}`);
+    const canClaim = (lastClaimedStr !== todayStr);
+
+    try {
+        // 2. SI ESTÁS LOGUEADO: Leemos los datos directos de tu BD
+        const res = await fetch(`http://localhost:3000/users/${userId}`);
+        const user = await res.json();
+
+        // Matemáticas del tiempo (24 horas = 86400000 milisegundos)
+        const exactClaimTime = user.lastClaimedTime || 0; // Si no existe, es 0
+        const now = new Date().getTime();
+        const timePassed = now - exactClaimTime;
+        const cooldown = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
+        
+        const canClaim = (timePassed >= cooldown);
+
+    // Título igual que los demás (H2)
+    const title = `<h2>BONO DIARIO</h2>`;
+    
+    // El Euro gigante en el centro
+    const amount = `
+        <div class="${canClaim ? 'pulsar-effect' : ''}" style="font-size: 55px; font-weight: 900; color: var(--primary-purple); text-shadow: 2px 2px 0 #000; line-height: 1; margin: 5px 0; width: 100%; text-align: center;">
+            1€
+        </div>
+    `;
+
+    // Mensaje o cuenta atrás
+    let messageAndCountdown = '';
+    if (canClaim) {
+        messageAndCountdown = `<p style="text-align: center; width: 100%;"><strong>Illo recoge ya tu euro gratis</strong></p>` +
+        `<p style="text-align: center; width: 100%;">Que al paso al que vas me lo quedo yo , o te crees tu que el gasoil se paga solo</p>`;
+    } else {
+        messageAndCountdown = `<p style="text-align: center; width: 100%;">Po ya tienes tu misero euro gratis, ni se te ocurra irte sin darme las gracias</p>` +
+        `<p style="text-align: center; width: 100%;">Y comprame algo, que me queo sin come</p>` +
+        `<p style="text-align: center; width: 100%;">Vuelve en:<br><span id="daily-bonus-countdown" style="font-size: 20px; color: var(--primary-purple); font-weight: 900;">HH:MM:SS</span></p>`;
+    }
+
+    // Botón
+    const button = `
+        <button id="btn-claim-daily-new" class="btn-claim-new ${canClaim ? '' : 'disabled'}" style="margin-top: auto;" ${canClaim ? '' : 'disabled'}>
+            ${canClaim ? '<i class="fas fa-coins"></i> RECLAMAR EURO' : 'COBRADO ¡MUSHO BETIS!'}
+        </button>
+    `;
+
+    // Lo metemos todo centrado y limpio
+    container.innerHTML = title + amount + messageAndCountdown + button;
+
+    // Conectamos el botón o activamos la cuenta atrás
+    if (canClaim) {
+        document.getElementById('btn-claim-daily-new').addEventListener('click', claimDailyBonus);
+    } else {
+        startCountdown(exactClaimTime);
+    }
+
+    } catch (error) {
+        console.error("No se pudo cargar el estado del bono:", error);
+        container.innerHTML = `<p style="color:red; font-weight:bold;">Error de conexión con la BD.</p>`;
+    }
+}
+
+// ==========================================
+// FUNCIÓN PARA COBRAR EL EURO Y SUBIRLO A LA BD
+// ==========================================
+async function claimDailyBonus() {
+    const userId = localStorage.getItem("memeba_currentUserId");
+    if (!userId) return; 
+
+    try {
+        const res = await fetch(`http://localhost:3000/users/${userId}`);
+        const user = await res.json();
+
+        const newBalance = (user.balance || 0) + 1.00;
+        const exactTime = new Date().getTime(); // Momento exacto de la reclamación en milisegundos
+
+        // Guardamos el nuevo saldo Y la marca de tiempo exacta
+        const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                balance: newBalance,
+                lastClaimedTime: exactTime // <-- ¡ESTO ES LO CLAVE!
+            })
+        });
+
+        if (patchRes.ok) {
+            const headerBal = document.getElementById("global-balance-text");
+            if (headerBal) headerBal.textContent = `${newBalance.toFixed(2)}€`;
+
+            renderDailyBonus();
+            showToast("¡Euro gratis añadido a tu cartera! 💰", "success");
+        }
+    } catch (error) {
+        console.error("Error al reclamar el bono:", error);
+        showToast("El servidor json-server está apagado.", "error");
+    }
+}
+
+// ==========================================
+// EL RELOJ DE LA CUENTA ATRÁS (24H INDIVIDUAL)
+// ==========================================
+function startCountdown(lastClaimedTime) {
+    const countdownSpan = document.getElementById('daily-bonus-countdown');
+    if (!countdownSpan) return;
+
+    // La hora a la que podrá volver a cobrar (24h después)
+    const claimAvailableTime = lastClaimedTime + (24 * 60 * 60 * 1000);
+
+    function updateCountdownUI() {
+        const now = new Date().getTime();
+        const diff = claimAvailableTime - now;
+
+        if (diff <= 0) {
+            if (window.countdownInterval) clearInterval(window.countdownInterval);
+            renderDailyBonus();
+            return;
+        }
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        countdownSpan.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    updateCountdownUI(); 
+    window.countdownInterval = setInterval(updateCountdownUI, 1000);
 }
