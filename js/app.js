@@ -87,6 +87,83 @@ function initShop() {
 
   const cartContainer = document.getElementById("cart-items-container");
   if (cartContainer) loadCartPage();
+
+  initHeroSliders(); //Animación de los sliders del Hero
+}
+
+// --- FUNCIÓN PARA INICIALIZAR LOS SLIDERS DEL HERO ---
+function initHeroSliders() {
+  const mandangaTrack = document.getElementById("mandanga-track");
+  const gachaWheel = document.getElementById("gacha-wheel");
+
+  // --- 1. SLIDER MANDANGA (Con tu idea del buffer a la izquierda) ---
+  if (mandangaTrack && gamesDatabase.length > 0) {
+    let lootGames = gamesDatabase.filter((game) => {
+      const discount = Math.round(((game.oldPrice - game.newPrice) / game.oldPrice) * 100);
+      return discount >= 40;
+    });
+
+    if (lootGames.length < 6) {
+        lootGames = [...lootGames, ...gamesDatabase].slice(0, 8);
+    }
+
+    // OJO AQUÍ: El que empieza con la clase 'active-loot' es el índice 1 (el segundo juego)
+    mandangaTrack.innerHTML = lootGames.map((g, index) => 
+      `<div class="mandanga-item ${index === 1 ? 'active-loot' : ''}">
+        <img src="${g.img}" alt="${g.title}" title="${g.title} (-${Math.round(((g.oldPrice - g.newPrice) / g.oldPrice) * 100)}%)">
+       </div>`
+    ).join("");
+
+    let isMoving = false;
+
+    setInterval(() => {
+      if (isMoving) return;
+      isMoving = true;
+
+      const firstItem = mandangaTrack.firstElementChild;       // El "escudo" invisible de la izquierda
+      const currentCenter = firstItem.nextElementSibling;      // El que está en el centro ahora
+      const nextCenter = currentCenter.nextElementSibling;     // El que va a entrar al centro
+      
+      const moveDistance = firstItem.offsetWidth + 15; // 130 + 15 = 145px
+
+      // 1. Apagamos el que estaba en el centro y encendemos el nuevo
+      currentCenter.classList.remove('active-loot');
+      if (nextCenter) nextCenter.classList.add('active-loot');
+
+      // 2. Movemos la tira
+      mandangaTrack.style.transition = "transform 0.8s ease-in-out";
+      mandangaTrack.style.transform = `translateX(-${moveDistance}px)`;
+
+      // 3. Cuando acaba la animación...
+      setTimeout(() => {
+        mandangaTrack.style.transition = "none";
+        
+        // ¡TU IDEA! Movemos el primer elemento al final. 
+        // Como ya estaba fuera de la pantalla por la izquierda, ¡nadie lo ve desaparecer!
+        mandangaTrack.appendChild(firstItem);    
+        
+        mandangaTrack.style.transform = "translateX(0px)"; // Reseteamos la posición
+        isMoving = false;
+      }, 800);
+
+    }, 3500); 
+  }
+
+  // --- 2. GACHA WHEEL ---
+  if (gachaWheel && gamesDatabase.length > 0) {
+    const randomGames = [...gamesDatabase].sort(() => 0.5 - Math.random()).slice(0, 6);
+    let wheelHTML = '';
+    randomGames.forEach((g, index) => {
+      // EL TRUCO: Sumamos 30 grados para que el icono caiga en el CENTRO del color y no en la línea
+      const rotation = (index * 60) + 30; 
+      wheelHTML += `
+        <div class="wheel-icon-container" style="transform: rotate(${rotation}deg);">
+          <img src="${g.img}" alt="${g.title}" onerror="this.src='https://picsum.photos/seed/${g.id}/100';">
+        </div>
+      `;
+    });
+    gachaWheel.innerHTML = wheelHTML;
+  }
 }
 
 // --- SISTEMA DE TOAST NOTIFICATIONS ---

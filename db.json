@@ -3720,9 +3720,9 @@
         "2",
         "9"
       ],
-      "balance": 123.26000000000005,
+      "balance": 63.26000000000005,
       "totalDeposited": 1400,
-      "totalSpent": 1278.74,
+      "totalSpent": 1338.74,
       "savings": 714.0000000000002,
       "purchases": [
         {
@@ -4032,6 +4032,34 @@
           "pricePaid": 15,
           "quantity": 1,
           "date": "2026-03-23T00:35:51.195Z"
+        },
+        {
+          "gameId": "77",
+          "title": "[GACHA] Breath of the Wild",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-23T14:22:21.303Z"
+        },
+        {
+          "gameId": "26",
+          "title": "[GACHA] Bloodborne",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-23T14:22:29.743Z"
+        },
+        {
+          "gameId": "62",
+          "title": "[GACHA] Fable Anniversary",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-23T14:26:19.202Z"
+        },
+        {
+          "gameId": "28",
+          "title": "[GACHA] The Last of Us Part II",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-23T14:51:09.455Z"
         }
       ],
       "lastClaimedTime": 1774225528237

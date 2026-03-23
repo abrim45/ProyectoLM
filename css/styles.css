@@ -962,6 +962,8 @@ details[open] summary h4::before {
   gap: 12px;
   transition: transform 0.2s ease-in-out;
   z-index: 5;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Textos de las cajas (Saqueo y Gacha) */
@@ -1086,4 +1088,127 @@ details[open] summary h4::before {
 .pulsar-effect {
   animation: pulsar 2s ease-in-out infinite;
   display: inline-block;
+}
+
+/* =========================================
+   MANDANGA SLIDER: EL DEFINITIVO Y ROBUSTO
+   ========================================= */
+.mandanga-slider-container {
+  width: 100%;
+  height: 105px; /* Un pelín más alto para que quepa al agrandarse */
+  overflow: hidden;
+  position: relative;
+  background: #1a0b2e;
+  border: 3px solid #000;
+  border-radius: 8px;
+  margin: 10px 0;
+  box-shadow: inset 0px 0px 10px rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+}
+
+.mandanga-track {
+  display: flex;
+  gap: 15px;
+  margin-left: calc(50% - 210px); 
+  width: max-content;
+  will-change: transform;
+}
+
+.mandanga-item {
+  width: 130px;
+  height: 70px;
+  flex-shrink: 0;
+  /* Transición suave para el tamaño y el brillo */
+  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
+  transform-origin: center;
+  filter: brightness(0.5); /* Los de los lados se ven más oscuros */
+}
+
+.mandanga-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 0 #000;
+}
+
+/* El juego que esté en el centro llevará esta clase */
+.mandanga-item.active-loot {
+  transform: scale(1.25); /* Lo hacemos un 25% más grande */
+  filter: brightness(1); /* Brillo a tope */
+  z-index: 10;
+}
+
+/* =========================================
+   GACHA: RULETA DE CASINO (TAMAÑO Y CENTRADO)
+   ========================================= */
+.roulette-container {
+  position: relative;
+  width: 160px; /* La hacemos un poco más grande (antes 140) */
+  height: 160px;
+  margin: 10px auto;
+}
+
+/* El pincho blanco que marca el premio */
+.roulette-pointer {
+  position: absolute;
+  top: -15px; 
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0; 
+  height: 0; 
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-top: 26px solid #fff; /* Pincho más grande y afilado */
+  z-index: 10;
+  filter: drop-shadow(0px 3px 0px #000);
+}
+
+.roulette-wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid #000;
+  /* Los colores de los quesitos */
+  background: conic-gradient(
+    #3b125f 0deg 60deg, 
+    #ffb700 60deg 120deg, 
+    #00b359 120deg 180deg, 
+    #3b125f 180deg 240deg, 
+    #ffb700 240deg 300deg, 
+    #00b359 300deg 360deg
+  );
+  animation: spinCasino 13s linear infinite; /* Un pelín más lenta para que no maree */
+  box-shadow: 0 4px 0px #000, inset 0 0 15px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.wheel-icon-container {
+  position: absolute;
+  width: 44px; /* Iconos más grandes (antes 35) */
+  height: 36px;
+  border-radius: 20%;
+  border: 2px solid #000;
+  background: #fff;
+  top: 1px; /* Separación desde el borde superior */
+  left: 50%;
+  margin-left: -23px; /* Exactamente la mitad del ancho (46 / 2) */
+  
+  /* LA MATEMÁTICA EXACTA: Centro de la ruleta (80px) menos el top (12px) = 68px */
+  transform-origin: 50% 80px; 
+  overflow: hidden;
+  box-shadow: 0 2px 0 #000;
+}
+
+.wheel-icon-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@keyframes spinCasino {
+  100% { transform: rotate(360deg); }
 }
