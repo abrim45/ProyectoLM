@@ -3720,10 +3720,10 @@
         "2",
         "9"
       ],
-      "balance": 63.26000000000005,
+      "balance": 3.3600000000000456,
       "totalDeposited": 1400,
-      "totalSpent": 1338.74,
-      "savings": 714.0000000000002,
+      "totalSpent": 1398.64,
+      "savings": 789.0800000000002,
       "purchases": [
         {
           "gameId": "6",
@@ -4060,6 +4060,27 @@
           "pricePaid": 15,
           "quantity": 1,
           "date": "2026-03-23T14:51:09.455Z"
+        },
+        {
+          "gameId": "2",
+          "title": "Cyberpunk 2077",
+          "pricePaid": 22.45,
+          "quantity": 1,
+          "date": "2026-03-23T15:52:37.369Z"
+        },
+        {
+          "gameId": "2",
+          "title": "Cyberpunk 2077",
+          "pricePaid": 22.45,
+          "quantity": 1,
+          "date": "2026-03-23T15:52:51.687Z"
+        },
+        {
+          "gameId": "48",
+          "title": "[GACHA] Nioh 2",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-23T16:18:35.763Z"
         }
       ],
       "lastClaimedTime": 1774225528237

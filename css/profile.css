@@ -1,27 +1,22 @@
-/* =========================================
-   CONTENEDOR A DOS COLUMNAS
-   ========================================= */
+
 .profile-page-container {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  gap: 30px; /* Separación entre el menú y la tarjeta */
+  gap: 30px;
   min-height: 60vh;
   max-width: 1000px;
   margin: 0 auto;
   padding: 50px 20px;
 }
 
-/* =========================================
-   NUEVO: MENÚ LATERAL (SIDEBAR)
-   ========================================= */
 .profile-sidebar {
   background: #ffffff;
   border: 3px solid #000;
   border-radius: 15px;
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 1);
   width: 280px;
-  flex-shrink: 0; /* Para que no se aplaste */
+  flex-shrink: 0;
   overflow: hidden;
 }
 
@@ -61,7 +56,7 @@
 .sidebar-item:hover {
   background: #fffacd;
   color: var(--primary-purple);
-  padding-left: 25px; /* Pequeño efecto de desplazamiento al pasar el ratón */
+  padding-left: 25px;
 }
 
 .sidebar-item i {
@@ -71,7 +66,6 @@
   color: var(--primary-purple);
 }
 
-/* --- Ajuste para móviles: apilamos las columnas --- */
 @media (max-width: 850px) {
   .profile-page-container {
     flex-direction: column;
@@ -94,7 +88,6 @@
   text-align: center;
 }
 
-/* Avatar del usuario */
 .profile-header {
   display: flex;
   flex-direction: column;
@@ -136,7 +129,6 @@
   letter-spacing: 1px;
 }
 
-/* Estadísticas (Deseados y Carrito) */
 .profile-stats {
   display: flex;
   justify-content: space-around;
@@ -174,7 +166,6 @@
   color: #555;
 }
 
-/* Botones */
 .profile-actions {
   display: flex;
   gap: 15px;
@@ -186,32 +177,27 @@
 }
 
 
-/* =========================================
-   NUEVO: CAJA DE AHORRO (CERDITO)
-   ========================================= */
+
 .stat-box.savings-box {
-  background: #e6ffed; /* Un fondo verde muy clarito */
+  background: #e6ffed;
   border-color: #000;
 }
 
 .stat-box.savings-box i {
-  color: var(--price-green); /* Cerdito verde dinero */
+  color: var(--price-green);
 }
 
 .stat-box.savings-box h3 {
   color: var(--price-green);
 }
 
-/* Ajustes en móvil para que quepan las 3 cajas */
+
 @media (max-width: 600px) {
   .profile-stats {
     flex-direction: column;
   }
 }
 
-/* =========================================
-   INPUTS DE EDICIÓN DE PERFIL (Estilo Cómic)
-   ========================================= */
 .comic-input {
   width: 100%;
   padding: 12px;

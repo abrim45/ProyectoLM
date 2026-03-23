@@ -1,18 +1,18 @@
-// 1. Ahora nuestra base de datos empieza vacía
+//La base de datos empieza vacía
 let gamesDatabase = [];
 let appliedCoupon = null;
-let currentCartTotal = 0; // Guardará el total sin descuentos
+let currentCartTotal = 0; // Guardar el total actual del carrito para aplicar el cupón correctamente
 
-// --- DICCIONARIO DE ETIQUETAS (TAGS OCULTOS) ---
+// --- DICCIONARIO DE ETIQUETAS PARA EL MOTOR DE BÚSQUEDA ---
 // Le añadimos palabras clave "invisibles" a los juegos para que coincidan con siglas y alias.
 const searchTags = {
-  "grand theft auto": "gta gta5 gta v gta 5",
-  baldur: "bg3",
+  "grand theft auto": "gta gta5 gta v gta 5 gtav gt",
+  baldur: "bg3 bg",
   "league of legends": "lol",
   "call of duty": "cod",
-  "ea sports": "fifa fc24",
+  "ea sports": "fifa fc24 fc",
   "rocket league": "rl",
-  zelda: "the legend of zelda totk botw",
+  zelda: "the legend of zelda totk botw zelda",
   cyberpunk: "cbp",
   "red dead": "rdr2 rdr",
   "counter-strike": "csgo cs2 cs",
@@ -96,7 +96,7 @@ function initHeroSliders() {
   const mandangaTrack = document.getElementById("mandanga-track");
   const gachaWheel = document.getElementById("gacha-wheel");
 
-  // --- 1. SLIDER MANDANGA (Con tu idea del buffer a la izquierda) ---
+  // --- 1. SLIDER MANDANGA ---
   if (mandangaTrack && gamesDatabase.length > 0) {
     let lootGames = gamesDatabase.filter((game) => {
       const discount = Math.round(((game.oldPrice - game.newPrice) / game.oldPrice) * 100);
@@ -107,7 +107,7 @@ function initHeroSliders() {
         lootGames = [...lootGames, ...gamesDatabase].slice(0, 8);
     }
 
-    // OJO AQUÍ: El que empieza con la clase 'active-loot' es el índice 1 (el segundo juego)
+    // El primer elemento de la tira es una imagen invisible que hace de relleno para que el primer juego real empiece ya centrado.
     mandangaTrack.innerHTML = lootGames.map((g, index) => 
       `<div class="mandanga-item ${index === 1 ? 'active-loot' : ''}">
         <img src="${g.img}" alt="${g.title}" title="${g.title} (-${Math.round(((g.oldPrice - g.newPrice) / g.oldPrice) * 100)}%)">
@@ -120,13 +120,13 @@ function initHeroSliders() {
       if (isMoving) return;
       isMoving = true;
 
-      const firstItem = mandangaTrack.firstElementChild;       // El "escudo" invisible de la izquierda
-      const currentCenter = firstItem.nextElementSibling;      // El que está en el centro ahora
-      const nextCenter = currentCenter.nextElementSibling;     // El que va a entrar al centro
+      const firstItem = mandangaTrack.firstElementChild;       // La imagen invisible de la izquierda
+      const currentCenter = firstItem.nextElementSibling;      // La que está en el centro ahora
+      const nextCenter = currentCenter.nextElementSibling;     // La que va a entrar al centro
       
       const moveDistance = firstItem.offsetWidth + 15; // 130 + 15 = 145px
 
-      // 1. Apagamos el que estaba en el centro y encendemos el nuevo
+      // 1. Apagamos la que estaba en el centro y encendemos el nuevo
       currentCenter.classList.remove('active-loot');
       if (nextCenter) nextCenter.classList.add('active-loot');
 
@@ -138,8 +138,8 @@ function initHeroSliders() {
       setTimeout(() => {
         mandangaTrack.style.transition = "none";
         
-        // ¡TU IDEA! Movemos el primer elemento al final. 
-        // Como ya estaba fuera de la pantalla por la izquierda, ¡nadie lo ve desaparecer!
+        // Movemos el primer elemento al final. 
+        // Como ya esta fuera de la pantalla por la izquierda no se ve desaparecer
         mandangaTrack.appendChild(firstItem);    
         
         mandangaTrack.style.transform = "translateX(0px)"; // Reseteamos la posición
@@ -154,7 +154,7 @@ function initHeroSliders() {
     const randomGames = [...gamesDatabase].sort(() => 0.5 - Math.random()).slice(0, 6);
     let wheelHTML = '';
     randomGames.forEach((g, index) => {
-      // EL TRUCO: Sumamos 30 grados para que el icono caiga en el CENTRO del color y no en la línea
+      // Sumamos 30 grados para que el icono caiga en el centro del color y no en la línea
       const rotation = (index * 60) + 30; 
       wheelHTML += `
         <div class="wheel-icon-container" style="transform: rotate(${rotation}deg);">
@@ -175,6 +175,7 @@ function showToast(message, type = "error") {
     document.body.appendChild(container);
   }
 
+  // Elegimos el icono según el tipo de mensaje 
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
   const icon =
@@ -185,6 +186,7 @@ function showToast(message, type = "error") {
   toast.innerHTML = `${icon} <span>${message}</span>`;
   container.appendChild(toast);
 
+  // Animación de entrada
   setTimeout(() => {
     toast.classList.add("fade-out");
     setTimeout(() => toast.remove(), 300);
@@ -196,6 +198,7 @@ function getCurrentUser() {
   return localStorage.getItem("memeba_currentUser");
 }
 
+// Función para verificar si el usuario está logueado. Si no lo está, muestra un mensaje y redirige al login.
 function requireLogin(shouldRedirect = false) {
   if (!getCurrentUser()) {
     showToast("¡Eh, quieto ahí! Tienes que iniciar sesión.", "error");
@@ -225,11 +228,11 @@ async function setCart(cart) {
   const userId = localStorage.getItem("memeba_currentUserId"); // Recuperamos su ID
 
   if (user) {
-    // 1. Guardamos en el navegador (para que la web vaya rapidísima sin recargar)
+    // 1. Guardamos en el navegador (para que la web vaya rapida sin recargar)
     localStorage.setItem(`memeba_cart_${user}`, JSON.stringify(cart));
     updateCartBadge();
 
-    // 2. Lo guardamos en tu base de datos (json-server)
+    // 2. Lo guardamos en la base de datos
     if (userId) {
       try {
         await fetch(`http://localhost:3000/users/${userId}`, {
@@ -247,6 +250,7 @@ async function setCart(cart) {
   }
 }
 
+// Funciones para favoritos, con sincronización local y remota
 function getFavorites() {
   const user = getCurrentUser();
   if (!user) return [];
@@ -283,6 +287,7 @@ async function setFavorites(favs) {
   }
 }
 
+// Función para actualizar el contador del carrito en el header
 function updateCartBadge() {
   const cart = getCart();
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -300,12 +305,14 @@ function renderGameCards(gamesToRender, containerElement) {
   // Forzamos que todos los IDs guardados se lean como Texto (String)
   const favsStr = getFavorites().map(String);
 
+  // Si no hay juegos que mostrar, ponemos un mensaje bonito en vez de dejar el espacio vacío
   if (gamesToRender.length === 0) {
     containerElement.innerHTML =
       '<h3 style="grid-column: 1/-1; text-align: center; padding: 40px; font-size: 24px;">No hay juegos aquí 😢</h3>';
     return;
   }
 
+  // Recorremos los juegos que queremos mostrar y generamos el HTML de cada tarjeta
   gamesToRender.forEach((game) => {
     const discount = Math.round(
       ((game.oldPrice - game.newPrice) / game.oldPrice) * 100,
@@ -323,6 +330,7 @@ function renderGameCards(gamesToRender, containerElement) {
     const heartClass = favsStr.includes(String(game.id)) ? "liked" : "";
     const bgSize = game.platform === "Nintendo" ? "contain" : "cover";
 
+    // Generamos el HTML de la tarjeta con los datos del juego
     const cardHTML = `
             <div class="card scroll-anim visible">
                 <div class="card-img" style="position: relative; overflow: hidden; background-color: #1a0b2e; padding: 10px; display: flex; justify-content: space-between; align-items: flex-start; height: 160px;">
@@ -362,6 +370,7 @@ function renderGameCards(gamesToRender, containerElement) {
 let gameToAddToCart = null;
 
 document.addEventListener("click", (e) => {
+  // Botones principales de las tarjetas
   const cartBtn = e.target.closest(".cart-btn");
   const likeBtn = e.target.closest(".like-btn");
 
@@ -385,6 +394,7 @@ document.addEventListener("click", (e) => {
   if (cartBtn) {
     if (!requireLogin(false)) return;
 
+    // Guardamos el ID del juego que queremos añadir al carrito para usarlo luego en el modal
     gameToAddToCart = String(cartBtn.dataset.id);
     const gameObj = gamesDatabase.find((g) => String(g.id) === gameToAddToCart);
     if (!gameObj) return;
@@ -410,6 +420,7 @@ document.addEventListener("click", (e) => {
       qtyModal = document.getElementById("qty-modal");
     }
 
+    // Actualizamos el título del modal con el nombre del juego que vamos a añadir
     document.getElementById("modal-game-title").textContent = gameObj.title;
     document.getElementById("qty-input").value = 1;
     qtyModal.classList.remove("hidden");
@@ -438,12 +449,14 @@ document.addEventListener("click", (e) => {
       (item) => String(item.id) === gameToAddToCart,
     );
 
+    // Si el juego ya está en el carrito, sumamos la cantidad. Si no, lo añadimos como nuevo.
     if (existingItemIndex > -1) {
       cart[existingItemIndex].quantity += qty;
     } else {
       cart.push({ id: gameToAddToCart, quantity: qty });
     }
 
+    // Guardamos el carrito actualizado y cerramos el modal
     setCart(cart);
     document.getElementById("qty-modal").classList.add("hidden");
     showToast("¡Añadido al carrito con éxito!", "success");
@@ -453,14 +466,17 @@ document.addEventListener("click", (e) => {
   if (likeBtn) {
     if (!requireLogin(false)) return;
 
+    // Comparamos Texto con Texto
     const gameId = String(likeBtn.dataset.id);
     let favs = getFavorites().map(String);
 
+    // Si el juego ya está en favoritos, lo quitamos. Si no, lo añadimos.
     if (favs.includes(gameId)) {
       favs = favs.filter((id) => String(id) !== gameId);
       likeBtn.classList.remove("liked");
       showToast("Eliminado de deseados 💔", "error");
 
+      // Si estamos en la página de favoritos, recargamos para que desaparezca la tarjeta
       const favGrid = document.getElementById("favorites-grid");
       if (favGrid) setTimeout(() => loadFavoritesPage(), 200);
     } else {
@@ -475,6 +491,7 @@ document.addEventListener("click", (e) => {
   // --- DETECCIÓN DEL GACHA ---
   const btnGacha = e.target.closest("#btn-gacha-new");
 
+  // Si se ha hecho click en el botón de tirar la gacha, verificamos que el usuario esté logueado y luego llamamos a la función de tirar la gacha
   if (btnGacha) {
     if (!requireLogin(false)) return; // Obligamos a estar logueado
     tirarGacha();
@@ -487,6 +504,7 @@ document.addEventListener("click", (e) => {
     const input = document.getElementById("coupon-input");
     if (!input) return;
 
+    // Leemos el código que ha escrito el usuario, lo limpiamos y lo pasamos a mayúsculas para compararlo con nuestro diccionario de cupones
     const code = input.value.trim().toUpperCase();
     if (!code) {
       showToast("Escribe un código primero, listillo.", "error");
@@ -512,6 +530,7 @@ document.addEventListener("click", (e) => {
       },
     };
 
+    // Verificamos si el código existe en nuestro diccionario. Si existe, lo aplicamos. Si no, mostramos un mensaje de error.
     if (discountCodes[code]) {
       appliedCoupon = discountCodes[code];
       showToast("¡Código canjeado!", "success");
@@ -533,6 +552,8 @@ window.applyFiltersGlobal = function () {
   const search = searchBar ? searchBar.value.toLowerCase() : "";
 
   const homeGrid = document.getElementById("game-grid");
+
+  // Si estamos en la página principal, aplicamos los filtros y ordenación a esa sección. La sección de loot ya tiene su propio filtro de descuento, así que no lo tocamos.
   if (homeGrid) {
     const checkboxes = document.querySelectorAll(".filter-platform");
     const selectedPlatforms = Array.from(checkboxes)
@@ -552,6 +573,7 @@ window.applyFiltersGlobal = function () {
         checkSearchMatch(g.title, search),
     );
 
+    // Ordenamos según el criterio seleccionado
     if (sortValue === "price-asc") {
       filtered.sort((a, b) => a.newPrice - b.newPrice);
     } else if (sortValue === "price-desc") {
@@ -565,6 +587,7 @@ window.applyFiltersGlobal = function () {
     renderGameCards(filtered, homeGrid);
   }
 
+  // Si estamos en la sección de loot, aplicamos el filtro de búsqueda pero mantenemos el filtro de descuento del 40% para que siga siendo una sección de "gangas".
   const lootGrid = document.getElementById("loot-grid");
   if (lootGrid) {
     let lootGames = gamesDatabase.filter((game) => {
@@ -582,6 +605,7 @@ async function processCheckout() {
   const userId = localStorage.getItem("memeba_currentUserId");
   const cart = getCart();
 
+  // Validamos que el usuario esté logueado y que el carrito no esté vacío antes de intentar procesar la compra
   if (!userId || cart.length === 0) {
     showToast("Tu carrito está vacío. ¡Añade algo primero!", "error");
     return;
@@ -599,6 +623,7 @@ async function processCheckout() {
     let totalAhorro = 0;
     const comprasNuevas = [];
 
+    // Recorremos cada item del carrito, buscamos su información en la base de datos de juegos y sumamos su precio al total. También calculamos el ahorro sumando la diferencia entre el precio antiguo y el nuevo.
     cart.forEach((cartItem) => {
       const game = gamesDb.find((g) => String(g.id) === String(cartItem.id));
       if (game) {
@@ -685,6 +710,7 @@ async function processCheckout() {
       const headerBal = document.getElementById("global-balance-text");
       if (headerBal) headerBal.textContent = `${nuevoSaldo.toFixed(2)}€`;
 
+      // Mostramos un mensaje de éxito
       showToast("¡Pago completado! Disfruta de los juegazos.", "success");
       appliedCoupon = null; // Reseteamos el cupón después de usarlo
     }
@@ -702,6 +728,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const headerPlaceholder = document.getElementById("header-placeholder");
       if (headerPlaceholder) headerPlaceholder.innerHTML = data;
 
+      // Después de cargar el header, verificamos si el usuario está logueado para mostrar su nombre y el botón de perfil, y también inyectamos el botón de saldo en el header.
       const user = getCurrentUser();
       const accountBtn = document.getElementById("account-btn");
       if (user && accountBtn) {
@@ -712,6 +739,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // --- 1. INYECTAR BOTÓN DE SALDO ARREGLADO ---
         const navContainer = accountBtn.parentNode;
 
+        // Solo lo inyectamos si no existe ya (para evitar duplicados si el usuario recarga o algo raro pasa)
         if (navContainer && !document.getElementById("header-wallet-btn")) {
           const walletBtn = document.createElement("a");
           walletBtn.href = "#";
@@ -738,12 +766,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 `${balance.toFixed(2)}€`;
             });
 
-          // --- 2. CREAR EL MODAL CÓMIC DE INGRESO (Se inyecta en el body) ---
+          // --- 2. CREAR EL MODAL CÓMIC DE INGRESO ---
           let fundsModal = document.getElementById("quick-funds-modal");
           if (!fundsModal) {
             fundsModal = document.createElement("div");
             fundsModal.id = "quick-funds-modal";
-            fundsModal.className = "modal-overlay hidden"; // Reutilizamos tu clase de modal oscuro
+            fundsModal.className = "modal-overlay hidden"; // Reutilizamos la clase de modal oscuro
             fundsModal.innerHTML = `
                   <div class="modal-content" style="max-width: 400px;">
                     <h3 style="color: var(--price-green); font-size: 26px; margin-top: 0; margin-bottom: 10px;">
@@ -767,6 +795,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 fundsModal.classList.add("hidden");
               });
 
+              // Aquí usamos la función global que creamos antes para añadir fondos, y luego cerramos el modal y limpiamos el input
             document
               .getElementById("btn-confirm-funds")
               .addEventListener("click", async () => {
@@ -774,6 +803,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   document.getElementById("quick-funds-input").value;
                 const num = parseFloat(inputVal);
 
+                // Validamos que el número sea válido y esté dentro del rango permitido
                 if (num > 0 && num <= 1000) {
                   await processAddFunds(num); // Usa la función global que creamos antes
                   fundsModal.classList.add("hidden");
@@ -833,6 +863,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .filter((g) => checkSearchMatch(g.title, term))
             .slice(0, 5); // Máximo 5 resultados
 
+          // Generamos el HTML de las sugerencias o un mensaje de "no encontrado"
           if (matches.length > 0) {
             suggestionsBox.innerHTML = matches
               .map(
@@ -877,6 +908,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         };
 
+        // Redirigir al index con la búsqueda al pulsar Enter
         searchBar.addEventListener("keypress", (e) => {
           if (e.key === "Enter") {
             e.preventDefault();
@@ -884,6 +916,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
 
+        // Redirigir al index con la búsqueda al hacer click en la lupa
         const searchButton = searchContainer.querySelector("button");
         if (searchButton) {
           searchButton.addEventListener("click", (e) => {
@@ -911,6 +944,7 @@ document.addEventListener("DOMContentLoaded", () => {
       enableSmoothNavigation();
     });
 
+  // Cargamos el footer y luego inyectamos la lógica de los enlaces que abren el modal
   fetch("components/footer.html")
     .then((response) => response.text())
     .then((data) => {
@@ -918,6 +952,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (footerPlaceholder) {
         footerPlaceholder.innerHTML = data;
 
+        // Después de cargar el footer, añadimos los event listeners a los enlaces de Términos y Privacidad para mostrar el modal de broma
         const linkTerms = document.getElementById("link-terms");
         const linkPrivacy = document.getElementById("link-privacy");
         const jokeModal = document.getElementById("joke-modal");
@@ -925,7 +960,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const jokeText = document.getElementById("joke-text");
         const jokeClose = document.getElementById("joke-close");
 
+        // Verificamos que existan los elementos antes de añadir los event listeners para evitar errores si el HTML no se cargó correctamente o si estamos en una página sin footer
         if (linkTerms && linkPrivacy && jokeModal) {
+          // Lógica para el enlace de Términos y Condiciones
           linkTerms.addEventListener("click", (e) => {
             e.preventDefault();
             jokeTitle.innerHTML =
@@ -935,6 +972,7 @@ document.addEventListener("DOMContentLoaded", () => {
             jokeModal.classList.remove("hidden");
           });
 
+          // Lógica para el enlace de Política de Privacidad
           linkPrivacy.addEventListener("click", (e) => {
             e.preventDefault();
             jokeTitle.innerHTML =
@@ -944,6 +982,7 @@ document.addEventListener("DOMContentLoaded", () => {
             jokeModal.classList.remove("hidden");
           });
 
+          // Lógica para cerrar el modal
           jokeClose.addEventListener("click", () => {
             jokeModal.classList.add("hidden");
           });
@@ -952,6 +991,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   const homeGrid = document.getElementById("game-grid");
+  // Solo si estamos en la página principal, añadimos los event listeners para los filtros y ordenación, porque las otras páginas no los tienen o tienen filtros específicos diferentes
   if (homeGrid) {
     document
       .querySelectorAll(".filter-platform")
@@ -968,6 +1008,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // Botón de reset para dejarlo todo como al principio
     const resetBtn = document.getElementById("reset-filters-btn");
     if (resetBtn) {
       resetBtn.addEventListener("click", () => {
@@ -986,9 +1027,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ==========================================
-  // 1. NUEVO REGISTRO (CONECTADO AL SERVIDOR)
-  // ==========================================
+  // ================================
+  // REGISTRO (CONECTADO AL SERVIDOR)
+  // ================================
   const registerForm = document.getElementById("register-form");
   if (registerForm) {
     registerForm.addEventListener("submit", async (e) => {
@@ -1008,7 +1049,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        // Si no existe, preparamos el nuevo jugador con los bolsillos vacíos
+        // Si no existe, preparamos el nuevo jugador con la cartera a 0
         const newUser = {
           username: user,
           password: pass,
@@ -1039,9 +1080,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ==========================================
-  // 2. NUEVO LOGIN (CONECTADO AL SERVIDOR)
-  // ==========================================
+  // =============================
+  // LOGIN (CONECTADO AL SERVIDOR)
+  // =============================
   const loginForm = document.getElementById("login-form");
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
@@ -1146,6 +1187,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// --- FUNCIONES PARA CARGAR LAS PÁGINAS DE FAVORITOS Y CARRITO ---
 function loadFavoritesPage() {
   if (!requireLogin(true)) {
     document.getElementById("favorites-grid").innerHTML =
@@ -1160,6 +1202,7 @@ function loadFavoritesPage() {
   if (favGrid) renderGameCards(favoriteGames, favGrid);
 }
 
+// Cargamos el carrito, mostrando un mensaje gracioso si está vacío, y ocultando la caja de pagar si no hay nada dentro. También añadimos la lógica para eliminar juegos del carrito.
 function loadCartPage() {
   if (!requireLogin(true)) {
     document.getElementById("cart-items-container").innerHTML =
@@ -1167,6 +1210,7 @@ function loadCartPage() {
     const summary = document.querySelector(".cart-summary");
     if (summary) summary.style.display = "none";
     return;
+    }
     const btnCheckout = document.getElementById("btn-checkout");
     if (btnCheckout) {
       const newBtn = btnCheckout.cloneNode(true);
@@ -1176,8 +1220,9 @@ function loadCartPage() {
         processCheckout();
       });
     }
-  }
+  
 
+    // Cargamos el carrito del usuario, lo mostramos bonito, calculamos el total, y si el carrito está vacío, mostramos un mensaje gracioso y ocultamos la caja de pagar.
   const cart = getCart();
   const cartContainer = document.getElementById("cart-items-container");
   const totalPriceEl = document.getElementById("cart-total-price");
@@ -1191,13 +1236,13 @@ function loadCartPage() {
       '<h3 style="text-align: center; padding: 40px;">Tu carrito está más vacío que mi cartera 🥲</h3>';
     totalPriceEl.textContent = "0.00€";
 
-    // --- NUEVO: Ocultamos la caja de pagar si no hay juegos ---
+    // --- Ocultamos la caja de pagar si no hay juegos ---
     const summaryBox = document.querySelector(".cart-summary");
     if (summaryBox) summaryBox.style.display = "none";
 
     return;
   } else {
-    // --- NUEVO: Nos aseguramos de que se vea si SÍ hay juegos ---
+    // --- Nos aseguramos de que se vea si sí hay juegos ---
     const summaryBox = document.querySelector(".cart-summary");
     if (summaryBox) summaryBox.style.display = "block";
   }
@@ -1237,6 +1282,7 @@ function loadCartPage() {
   aplicarDescuentoUI(); // Que la función decida si hay que rebajarlo
 }
 
+// Función global para eliminar un juego del carrito
 window.removeFromCart = function (id) {
   let cart = getCart();
   cart = cart.filter((item) => String(item.id) !== String(id));
@@ -1267,7 +1313,6 @@ function enableSmoothNavigation() {
 }
 
 // --- FUNCIÓN PARA CARGAR LA PÁGINA INDIVIDUAL DEL JUEGO ---
-// --- FUNCIÓN PARA CARGAR LA PÁGINA INDIVIDUAL DEL JUEGO ---
 async function loadGamePage() {
   if (!window.location.pathname.includes("game.html")) return;
 
@@ -1286,13 +1331,14 @@ async function loadGamePage() {
       </div>`;
   };
 
+  // Si no hay ID, mostramos un error
   if (!gameId) {
     showError("Necesitas hacer clic en un juego desde la tienda.");
     return;
   }
 
   try {
-    // Le pedimos los datos directamente a tu json-server (Puerto 3000)
+    // Le pedimos los datos directamente a tu json-server
     const response = await fetch(
       `http://localhost:3000/gamesDatabase/${gameId}`,
     );
@@ -1370,7 +1416,7 @@ async function loadGamePage() {
       reviewsBox.innerHTML =
         "<p style='font-weight: 800; font-size: 18px;'>Aún no hay reseñas para este juego. ¡Sé el primero!</p>";
     }
-    // 5. LÓGICA DEL FORMULARIO DE RESEÑAS (NUEVO)
+    // 5. LÓGICA DEL FORMULARIO DE RESEÑAS
     const interactiveStars = document.querySelectorAll(
       "#interactive-stars .fa-star",
     );
@@ -1396,7 +1442,6 @@ async function loadGamePage() {
       iluminarEstrellas(scoreInput.value);
 
       interactiveStars.forEach((star) => {
-        // ¡ELIMINADOS LOS EVENTOS MOUSEOVER Y MOUSEOUT!
 
         // Al hacer clic (se queda fijado y hace 'pop')
         star.addEventListener("click", function () {
@@ -1441,7 +1486,7 @@ async function loadGamePage() {
             ? [...game.reviews, newReview]
             : [newReview];
 
-          // Enviamos el parche (PATCH) a tu base de datos para actualizar este juego concreto
+          // Enviamos el parche a la base de datos para actualizar este juego concreto
           const patchRes = await fetch(
             `http://localhost:3000/gamesDatabase/${gameId}`,
             {
@@ -1491,7 +1536,7 @@ async function loadProfilePage() {
   const userId = localStorage.getItem("memeba_currentUserId");
   const container = document.querySelector(".profile-card");
 
-  // Si no hay ID (es un usuario fantasma del código viejo), lo echamos al login
+  // Si no hay ID lo echamos al login
   if (!userId) {
     showToast("Sesión caducada. Por favor, vuelve a entrar.", "error");
     localStorage.removeItem("memeba_currentUser");
@@ -1511,7 +1556,7 @@ async function loadProfilePage() {
     // Pintamos sus datos en el HTML
     document.getElementById("p-username").textContent = userData.username;
 
-    // --- NUEVO: SISTEMA DE TÍTULOS DINÁMICOS ---
+    // --- SISTEMA DE TÍTULOS DINÁMICOS ---
     const totalGastado = userData.totalSpent || 0;
     let tituloRango = "Rata de Alcantarilla 🐀"; // Rango base (0€)
 
@@ -1569,14 +1614,12 @@ async function loadProfilePage() {
       });
     }
 
-    // --- NUEVO: Rellenar el Ahorro Total ---
-    // En el futuro, sumaremos (oldPrice - newPrice) de los juegos en "userData.purchases".
-    // Por ahora, simulamos 0.00€ o lo que tenga la base de datos en "savings".
+    // --- Calculo del Ahorro Total ---
     const totalSavings = userData.savings ? userData.savings : 0;
     document.getElementById("p-saved-money").textContent =
       `${totalSavings.toFixed(2)}€`;
 
-    // --- NUEVO: Lógica del Modal de Ajustes de Perfil ---
+    // --- Lógica del Modal de Ajustes de Perfil ---
     const linkEditProfile = document.getElementById("link-edit-profile");
     const settingsModal = document.getElementById("settings-modal");
     const btnCancelSettings = document.getElementById("btn-cancel-settings");
@@ -1624,7 +1667,7 @@ async function loadProfilePage() {
             }
           }
 
-          // Enviamos la actualización (PATCH) a la base de datos
+          // Enviamos la actualización a la base de datos
           const patchRes = await fetch(
             `http://localhost:3000/users/${userId}`,
             {
@@ -1640,7 +1683,7 @@ async function loadProfilePage() {
           if (patchRes.ok) {
             showToast("¡Perfil actualizado con éxito!", "success");
 
-            // EL TRUCO SENIOR: Migramos las claves del localStorage si cambió el nombre
+            // Migramos las claves del localStorage si cambió el nombre
             if (newUsername !== userData.username) {
               localStorage.removeItem(`memeba_cart_${userData.username}`);
               localStorage.removeItem(`memeba_favs_${userData.username}`);
@@ -1669,14 +1712,14 @@ async function loadProfilePage() {
       });
     }
 
-    // --- NAVEGACIÓN ENTRE VISTAS (PESTAÑAS) ---
+    // --- NAVEGACIÓN ENTRE PESTAÑAS ---
     const linkSummary = document.getElementById("link-summary");
     const linkWallet = document.getElementById("link-wallet");
-    const linkPurchases = document.getElementById("link-purchases"); // NUEVO
+    const linkPurchases = document.getElementById("link-purchases"); 
 
     const viewSummary = document.getElementById("view-summary");
     const viewWallet = document.getElementById("view-wallet");
-    const viewPurchases = document.getElementById("view-purchases"); // NUEVO
+    const viewPurchases = document.getElementById("view-purchases"); 
 
     // Función auxiliar para limpiar colores del menú y ocultar todas las vistas
     const resetViews = () => {
@@ -1689,6 +1732,7 @@ async function loadProfilePage() {
       if (viewPurchases) viewPurchases.classList.add("hidden");
     };
 
+    // Configuramos los eventos de los enlaces del menú lateral
     if (linkSummary && linkWallet && linkPurchases) {
       linkSummary.addEventListener("click", (e) => {
         e.preventDefault();
@@ -1718,7 +1762,7 @@ async function loadProfilePage() {
     if (purchasesList) {
       // Comprobamos si el usuario tiene compras en la base de datos
       if (userData.purchases && userData.purchases.length > 0) {
-        // Le damos la vuelta (reverse) para que las compras más recientes salgan arriba del todo
+        // Le damos la vuelta para que las compras más recientes salgan arriba del todo
         purchasesList.innerHTML = userData.purchases
           .reverse()
           .map(
@@ -1851,9 +1895,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ==========================================
-// 🎰 SISTEMA GACHA (LA CAJA DE BOTÍN)
-// ==========================================
+// =================
+// 🎰 SISTEMA GACHA
+// =================
 async function tirarGacha() {
   const userId = localStorage.getItem("memeba_currentUserId");
   if (!userId) return;
@@ -1889,7 +1933,7 @@ async function tirarGacha() {
     const nuevaCompra = {
       gameId: premio.id,
       title: `[GACHA] ${premio.title}`, // Le ponemos etiqueta Gacha
-      pricePaid: PRECIO_GACHA, // Pagó 15€ por él
+      pricePaid: PRECIO_GACHA,
       quantity: 1,
       date: new Date().toISOString(),
     };
@@ -1914,7 +1958,7 @@ async function tirarGacha() {
       const headerBal = document.getElementById("global-balance-text");
       if (headerBal) headerBal.textContent = `${nuevoSaldo.toFixed(2)}€`;
 
-      // ¡Mostramos el pantallazo épico del premio!
+      // Mostramos el pantallazo del premio
       mostrarPremioGacha(premio);
     }
   } catch (error) {
@@ -1923,7 +1967,7 @@ async function tirarGacha() {
   }
 }
 
-// Ventana emergente estilo cómic para el premio animado (TAMAÑO CINE)
+// Ventana emergente estilo cómic para el premio animado
 function mostrarPremioGacha(premio) {
   let modal = document.getElementById("gacha-modal");
   if (!modal) {
@@ -1933,7 +1977,7 @@ function mostrarPremioGacha(premio) {
     document.body.appendChild(modal);
   }
 
-  // Calculamos si ha ganado dinero (STONKS) o lo ha perdido (TIMADA)
+  // Calculamos si ha ganado dinero o lo ha perdido
   const isStonks = premio.newPrice > 15;
   const mensajeStonks = isStonks
     ? "¡GAMBLING ALWAYS WIN! 📈"
@@ -1943,7 +1987,7 @@ function mostrarPremioGacha(premio) {
 
   // Hemos pasado el max-width a 800px y aumentado todos los márgenes y textos
   modal.innerHTML = `
-        <div class="modal-content" style="text-align: center; max-width: 600px; width: 60%; background: ${bgStonks}; transition: all 0.3s; position: relative; padding: 40px;">
+        <div class="modal-content" style="text-align: center; max-width: 600px; width: 90%; background: ${bgStonks}; transition: all 0.3s; position: relative; padding: 20px; box-sizing: border-box;">
             <h2 style="color: var(--primary-purple); font-size: 42px; margin-top: 0; text-transform: uppercase; text-shadow: 2px 2px #fff;">
                 <i class="fas fa-gift"></i> ¡GAMBLING A TOPE!
             </h2>
@@ -1978,9 +2022,9 @@ function mostrarPremioGacha(premio) {
   });
 }
 
-// ==========================================
-// 🎲 ANIMACIÓN DE RULETA GACHA (LA DEFINITIVA)
-// ==========================================
+// ===================
+// ANIMACIÓN DE RULETA
+// ===================
 function animarRuletaGacha(premio) {
   const rouletteContainer = document.getElementById("gacha-roulette-container");
   const roulette = document.getElementById("gacha-roulette");
@@ -1996,12 +2040,13 @@ function animarRuletaGacha(premio) {
 
   const iteraciones = 40;
 
-  // --- IMÁGENES TAMAÑO CINE ---
+  // --- IMÁGENES ---
   const itemWidth = 300;
   const spaceBetween = 20;
   const fullItemWidth = itemWidth + spaceBetween;
   const winnerIndex = 32;
 
+  // Insertamos imágenes aleatorias, pero en la posición del premio insertamos el premio real
   for (let i = 0; i < iteraciones; i++) {
     const gameToInsert =
       i === winnerIndex
@@ -2033,6 +2078,7 @@ function animarRuletaGacha(premio) {
     roulette.style.transform = `translateX(-${distanceToScroll}px)`;
   }, 50);
 
+  // Cuando termine la animación, mostramos el premio
   roulette.addEventListener(
     "transitionend",
     () => {
@@ -2046,6 +2092,200 @@ function animarRuletaGacha(premio) {
     },
     { once: true },
   );
+}
+
+// --- FUNCIÓN PARA RECALCULAR EL CARRITO CON CUPONES ---
+function aplicarDescuentoUI() {
+  const totalPriceEl = document.getElementById("cart-total-price");
+  const msgEl = document.getElementById("coupon-msg");
+  if (!totalPriceEl) return;
+
+  let finalTotal = currentCartTotal;
+
+  if (appliedCoupon) {
+    // Matemáticas del descuento
+    if (appliedCoupon.type === "percent") {
+      finalTotal = finalTotal - finalTotal * appliedCoupon.value;
+    } else if (appliedCoupon.type === "fixed") {
+      finalTotal = Math.max(0, finalTotal - appliedCoupon.value); // Evita que baje de 0€
+    } else if (appliedCoupon.type === "punish") {
+      finalTotal = finalTotal * appliedCoupon.value; // El castigo de Gabe
+    }
+
+    // Mostrar el mensaje del cupón aplicado
+    if (msgEl) {
+      msgEl.textContent = appliedCoupon.message;
+      msgEl.style.color =
+        appliedCoupon.type === "punish" ? "#ff0044" : "var(--price-green)";
+      msgEl.style.display = "block";
+    }
+  } else {
+    if (msgEl) msgEl.style.display = "none";
+  }
+
+  totalPriceEl.textContent = finalTotal.toFixed(2) + "€";
+}
+
+// =====================
+// LÓGICA DE BONO DIARIO
+// =====================
+
+async function renderDailyBonus() {
+  const container = document.getElementById("daily-bonus-col-container");
+  if (!container) return;
+
+  // Limpiamos intervalos anteriores
+  if (window.countdownInterval) clearInterval(window.countdownInterval);
+
+  // Recuperamos el ID del usuario real
+  const userId = localStorage.getItem("memeba_currentUserId");
+
+  // 1. SI NO ESTÁS LOGUEADO
+  if (!userId) {
+    container.innerHTML = `
+            <h2>RASCADA DIARIA</h2>
+            <p><strong>¿De verdad eres tan rata compadre?</strong></p>
+            <p>Mira como aqui en memeba somos empaticos con los pobres como tu, si nos haces el favor de loguearte una vez al dia (Lo que hace que nosotros ganemos un paston por vender tu informacion personal) te daremos <br>UN MISERO EURO</p>
+            <p>Enga no te hagas el duro, haz click en el boton de abajo y deja de ser tan miserable</p>
+            <button class="btn-claim-new" style="background: var(--primary-purple); color: white; margin-top: auto;" onclick="window.location.href='login.html'">
+                <i class="fas fa-lock"></i> INICIAR SESIÓN
+            </button>
+        `;
+    return;
+  }
+
+  // 2. SI ESTÁS LOGUEADO
+  const todayStr = new Date().toISOString().split("T")[0];
+  const lastClaimedStr = localStorage.getItem(`daily_bonus_${userId}`);
+  const canClaim = lastClaimedStr !== todayStr;
+
+  try {
+    // 2. SI ESTÁS LOGUEADO: Leemos los datos directos de la BD
+    const res = await fetch(`http://localhost:3000/users/${userId}`);
+    const user = await res.json();
+
+    // Matemáticas del tiempo (24 horas = 86400000 milisegundos)
+    const exactClaimTime = user.lastClaimedTime || 0; // Si no existe, es 0
+    const now = new Date().getTime();
+    const timePassed = now - exactClaimTime;
+    const cooldown = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
+
+    const canClaim = timePassed >= cooldown;
+
+    // Título igual que los demás (H2)
+    const title = `<h2>BONO DIARIO</h2>`;
+
+    // El Euro gigante en el centro
+    const amount = `
+        <div class="${canClaim ? "pulsar-effect" : ""}" style="font-size: 55px; font-weight: 900; color: var(--primary-purple); text-shadow: 2px 2px 0 #000; line-height: 1; margin: 5px 0; width: 100%; text-align: center;">
+            1€
+        </div>
+    `;
+
+    // Mensaje o cuenta atrás
+    let messageAndCountdown = "";
+    if (canClaim) {
+      messageAndCountdown =
+        `<p style="text-align: center; width: 100%;"><strong>Illo recoge ya tu euro gratis</strong></p>` +
+        `<p style="text-align: center; width: 100%;">Que al paso al que vas me lo quedo yo , o te crees tu que el gasoil se paga solo</p>`;
+    } else {
+      messageAndCountdown =
+        `<p style="text-align: center; width: 100%;"> Ya tienes tu mísero euro gratis, ni se te ocurra irte sin darme las gracias</p>` +
+        `<p style="text-align: center; width: 100%;">Y cómprame algo, que me queo sin come</p>` +
+        `<p style="text-align: center; width: 100%;">Vuelve en:<br><span id="daily-bonus-countdown" style="font-size: 20px; color: var(--primary-purple); font-weight: 900;">HH:MM:SS</span></p>`;
+    }
+
+    // Botón
+    const button = `
+        <button id="btn-claim-daily-new" class="btn-claim-new ${canClaim ? "" : "disabled"}" style="margin-top: auto;" ${canClaim ? "" : "disabled"}>
+            ${canClaim ? '<i class="fas fa-coins"></i> RECLAMAR EURO' : "¡COBRADO!"}
+        </button>
+    `;
+
+    // Lo metemos todo centrado y limpio
+    container.innerHTML = title + amount + messageAndCountdown + button;
+
+    // Conectamos el botón o activamos la cuenta atrás
+    if (canClaim) {
+      document
+        .getElementById("btn-claim-daily-new")
+        .addEventListener("click", claimDailyBonus);
+    } else {
+      startCountdown(exactClaimTime);
+    }
+  } catch (error) {
+    console.error("No se pudo cargar el estado del bono:", error);
+    container.innerHTML = `<p style="color:red; font-weight:bold;">Error de conexión con la BD :(</p>`;
+  }
+}
+
+// =============================================
+// FUNCIÓN PARA COBRAR EL EURO Y SUBIRLO A LA BD
+// =============================================
+async function claimDailyBonus() {
+  const userId = localStorage.getItem("memeba_currentUserId");
+  if (!userId) return;
+
+  try {
+    const res = await fetch(`http://localhost:3000/users/${userId}`);
+    const user = await res.json();
+
+    const newBalance = (user.balance || 0) + 1.0;
+    const exactTime = new Date().getTime(); // Momento exacto de la reclamación
+
+    // Guardamos el nuevo saldo Y la marca de tiempo exacta
+    const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        balance: newBalance,
+        lastClaimedTime: exactTime, 
+      }),
+    });
+
+    if (patchRes.ok) {
+      const headerBal = document.getElementById("global-balance-text");
+      if (headerBal) headerBal.textContent = `${newBalance.toFixed(2)}€`;
+
+      renderDailyBonus();
+      showToast("¡Euro gratis añadido a tu cartera! 💰", "success");
+    }
+  } catch (error) {
+    console.error("Error al reclamar el bono:", error);
+    showToast("El servidor json-server está apagado.", "error");
+  }
+}
+
+// ===========================
+// EL RELOJ DE LA CUENTA ATRÁS
+// ===========================
+function startCountdown(lastClaimedTime) {
+  const countdownSpan = document.getElementById("daily-bonus-countdown");
+  if (!countdownSpan) return;
+
+  // La hora a la que podrá volver a cobrar (24h después)
+  const claimAvailableTime = lastClaimedTime + 24 * 60 * 60 * 1000;
+
+  function updateCountdownUI() {
+    const now = new Date().getTime();
+    const diff = claimAvailableTime - now;
+
+    if (diff <= 0) {
+      if (window.countdownInterval) clearInterval(window.countdownInterval);
+      renderDailyBonus();
+      return;
+    }
+
+    // Calculamos horas, minutos y segundos restantes
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    countdownSpan.textContent = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  updateCountdownUI();
+  window.countdownInterval = setInterval(updateCountdownUI, 1000);
 }
 
 // ==========================================
@@ -2090,10 +2330,10 @@ function desatarLocuraBetica() {
 
   modal.innerHTML = `
         <div style="text-align: center; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);" id="betis-content">
-            <img src="assets/BetisMeme.jpg" alt="Logo Betis" style="width: 500betispx; filter: drop-shadow(0px 0px 30px #fff); margin-bottom: 20px;">
+            <img src="assets/BetisMeme.jpg" alt="Logo Betis" style="width: 90%; max-width: 500px; filter: drop-shadow(0px 0px 30px #fff); margin-bottom: 20px;">
                  <style="width: 300px; filter: drop-shadow(0px 0px 30px #fff); margin-bottom: 20px;">
             
-            <h1 style="color: #fff; font-size: 60px; text-shadow: 4px 4px 0px #000, -2px -2px 0px #000; margin: 0; font-weight: 900; text-transform: uppercase;">
+            <h1 style="color: #fff; font-size: clamp(32px, 8vw, 60px); text-shadow: 4px 4px 0px #000, -2px -2px 0px #000; margin: 0; font-weight: 900; text-transform: uppercase;">
                 ¡Musho Betis!
             </h1>
             <p style="color: #fff; font-size: 24px; font-weight: bold; background: #000; display: inline-block; padding: 10px 20px; border-radius: 8px; margin-top: 10px;">
@@ -2121,197 +2361,4 @@ function desatarLocuraBetica() {
     if (audio) audio.pause(); // Apagamos el himno
     modal.remove(); // Destruimos la prueba del delito
   });
-}
-
-// --- FUNCIÓN PARA RECALCULAR EL CARRITO CON CUPONES ---
-function aplicarDescuentoUI() {
-  const totalPriceEl = document.getElementById("cart-total-price");
-  const msgEl = document.getElementById("coupon-msg");
-  if (!totalPriceEl) return;
-
-  let finalTotal = currentCartTotal;
-
-  if (appliedCoupon) {
-    // Matemáticas del descuento
-    if (appliedCoupon.type === "percent") {
-      finalTotal = finalTotal - finalTotal * appliedCoupon.value;
-    } else if (appliedCoupon.type === "fixed") {
-      finalTotal = Math.max(0, finalTotal - appliedCoupon.value); // Evita que baje de 0€
-    } else if (appliedCoupon.type === "punish") {
-      finalTotal = finalTotal * appliedCoupon.value; // El castigo de Gabe
-    }
-
-    // Mostrar el mensajito
-    if (msgEl) {
-      msgEl.textContent = appliedCoupon.message;
-      msgEl.style.color =
-        appliedCoupon.type === "punish" ? "#ff0044" : "var(--price-green)";
-      msgEl.style.display = "block";
-    }
-  } else {
-    if (msgEl) msgEl.style.display = "none";
-  }
-
-  totalPriceEl.textContent = finalTotal.toFixed(2) + "€";
-}
-
-// ==========================================
-// 🪙 LÓGICA DE BONO DIARIO CON CUENTA ATRÁS (DISEÑO UNIFICADO)
-// ==========================================
-
-async function renderDailyBonus() {
-  const container = document.getElementById("daily-bonus-col-container");
-  if (!container) return;
-
-  // Limpiamos intervalos anteriores
-  if (window.countdownInterval) clearInterval(window.countdownInterval);
-
-  // Recuperamos el ID del usuario real
-  const userId = localStorage.getItem("memeba_currentUserId");
-
-  // 1. SI NO ESTÁS LOGUEADO
-  if (!userId) {
-    container.innerHTML = `
-            <h2>RASCADA DIARIA</h2>
-            <p><strong>¿De verdad eres tan rata compadre?</strong></p>
-            <p>Mira como aqui en memeba somos empaticos con los pobres como tu, si nos haces el favor de loguearte una vez al dia (Lo que hace que nosotros ganemos un paston por vender tu informacion personal) te daremos <br>UN MISERO EURO</p>
-            <p>Enga no te hagas el duro, haz click en el boton de abajo y deja de ser tan miserable</p>
-            <button class="btn-claim-new" style="background: var(--primary-purple); color: white; margin-top: auto;" onclick="window.location.href='login.html'">
-                <i class="fas fa-lock"></i> INICIAR SESIÓN
-            </button>
-        `;
-    return;
-  }
-
-  // 2. SI ESTÁS LOGUEADO
-  const todayStr = new Date().toISOString().split("T")[0];
-  const lastClaimedStr = localStorage.getItem(`daily_bonus_${userId}`);
-  const canClaim = lastClaimedStr !== todayStr;
-
-  try {
-    // 2. SI ESTÁS LOGUEADO: Leemos los datos directos de tu BD
-    const res = await fetch(`http://localhost:3000/users/${userId}`);
-    const user = await res.json();
-
-    // Matemáticas del tiempo (24 horas = 86400000 milisegundos)
-    const exactClaimTime = user.lastClaimedTime || 0; // Si no existe, es 0
-    const now = new Date().getTime();
-    const timePassed = now - exactClaimTime;
-    const cooldown = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
-
-    const canClaim = timePassed >= cooldown;
-
-    // Título igual que los demás (H2)
-    const title = `<h2>BONO DIARIO</h2>`;
-
-    // El Euro gigante en el centro
-    const amount = `
-        <div class="${canClaim ? "pulsar-effect" : ""}" style="font-size: 55px; font-weight: 900; color: var(--primary-purple); text-shadow: 2px 2px 0 #000; line-height: 1; margin: 5px 0; width: 100%; text-align: center;">
-            1€
-        </div>
-    `;
-
-    // Mensaje o cuenta atrás
-    let messageAndCountdown = "";
-    if (canClaim) {
-      messageAndCountdown =
-        `<p style="text-align: center; width: 100%;"><strong>Illo recoge ya tu euro gratis</strong></p>` +
-        `<p style="text-align: center; width: 100%;">Que al paso al que vas me lo quedo yo , o te crees tu que el gasoil se paga solo</p>`;
-    } else {
-      messageAndCountdown =
-        `<p style="text-align: center; width: 100%;">Po ya tienes tu misero euro gratis, ni se te ocurra irte sin darme las gracias</p>` +
-        `<p style="text-align: center; width: 100%;">Y cómprame algo, que me queo sin come</p>` +
-        `<p style="text-align: center; width: 100%;">Vuelve en:<br><span id="daily-bonus-countdown" style="font-size: 20px; color: var(--primary-purple); font-weight: 900;">HH:MM:SS</span></p>`;
-    }
-
-    // Botón
-    const button = `
-        <button id="btn-claim-daily-new" class="btn-claim-new ${canClaim ? "" : "disabled"}" style="margin-top: auto;" ${canClaim ? "" : "disabled"}>
-            ${canClaim ? '<i class="fas fa-coins"></i> RECLAMAR EURO' : "COBRADO ¡MUSHO BETIS!"}
-        </button>
-    `;
-
-    // Lo metemos todo centrado y limpio
-    container.innerHTML = title + amount + messageAndCountdown + button;
-
-    // Conectamos el botón o activamos la cuenta atrás
-    if (canClaim) {
-      document
-        .getElementById("btn-claim-daily-new")
-        .addEventListener("click", claimDailyBonus);
-    } else {
-      startCountdown(exactClaimTime);
-    }
-  } catch (error) {
-    console.error("No se pudo cargar el estado del bono:", error);
-    container.innerHTML = `<p style="color:red; font-weight:bold;">Error de conexión con la BD.</p>`;
-  }
-}
-
-// ==========================================
-// FUNCIÓN PARA COBRAR EL EURO Y SUBIRLO A LA BD
-// ==========================================
-async function claimDailyBonus() {
-  const userId = localStorage.getItem("memeba_currentUserId");
-  if (!userId) return;
-
-  try {
-    const res = await fetch(`http://localhost:3000/users/${userId}`);
-    const user = await res.json();
-
-    const newBalance = (user.balance || 0) + 1.0;
-    const exactTime = new Date().getTime(); // Momento exacto de la reclamación en milisegundos
-
-    // Guardamos el nuevo saldo Y la marca de tiempo exacta
-    const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        balance: newBalance,
-        lastClaimedTime: exactTime, // <-- ¡ESTO ES LO CLAVE!
-      }),
-    });
-
-    if (patchRes.ok) {
-      const headerBal = document.getElementById("global-balance-text");
-      if (headerBal) headerBal.textContent = `${newBalance.toFixed(2)}€`;
-
-      renderDailyBonus();
-      showToast("¡Euro gratis añadido a tu cartera! 💰", "success");
-    }
-  } catch (error) {
-    console.error("Error al reclamar el bono:", error);
-    showToast("El servidor json-server está apagado.", "error");
-  }
-}
-
-// ==========================================
-// EL RELOJ DE LA CUENTA ATRÁS (24H INDIVIDUAL)
-// ==========================================
-function startCountdown(lastClaimedTime) {
-  const countdownSpan = document.getElementById("daily-bonus-countdown");
-  if (!countdownSpan) return;
-
-  // La hora a la que podrá volver a cobrar (24h después)
-  const claimAvailableTime = lastClaimedTime + 24 * 60 * 60 * 1000;
-
-  function updateCountdownUI() {
-    const now = new Date().getTime();
-    const diff = claimAvailableTime - now;
-
-    if (diff <= 0) {
-      if (window.countdownInterval) clearInterval(window.countdownInterval);
-      renderDailyBonus();
-      return;
-    }
-
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-    countdownSpan.textContent = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-  }
-
-  updateCountdownUI();
-  window.countdownInterval = setInterval(updateCountdownUI, 1000);
 }

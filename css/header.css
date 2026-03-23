@@ -52,7 +52,6 @@ header {
   transform: scale(1.2) rotate(15deg);
 }
 
-/* --- BUSCADOR CORREGIDO --- */
 .search-container {
   flex-grow: 1;
   max-width: 600px;
@@ -60,7 +59,6 @@ header {
   display: flex;
   border: 2px solid #000;
   border-radius: 8px;
-  /* HEMOS QUITADO EL overflow: hidden; y añadido position: relative; */
   position: relative; 
   background: #fff;
 }
@@ -72,7 +70,7 @@ header {
   font-size: 15px;
   outline: none;
   font-family: "Fredoka", sans-serif;
-  border-radius: 6px 0 0 6px; /* Ajuste para las esquinas */
+  border-radius: 6px 0 0 6px;
 }
 
 .search-container button {
@@ -83,17 +81,16 @@ header {
   font-size: 16px;
   color: #000;
   transition: background 0.2s;
-  border-radius: 0 6px 6px 0; /* Ajuste para las esquinas */
+  border-radius: 0 6px 6px 0;
 }
 
 .search-container button:hover {
   background-color: #e6a600;
 }
 
-/* --- LA NUEVA CAJA DE SUGERENCIAS --- */
 .search-suggestions {
   position: absolute;
-  top: calc(100% + 5px); /* Justo debajo del buscador */
+  top: calc(100% + 5px);
   left: 0;
   width: 100%;
   background: #fff;
@@ -103,7 +100,7 @@ header {
   box-shadow: 4px 4px 0px rgba(0,0,0,1);
   max-height: 350px;
   overflow-y: auto;
-  display: none; /* Oculta por defecto */
+  display: none;
 }
 
 .suggestion-item {
@@ -123,7 +120,7 @@ header {
 }
 
 .suggestion-item:hover {
-  background-color: #fffacd; /* Amarillito al pasar el ratón */
+  background-color: #fffacd;
 }
 
 .suggestion-item img {
@@ -183,7 +180,6 @@ header {
   transform: scale(1.5);
 }
 
-/* Modo móvil solo para el header */
 @media (max-width: 900px) {
   header {
     flex-direction: column;
@@ -194,64 +190,4 @@ header {
     margin: 0;
     width: 100%;
   }
-}
-
-/* =========================================
-   MÓVILES: TIENDA, FILTROS Y CARRITO
-   ========================================= */
-@media (max-width: 900px) {
-    /* Reducimos el padding lateral de la página */
-    main { padding: 20px 5%; }
-
-    /* El banner gigante se apila y se centra */
-    .hero {
-        flex-direction: column;
-        text-align: center;
-        padding: 30px 20px;
-        gap: 20px;
-    }
-    .hero h1 { font-size: 2.2rem; }
-
-    /* Los filtros se ponen encima de los juegos y ocupan todo el ancho */
-    .store-container {
-        flex-direction: column;
-    }
-    .sidebar-filters {
-        width: 100%;
-        position: static; /* Ya no flota al hacer scroll */
-        margin-bottom: 20px;
-    }
-
-    /* Las cajitas de título se centran */
-    .page-header-box {
-        text-align: center;
-        padding: 15px 20px;
-    }
-
-    /* Arreglamos los items del carrito para que no se aplasten */
-    .cart-item {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
-    }
-    .cart-item img {
-        width: 100%;
-        max-width: 250px;
-        height: auto;
-    }
-    .cart-item > div:last-child {
-        width: 100%;
-        display: flex;
-        justify-content: space-between; /* Precio a un lado, botón al otro */
-        align-items: center;
-        margin-top: 10px;
-    }
-}
-
-/* Pantallas MUY pequeñas (Teléfonos en vertical) */
-@media (max-width: 480px) {
-    .product-grid {
-        /* En móviles pequeños, forzamos 1 sola columna de juegos grandes */
-        grid-template-columns: 1fr; 
-    }
 }

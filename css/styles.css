@@ -3,7 +3,6 @@
 @import url("auth.css");
 @import url("game.css");
 
-/* --- VARIABLES GLOBALES --- */
 :root {
   --primary-purple: #3b125f;
   --dark-purple: #2a0b45;
@@ -13,14 +12,12 @@
   --text-light: #ffffff;
   --card-hover: #ffffff;
 
-  /* Colores de Plataformas */
   --color-pc: #1b2838;
   --color-ps: #003791;
   --color-xbox: #107c10;
   --color-nintendo: #e60012;
 }
 
-/* --- ESTILOS BASE --- */
 body {
   margin: 0;
   font-family: "Fredoka", sans-serif;
@@ -37,10 +34,9 @@ body {
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 
-  /* --- LO NUEVO PARA EL FOOTER --- */
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ocupa toda la altura de la ventana */
+  min-height: 100vh;
 }
 
 main {
@@ -48,9 +44,8 @@ main {
   max-width: 1400px;
   margin: 0 auto;
 
-  /* --- LO NUEVO PARA EL FOOTER --- */
-  flex: 1; /* Esto empuja el footer hacia el fondo cueste lo que cueste */
-  width: 100%; /* Asegura que no se encoja */
+  flex: 1;
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -78,14 +73,12 @@ body.page-loaded {
   transform: scale(1.05);
 }
 
-/* --- CONTENEDOR DE LA TIENDA --- */
 .store-container {
   display: flex;
   gap: 30px;
   align-items: flex-start;
 }
 
-/* --- FILTROS (Sidebar) --- */
 .sidebar-filters {
   width: 250px;
   flex-shrink: 0;
@@ -125,7 +118,6 @@ body.page-loaded {
   font-size: 15px;
 }
 
-/* CHECKBOXES PERSONALIZADOS (Estilo Cómic a prueba de navegadores) */
 .filter-group input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
@@ -163,7 +155,6 @@ body.page-loaded {
   transform: rotate(45deg);
 }
 
-/* --- SLIDER DE PRECIO PERFECTO V2 --- */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -179,11 +170,10 @@ input[type="range"]:focus {
 
 input[type="range"]::-webkit-slider-runnable-track {
   width: 100%;
-  height: 12px; /* La hacemos un poquito más alta para que luzca bien */
+  height: 12px;
   cursor: pointer;
   background: var(--price-green);
   border-radius: 10px;
-  /* ¡EL TRUCO! Fuera border, hola sombra interior */
   border: none;
   box-shadow: inset 0 0 0 2px #000;
 }
@@ -196,20 +186,18 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer;
   -webkit-appearance: none;
   appearance: none;
-  /* Ajustamos el margen para que vuelva a quedar perfectamente centrado */
   margin-top: -7px;
   border: 3px solid #000;
   transition: transform 0.1s;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.15); /* Efecto hover adaptado al nuevo tamaño */
+  transform: scale(1.15); 
 }
 
-/* --- ESTILOS DE LOS ACORDEONES (Header de Filtros) --- */
 details.filter-group {
   margin-bottom: 15px;
-  border-bottom: 2px dashed #ccc; /* Volvemos al dashed gris, es más sutil */
+  border-bottom: 2px dashed #ccc;
   padding-bottom: 10px;
 }
 
@@ -217,37 +205,34 @@ details.filter-group:last-child {
   border-bottom: none;
 }
 
-/* Ocultamos la flecha fea que traen por defecto los navegadores */
 summary {
   cursor: pointer;
-  list-style: none; /* Estándar */
+  list-style: none;
   outline: none;
 }
 summary::-webkit-details-marker {
-  display: none !important; /* Webkit/Blink (Chrome, Edge, Safari) */
+  display: none !important;
 }
 summary::marker {
-  display: none; /* Firefox */
+  display: none;
 }
 
-/* Reestilizamos el h4 para tener la flecha a la izquierda */
 summary h4 {
   display: flex;
-  justify-content: flex-start; /* Flecha a la izquierda, texto a continuación */
+  justify-content: flex-start;
   align-items: center;
-  gap: 12px; /* Espacio entre flecha y texto */
+  gap: 12px;
   margin: 0;
   color: var(--text-dark);
   font-weight: 700;
 }
 
-/* La flecha morada a la izquierda (cubic-bezier para efecto rebote) */
 summary h4::before {
-  content: "\f107"; /* Icono de flecha de ángulo de FontAwesome */
+  content: "\f107";
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
   font-size: 18px;
-  color: var(--primary-purple); /* El moradito característico */
+  color: var(--primary-purple);
   transition:
     transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
     color 0.2s;
@@ -260,10 +245,9 @@ summary h4:hover {
 summary h4:hover::before {
   color: var(
     --accent-yellow
-  ); /* Al pasar el ratón, la flecha se vuelve amarilla */
+  ); 
 }
 
-/* Cuando el acordeón se abre, la flecha gira 180 grados */
 details[open] summary h4::before {
   transform: rotate(180deg);
 }
@@ -272,7 +256,6 @@ details[open] summary h4::before {
   padding-top: 15px;
 }
 
-/* --- ESTILO DEL SELECTOR DE ORDENAR (Rediseño total) --- */
 .custom-select {
   width: 100%;
   padding: 12px 15px;
@@ -281,32 +264,28 @@ details[open] summary h4::before {
   font-weight: 700;
   color: var(--text-dark);
 
-  /* 1. Destruimos el diseño nativo */
   appearance: none;
   -webkit-appearance: none;
 
-  /* 2. Dibujamos nuestro diseño "bombástico" estilo cómic */
-  background-color: #fffacd; /* Fondo amarillo pálido del body */
-  border: 3px solid #000; /* Borde negro grueso */
+  background-color: #fffacd;
+  border: 3px solid #000;
   border-radius: 8px;
   cursor: pointer;
   outline: none;
   transition: all 0.2s;
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1); /* Sombra dura */
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
 
-  /* 3. Añadimos una flecha personalizada morada con imagen de fondo */
-  /* (Copiado de una flecha de ángulo morado #3b125f codificada en base64) */
+
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%233b125f'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: calc(100% - 15px) center;
   background-size: 20px 20px;
-  padding-right: 45px; /* Espacio para la flecha */
+  padding-right: 45px; 
 }
 
-/* Efectos al pasar el ratón y focus */
 .custom-select:hover {
-  background-color: #ffe066; /* Un amarillo más fuerte */
-  transform: translateY(-2px); /* Pequeño levante */
+  background-color: #ffe066;
+  transform: translateY(-2px);
   box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
 }
 
@@ -317,7 +296,6 @@ details[open] summary h4::before {
     4px 4px 0px rgba(0, 0, 0, 1);
 }
 
-/* Estilo para las opciones del desplegable */
 .custom-select option {
   font-weight: 600;
   color: var(--text-dark);
@@ -328,7 +306,6 @@ details[open] summary h4::before {
   color: white;
 }
 
-/* --- BOTÓN DE RESTABLECER FILTROS --- */
 .btn-reset {
   width: 100%;
   padding: 12px;
@@ -357,10 +334,9 @@ details[open] summary h4::before {
 
 .btn-reset:active {
   transform: translateY(4px);
-  box-shadow: 0px 0px 0px rgba(0, 0, 0, 1); /* Efecto de ser aplastado */
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 1);
 }
 
-/* --- CATÁLOGO DE JUEGOS --- */
 .product-section {
   flex-grow: 1;
 }
@@ -386,7 +362,6 @@ details[open] summary h4::before {
   gap: 20px;
 }
 
-/* TARJETAS DE JUEGO */
 .card {
   background: #fff;
   border-radius: 12px;
@@ -544,7 +519,6 @@ details[open] summary h4::before {
   font-weight: 800;
 }
 
-/* --- MODAL (Ventana emergente) --- */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -608,7 +582,6 @@ details[open] summary h4::before {
   font-weight: bold;
 }
 
-/* --- CARRITO DE COMPRAS --- */
 .cart-container {
   background: #fff;
   border: 2px solid #000;
@@ -670,7 +643,6 @@ details[open] summary h4::before {
   border-radius: 12px;
 }
 
-/* 2. LAS CAJITAS BLANCAS DE TÍTULO (Favoritos, Loot, Carrito) */
 .page-header-box {
   background: #fff;
   border: 2px solid #000;
@@ -694,9 +666,6 @@ details[open] summary h4::before {
   font-weight: 600;
 }
 
-/* =========================================
-   SISTEMA DE NOTIFICACIONES (TOASTS)
-   ========================================= */
 #toast-container {
   position: fixed;
   bottom: 20px;
@@ -705,7 +674,7 @@ details[open] summary h4::before {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  pointer-events: none; /* Para que no bloquee los clics debajo */
+  pointer-events: none;
 }
 
 .toast {
@@ -725,7 +694,6 @@ details[open] summary h4::before {
   transform: translateX(100%);
 }
 
-/* Colores según el tipo de alerta */
 .toast.error {
   border-left: 8px solid #ff0044;
 }
@@ -733,12 +701,10 @@ details[open] summary h4::before {
   border-left: 8px solid var(--price-green);
 }
 
-/* Animación de salida */
 .toast.fade-out {
   animation: fadeOutToast 0.3s ease-out forwards;
 }
 
-/* Las animaciones clave (Keyframes) */
 @keyframes slideInRight {
   to {
     transform: translateX(0);
@@ -753,46 +719,40 @@ details[open] summary h4::before {
   }
 }
 
-/* =========================================
-   MÓVILES: TIENDA, FILTROS Y CARRITO
-   ========================================= */
+
 @media (max-width: 900px) {
-  /* Reducimos el padding lateral de la página */
   main {
     padding: 20px 5%;
   }
 
-  /* El banner gigante se apila y se centra */
+
   .hero-3col {
-    grid-template-columns: 1fr; /* Pasa de 3 columnas a 1 sola */
+    grid-template-columns: 1fr;
     padding: 20px;
   }
   .bonus-col,
   .gacha-col-new {
-    transform: none; /* Quitamos la rotación en móvil para que encaje bien */
+    transform: none;
   }
   .bonus-col:hover,
   .gacha-col-new:hover {
     transform: scale(1.02);
   }
 
-  /* Los filtros se ponen encima de los juegos y ocupan todo el ancho */
   .store-container {
     flex-direction: column;
   }
   .sidebar-filters {
     width: 100%;
-    position: static; /* Ya no flota al hacer scroll */
+    position: static;
     margin-bottom: 20px;
   }
 
-  /* Las cajitas de título se centran */
   .page-header-box {
     text-align: center;
     padding: 15px 20px;
   }
 
-  /* Arreglamos los items del carrito para que no se aplasten */
   .cart-item {
     flex-direction: column;
     text-align: center;
@@ -806,62 +766,49 @@ details[open] summary h4::before {
   .cart-item > div:last-child {
     width: 100%;
     display: flex;
-    justify-content: space-between; /* Precio a un lado, botón al otro */
+    justify-content: space-between;
     align-items: center;
     margin-top: 10px;
   }
 }
 
-/* Pantallas MUY pequeñas (Teléfonos en vertical) */
 @media (max-width: 480px) {
   .product-grid {
-    /* En móviles pequeños, forzamos 1 sola columna de juegos grandes */
     grid-template-columns: 1fr;
   }
 }
 
-/* =========================================
-   SCROLLBAR PERSONALIZADA (Estilo Cómic)
-   ========================================= */
-
-/* Para Firefox */
 * {
   scrollbar-width: auto;
-  scrollbar-color: #fffacd #1a0b2e; /* Color del pulgar y del carril */
+  scrollbar-color: #fffacd #1a0b2e;
 }
 
-/* Para Chrome, Edge, Safari y Opera */
 ::-webkit-scrollbar {
-  width: 16px; /* Ancho de la barra vertical */
-  height: 16px; /* Alto de la barra horizontal (si la hay) */
+  width: 16px;
+  height: 16px;
 }
 
-/* El carril por donde baja la barra */
 ::-webkit-scrollbar-track {
-  background: #fffacd; /* Fondo amarillito a juego con la web */
-  border-left: 3px solid #000; /* Línea separadora negra */
+  background: #fffacd;
+  border-left: 3px solid #000;
 }
 
-/* La barra que agarras con el ratón */
+
 ::-webkit-scrollbar-thumb {
   background-color: var(--primary-purple);
   border-radius: 8px;
-  border: 3px solid #000; /* Borde estilo cómic */
+  border: 3px solid #000; 
 }
 
-/* Efecto hover al pasar el ratón por la barra */
 ::-webkit-scrollbar-thumb:hover {
-  background-color: var(--accent-yellow); /* Se vuelve amarilla */
+  background-color: var(--accent-yellow);
   cursor: grab;
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background-color: #e6a600; /* Un poco más oscura al hacer clic */
+  background-color: #e6a600;
 }
 
-/* =========================================
-   DESPLEGABLE PERSONALIZADO CÓMIC
-   ========================================= */
 .custom-select-wrapper {
   position: relative;
   width: 100%;
@@ -871,7 +818,7 @@ details[open] summary h4::before {
 }
 
 .custom-select-trigger {
-  background-color: var(--accent-yellow); /* Amarillito */
+  background-color: var(--accent-yellow);
   border: 3px solid #000;
   border-radius: 8px;
   padding: 12px 15px;
@@ -906,10 +853,10 @@ details[open] summary h4::before {
   visibility: hidden;
   transform: translateY(-10px);
   transition: all 0.2s ease;
-  overflow: hidden; /* Para que los bordes curvos se respeten */
+  overflow: hidden;
 }
 
-/* Clase para abrir el menú desde JS */
+
 .custom-select-wrapper.open .custom-options {
   opacity: 1;
   visibility: visible;
@@ -935,18 +882,12 @@ details[open] summary h4::before {
   font-weight: 900;
 }
 
-/* =========================================
-   🟢⚪ BANNER HERO REDISEÑADO 🟢⚪
-   ========================================= */
-
-/* El grid de 3 columnas (ahora sin fondo morado, porque lo lleva el padre) */
 .hero-3col {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
-/* Base común para las 3 cajas de cómic */
 .hero-col {
   background: #fff;
   border: 4px solid #000;
@@ -966,7 +907,6 @@ details[open] summary h4::before {
   max-width: 100%;
 }
 
-/* Textos de las cajas (Saqueo y Gacha) */
 .loot-col h2,
 .bonus-col h2,
 .gacha-col-new h2 {
@@ -986,7 +926,6 @@ details[open] summary h4::before {
   line-height: 1.3;
 }
 
-/* === LAS 3 CAJAS TORCIDITAS CON COLORES VIVOS === */
 .loot-col {
   transform: rotate(-2deg);
   background: #fffacd;
@@ -1001,7 +940,6 @@ details[open] summary h4::before {
   background: #fffacd;
 }
 
-/* Efecto al pasar el ratón */
 .loot-col:hover {
   transform: scale(1.03) rotate(-2deg);
   z-index: 15;
@@ -1015,9 +953,6 @@ details[open] summary h4::before {
   z-index: 15;
 }
 
-/* =========================================
-   BOTONES DEL HERO
-   ========================================= */
 .btn-loot,
 .btn-claim-new,
 .btn-gacha-new {
@@ -1036,7 +971,7 @@ details[open] summary h4::before {
     box-shadow 0.1s;
   text-transform: uppercase;
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
-  margin-top: auto; /* Empuja el botón hacia abajo si hay espacio libre */
+  margin-top: auto;
 }
 
 .btn-loot:active,
@@ -1090,12 +1025,9 @@ details[open] summary h4::before {
   display: inline-block;
 }
 
-/* =========================================
-   MANDANGA SLIDER: EL DEFINITIVO Y ROBUSTO
-   ========================================= */
 .mandanga-slider-container {
   width: 100%;
-  height: 105px; /* Un pelín más alto para que quepa al agrandarse */
+  height: 105px;
   overflow: hidden;
   position: relative;
   background: #1a0b2e;
@@ -1119,10 +1051,9 @@ details[open] summary h4::before {
   width: 130px;
   height: 70px;
   flex-shrink: 0;
-  /* Transición suave para el tamaño y el brillo */
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
   transform-origin: center;
-  filter: brightness(0.5); /* Los de los lados se ven más oscuros */
+  filter: brightness(0.5);
 }
 
 .mandanga-item img {
@@ -1134,24 +1065,20 @@ details[open] summary h4::before {
   box-shadow: 0 4px 0 #000;
 }
 
-/* El juego que esté en el centro llevará esta clase */
+
 .mandanga-item.active-loot {
-  transform: scale(1.25); /* Lo hacemos un 25% más grande */
-  filter: brightness(1); /* Brillo a tope */
+  transform: scale(1.25);
+  filter: brightness(1);
   z-index: 10;
 }
 
-/* =========================================
-   GACHA: RULETA DE CASINO (TAMAÑO Y CENTRADO)
-   ========================================= */
 .roulette-container {
   position: relative;
-  width: 160px; /* La hacemos un poco más grande (antes 140) */
+  width: 160px; 
   height: 160px;
   margin: 10px auto;
 }
 
-/* El pincho blanco que marca el premio */
 .roulette-pointer {
   position: absolute;
   top: -15px; 
@@ -1161,7 +1088,7 @@ details[open] summary h4::before {
   height: 0; 
   border-left: 14px solid transparent;
   border-right: 14px solid transparent;
-  border-top: 26px solid #fff; /* Pincho más grande y afilado */
+  border-top: 26px solid #fff;
   z-index: 10;
   filter: drop-shadow(0px 3px 0px #000);
 }
@@ -1171,7 +1098,6 @@ details[open] summary h4::before {
   height: 100%;
   border-radius: 50%;
   border: 4px solid #000;
-  /* Los colores de los quesitos */
   background: conic-gradient(
     #3b125f 0deg 60deg, 
     #ffb700 60deg 120deg, 
@@ -1180,7 +1106,7 @@ details[open] summary h4::before {
     #ffb700 240deg 300deg, 
     #00b359 300deg 360deg
   );
-  animation: spinCasino 13s linear infinite; /* Un pelín más lenta para que no maree */
+  animation: spinCasino 13s linear infinite;
   box-shadow: 0 4px 0px #000, inset 0 0 15px rgba(0,0,0,0.6);
   position: relative;
   overflow: hidden;
@@ -1188,16 +1114,16 @@ details[open] summary h4::before {
 
 .wheel-icon-container {
   position: absolute;
-  width: 44px; /* Iconos más grandes (antes 35) */
+  width: 44px;
   height: 36px;
   border-radius: 20%;
   border: 2px solid #000;
   background: #fff;
-  top: 1px; /* Separación desde el borde superior */
+  top: 1px;
   left: 50%;
-  margin-left: -23px; /* Exactamente la mitad del ancho (46 / 2) */
+  margin-left: -23px;
   
-  /* LA MATEMÁTICA EXACTA: Centro de la ruleta (80px) menos el top (12px) = 68px */
+
   transform-origin: 50% 80px; 
   overflow: hidden;
   box-shadow: 0 2px 0 #000;
@@ -1211,4 +1137,21 @@ details[open] summary h4::before {
 
 @keyframes spinCasino {
   100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+  .search-container input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .btn-loot, .btn-claim-new, .btn-gacha-new {
+    max-width: 100%;
+  }
+  
+  .modal-content {
+    width: 90% !important;
+    padding: 20px !important;
+    box-sizing: border-box;
+  }
 }
