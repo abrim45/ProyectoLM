@@ -1,7 +1,7 @@
-@import url('header.css');
-@import url('footer.css');
-@import url('auth.css');
-@import url('game.css');
+@import url("header.css");
+@import url("footer.css");
+@import url("auth.css");
+@import url("game.css");
 
 /* --- VARIABLES GLOBALES --- */
 :root {
@@ -31,9 +31,11 @@ body {
     radial-gradient(#ffe066 15%, transparent 15%),
     radial-gradient(#ffe066 15%, transparent 15%);
   background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
-  opacity: 0; 
-  transition: opacity 0.3s ease-in-out; 
+  background-position:
+    0 0,
+    10px 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
 
   /* --- LO NUEVO PARA EL FOOTER --- */
   display: flex;
@@ -45,7 +47,7 @@ main {
   padding: 40px 5%;
   max-width: 1400px;
   margin: 0 auto;
-  
+
   /* --- LO NUEVO PARA EL FOOTER --- */
   flex: 1; /* Esto empuja el footer hacia el fondo cueste lo que cueste */
   width: 100%; /* Asegura que no se encoja */
@@ -56,8 +58,6 @@ body.page-loaded {
   opacity: 1;
 }
 
-
-
 .btn-primary {
   background-color: var(--accent-yellow);
   color: #000;
@@ -67,7 +67,9 @@ body.page-loaded {
   font-weight: 700;
   border-radius: 8px;
   display: inline-block;
-  transition: background 0.2s, transform 0.2s;
+  transition:
+    background 0.2s,
+    transform 0.2s;
   border: 2px solid #000;
 }
 
@@ -150,7 +152,7 @@ body.page-loaded {
 }
 
 .filter-group input[type="checkbox"]:checked::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 6px;
   top: 2px;
@@ -168,7 +170,7 @@ input[type="range"] {
   width: 100%;
   margin: 15px 0;
   background: transparent;
-  padding: 0; 
+  padding: 0;
 }
 
 input[type="range"]:focus {
@@ -183,11 +185,11 @@ input[type="range"]::-webkit-slider-runnable-track {
   border-radius: 10px;
   /* ¡EL TRUCO! Fuera border, hola sombra interior */
   border: none;
-  box-shadow: inset 0 0 0 2px #000; 
+  box-shadow: inset 0 0 0 2px #000;
 }
 
 input[type="range"]::-webkit-slider-thumb {
-  height: 26px; 
+  height: 26px;
   width: 26px;
   border-radius: 50%;
   background: var(--primary-purple);
@@ -195,7 +197,7 @@ input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   /* Ajustamos el margen para que vuelva a quedar perfectamente centrado */
-  margin-top: -7px; 
+  margin-top: -7px;
   border: 3px solid #000;
   transition: transform 0.1s;
 }
@@ -206,150 +208,156 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* --- ESTILOS DE LOS ACORDEONES (Header de Filtros) --- */
 details.filter-group {
-    margin-bottom: 15px;
-    border-bottom: 2px dashed #ccc; /* Volvemos al dashed gris, es más sutil */
-    padding-bottom: 10px;
+  margin-bottom: 15px;
+  border-bottom: 2px dashed #ccc; /* Volvemos al dashed gris, es más sutil */
+  padding-bottom: 10px;
 }
 
 details.filter-group:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 /* Ocultamos la flecha fea que traen por defecto los navegadores */
 summary {
-    cursor: pointer;
-    list-style: none; /* Estándar */
-    outline: none;
+  cursor: pointer;
+  list-style: none; /* Estándar */
+  outline: none;
 }
 summary::-webkit-details-marker {
-    display: none !important; /* Webkit/Blink (Chrome, Edge, Safari) */
+  display: none !important; /* Webkit/Blink (Chrome, Edge, Safari) */
 }
 summary::marker {
-    display: none; /* Firefox */
+  display: none; /* Firefox */
 }
 
 /* Reestilizamos el h4 para tener la flecha a la izquierda */
 summary h4 {
-    display: flex;
-    justify-content: flex-start; /* Flecha a la izquierda, texto a continuación */
-    align-items: center;
-    gap: 12px; /* Espacio entre flecha y texto */
-    margin: 0;
-    color: var(--text-dark);
-    font-weight: 700;
+  display: flex;
+  justify-content: flex-start; /* Flecha a la izquierda, texto a continuación */
+  align-items: center;
+  gap: 12px; /* Espacio entre flecha y texto */
+  margin: 0;
+  color: var(--text-dark);
+  font-weight: 700;
 }
 
 /* La flecha morada a la izquierda (cubic-bezier para efecto rebote) */
 summary h4::before {
-    content: '\f107'; /* Icono de flecha de ángulo de FontAwesome */
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    font-size: 18px;
-    color: var(--primary-purple); /* El moradito característico */
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s;
-    display: inline-block;
+  content: "\f107"; /* Icono de flecha de ángulo de FontAwesome */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 18px;
+  color: var(--primary-purple); /* El moradito característico */
+  transition:
+    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    color 0.2s;
+  display: inline-block;
 }
 
 summary h4:hover {
-    color: var(--primary-purple);
+  color: var(--primary-purple);
 }
 summary h4:hover::before {
-    color: var(--accent-yellow); /* Al pasar el ratón, la flecha se vuelve amarilla */
+  color: var(
+    --accent-yellow
+  ); /* Al pasar el ratón, la flecha se vuelve amarilla */
 }
 
 /* Cuando el acordeón se abre, la flecha gira 180 grados */
 details[open] summary h4::before {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .filter-content {
-    padding-top: 15px;
+  padding-top: 15px;
 }
 
 /* --- ESTILO DEL SELECTOR DE ORDENAR (Rediseño total) --- */
 .custom-select {
-    width: 100%;
-    padding: 12px 15px;
-    font-family: "Fredoka", sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text-dark);
-    
-    /* 1. Destruimos el diseño nativo */
-    appearance: none;
-    -webkit-appearance: none;
-    
-    /* 2. Dibujamos nuestro diseño "bombástico" estilo cómic */
-    background-color: #fffacd; /* Fondo amarillo pálido del body */
-    border: 3px solid #000; /* Borde negro grueso */
-    border-radius: 8px;
-    cursor: pointer;
-    outline: none;
-    transition: all 0.2s;
-    box-shadow: 4px 4px 0px rgba(0,0,0,1); /* Sombra dura */
-    
-    /* 3. Añadimos una flecha personalizada morada con imagen de fondo */
-    /* (Copiado de una flecha de ángulo morado #3b125f codificada en base64) */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%233b125f'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: calc(100% - 15px) center;
-    background-size: 20px 20px;
-    padding-right: 45px; /* Espacio para la flecha */
+  width: 100%;
+  padding: 12px 15px;
+  font-family: "Fredoka", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+
+  /* 1. Destruimos el diseño nativo */
+  appearance: none;
+  -webkit-appearance: none;
+
+  /* 2. Dibujamos nuestro diseño "bombástico" estilo cómic */
+  background-color: #fffacd; /* Fondo amarillo pálido del body */
+  border: 3px solid #000; /* Borde negro grueso */
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1); /* Sombra dura */
+
+  /* 3. Añadimos una flecha personalizada morada con imagen de fondo */
+  /* (Copiado de una flecha de ángulo morado #3b125f codificada en base64) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%233b125f'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 15px) center;
+  background-size: 20px 20px;
+  padding-right: 45px; /* Espacio para la flecha */
 }
 
 /* Efectos al pasar el ratón y focus */
 .custom-select:hover {
-    background-color: #ffe066; /* Un amarillo más fuerte */
-    transform: translateY(-2px); /* Pequeño levante */
-    box-shadow: 6px 6px 0px rgba(0,0,0,1);
+  background-color: #ffe066; /* Un amarillo más fuerte */
+  transform: translateY(-2px); /* Pequeño levante */
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
 }
 
 .custom-select:focus {
-    border-color: var(--primary-purple);
-    box-shadow: 0 0 0 2px var(--primary-purple), 4px 4px 0px rgba(0,0,0,1);
+  border-color: var(--primary-purple);
+  box-shadow:
+    0 0 0 2px var(--primary-purple),
+    4px 4px 0px rgba(0, 0, 0, 1);
 }
 
 /* Estilo para las opciones del desplegable */
 .custom-select option {
-    font-weight: 600;
-    color: var(--text-dark);
-    background-color: #fffacd;
+  font-weight: 600;
+  color: var(--text-dark);
+  background-color: #fffacd;
 }
 .custom-select option:checked {
-    background-color: var(--primary-purple);
-    color: white;
+  background-color: var(--primary-purple);
+  color: white;
 }
 
 /* --- BOTÓN DE RESTABLECER FILTROS --- */
 .btn-reset {
-    width: 100%;
-    padding: 12px;
-    margin-top: 15px;
-    background-color: #ff4444;
-    color: white;
-    border: 3px solid #000;
-    border-radius: 8px;
-    font-family: "Fredoka", sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.1s ease;
-    box-shadow: 4px 4px 0px rgba(0,0,0,1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background-color: #ff4444;
+  color: white;
+  border: 3px solid #000;
+  border-radius: 8px;
+  font-family: "Fredoka", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 
 .btn-reset:hover {
-    background-color: #ff2222;
-    transform: translateY(-2px);
-    box-shadow: 6px 6px 0px rgba(0,0,0,1);
+  background-color: #ff2222;
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
 }
 
 .btn-reset:active {
-    transform: translateY(4px);
-    box-shadow: 0px 0px 0px rgba(0,0,0,1); /* Efecto de ser aplastado */
+  transform: translateY(4px);
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 1); /* Efecto de ser aplastado */
 }
 
 /* --- CATÁLOGO DE JUEGOS --- */
@@ -365,6 +373,7 @@ details[open] summary h4::before {
   display: flex;
   align-items: center;
   gap: 10px;
+  color: var(--primary-purple);
 }
 
 .section-title i {
@@ -389,7 +398,10 @@ details[open] summary h4::before {
   border: 2px solid #000;
   opacity: 0;
   transform: translateY(40px);
-  transition: opacity 0.5s ease-out, transform 0.5s ease-out, box-shadow 0.2s;
+  transition:
+    opacity 0.5s ease-out,
+    transform 0.5s ease-out,
+    box-shadow 0.2s;
 }
 
 .card.visible {
@@ -434,10 +446,18 @@ details[open] summary h4::before {
   text-transform: uppercase;
 }
 
-.tag-pc { background-color: var(--color-pc); }
-.tag-playstation { background-color: var(--color-ps); }
-.tag-xbox { background-color: var(--color-xbox); }
-.tag-nintendo { background-color: var(--color-nintendo); }
+.tag-pc {
+  background-color: var(--color-pc);
+}
+.tag-playstation {
+  background-color: var(--color-ps);
+}
+.tag-xbox {
+  background-color: var(--color-xbox);
+}
+.tag-nintendo {
+  background-color: var(--color-nintendo);
+}
 
 .card-body {
   padding: 15px;
@@ -650,29 +670,28 @@ details[open] summary h4::before {
   border-radius: 12px;
 }
 
-
 /* 2. LAS CAJITAS BLANCAS DE TÍTULO (Favoritos, Loot, Carrito) */
 .page-header-box {
-    background: #fff;
-    border: 2px solid #000;
-    border-radius: 12px;
-    padding: 20px 30px;
-    margin-bottom: 30px;
-    box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 12px;
+  padding: 20px 30px;
+  margin-bottom: 30px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .page-header-box .section-title {
-    margin-bottom: 0; 
+  margin-bottom: 0;
 }
 
 .page-header-box p {
-    margin: 0;
-    font-size: 1.1rem;
-    color: #555;
-    font-weight: 600;
+  margin: 0;
+  font-size: 1.1rem;
+  color: #555;
+  font-weight: 600;
 }
 
 /* =========================================
@@ -707,8 +726,12 @@ details[open] summary h4::before {
 }
 
 /* Colores según el tipo de alerta */
-.toast.error { border-left: 8px solid #ff0044; }
-.toast.success { border-left: 8px solid var(--price-green); }
+.toast.error {
+  border-left: 8px solid #ff0044;
+}
+.toast.success {
+  border-left: 8px solid var(--price-green);
+}
 
 /* Animación de salida */
 .toast.fade-out {
@@ -717,74 +740,84 @@ details[open] summary h4::before {
 
 /* Las animaciones clave (Keyframes) */
 @keyframes slideInRight {
-  to { transform: translateX(0); opacity: 1; }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 @keyframes fadeOutToast {
-  to { transform: translateX(100%); opacity: 0; }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 
 /* =========================================
    MÓVILES: TIENDA, FILTROS Y CARRITO
    ========================================= */
 @media (max-width: 900px) {
-    /* Reducimos el padding lateral de la página */
-    main { padding: 20px 5%; }
+  /* Reducimos el padding lateral de la página */
+  main {
+    padding: 20px 5%;
+  }
 
-    /* El banner gigante se apila y se centra */
-    .hero-3col {
-        grid-template-columns: 1fr; /* Pasa de 3 columnas a 1 sola */
-        padding: 20px;
-    }
-    .bonus-col, .gacha-col-new {
-        transform: none; /* Quitamos la rotación en móvil para que encaje bien */
-    }
-    .bonus-col:hover, .gacha-col-new:hover {
-        transform: scale(1.02); 
-    }
+  /* El banner gigante se apila y se centra */
+  .hero-3col {
+    grid-template-columns: 1fr; /* Pasa de 3 columnas a 1 sola */
+    padding: 20px;
+  }
+  .bonus-col,
+  .gacha-col-new {
+    transform: none; /* Quitamos la rotación en móvil para que encaje bien */
+  }
+  .bonus-col:hover,
+  .gacha-col-new:hover {
+    transform: scale(1.02);
+  }
 
-    /* Los filtros se ponen encima de los juegos y ocupan todo el ancho */
-    .store-container {
-        flex-direction: column;
-    }
-    .sidebar-filters {
-        width: 100%;
-        position: static; /* Ya no flota al hacer scroll */
-        margin-bottom: 20px;
-    }
+  /* Los filtros se ponen encima de los juegos y ocupan todo el ancho */
+  .store-container {
+    flex-direction: column;
+  }
+  .sidebar-filters {
+    width: 100%;
+    position: static; /* Ya no flota al hacer scroll */
+    margin-bottom: 20px;
+  }
 
-    /* Las cajitas de título se centran */
-    .page-header-box {
-        text-align: center;
-        padding: 15px 20px;
-    }
+  /* Las cajitas de título se centran */
+  .page-header-box {
+    text-align: center;
+    padding: 15px 20px;
+  }
 
-    /* Arreglamos los items del carrito para que no se aplasten */
-    .cart-item {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
-    }
-    .cart-item img {
-        width: 100%;
-        max-width: 250px;
-        height: auto;
-    }
-    .cart-item > div:last-child {
-        width: 100%;
-        display: flex;
-        justify-content: space-between; /* Precio a un lado, botón al otro */
-        align-items: center;
-        margin-top: 10px;
-    }
+  /* Arreglamos los items del carrito para que no se aplasten */
+  .cart-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  .cart-item img {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+  }
+  .cart-item > div:last-child {
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* Precio a un lado, botón al otro */
+    align-items: center;
+    margin-top: 10px;
+  }
 }
 
 /* Pantallas MUY pequeñas (Teléfonos en vertical) */
 @media (max-width: 480px) {
-    .product-grid {
-        /* En móviles pequeños, forzamos 1 sola columna de juegos grandes */
-        grid-template-columns: 1fr; 
-    }
+  .product-grid {
+    /* En móviles pequeños, forzamos 1 sola columna de juegos grandes */
+    grid-template-columns: 1fr;
+  }
 }
 
 /* =========================================
@@ -830,73 +863,76 @@ details[open] summary h4::before {
    DESPLEGABLE PERSONALIZADO CÓMIC
    ========================================= */
 .custom-select-wrapper {
-    position: relative;
-    width: 100%;
-    font-family: 'Fredoka', sans-serif;
-    font-weight: 700;
-    user-select: none;
+  position: relative;
+  width: 100%;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  user-select: none;
 }
 
 .custom-select-trigger {
-    background-color: var(--accent-yellow); /* Amarillito */
-    border: 3px solid #000;
-    border-radius: 8px;
-    padding: 12px 15px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #000;
-    font-size: 16px;
-    box-shadow: 4px 4px 0px rgba(0,0,0,1);
-    transition: transform 0.1s, box-shadow 0.1s;
+  background-color: var(--accent-yellow); /* Amarillito */
+  border: 3px solid #000;
+  border-radius: 8px;
+  padding: 12px 15px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #000;
+  font-size: 16px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  transition:
+    transform 0.1s,
+    box-shadow 0.1s;
 }
 
 .custom-select-trigger:active {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px rgba(0,0,0,1);
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
 }
 
 .custom-options {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    right: 0;
-    background-color: #fff;
-    border: 3px solid #000;
-    border-radius: 8px;
-    box-shadow: 6px 6px 0px rgba(0,0,0,1);
-    z-index: 100;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.2s ease;
-    overflow: hidden; /* Para que los bordes curvos se respeten */
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 3px solid #000;
+  border-radius: 8px;
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  overflow: hidden; /* Para que los bordes curvos se respeten */
 }
 
 /* Clase para abrir el menú desde JS */
 .custom-select-wrapper.open .custom-options {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .custom-option {
-    padding: 12px 15px;
-    cursor: pointer;
-    color: #333;
-    border-bottom: 2px dashed #ccc;
-    transition: background 0.2s;
+  padding: 12px 15px;
+  cursor: pointer;
+  color: #333;
+  border-bottom: 2px dashed #ccc;
+  transition: background 0.2s;
 }
 
 .custom-option:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
-.custom-option:hover, .custom-option.selected {
-    background-color: #fffacd;
-    color: var(--primary-purple);
-    font-weight: 900;
+.custom-option:hover,
+.custom-option.selected {
+  background-color: #fffacd;
+  color: var(--primary-purple);
+  font-weight: 900;
 }
 
 /* =========================================
@@ -905,89 +941,149 @@ details[open] summary h4::before {
 
 /* El grid de 3 columnas (ahora sin fondo morado, porque lo lleva el padre) */
 .hero-3col {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
 /* Base común para las 3 cajas de cómic */
 .hero-col {
-    background: #fff; 
-    border: 4px solid #000;
-    border-radius: 12px;
-    box-shadow: 6px 6px 0px rgba(0,0,0,1);
-    padding: 20px;
-    text-align: center;
-    color: #000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    transition: transform 0.2s ease-in-out;
-    z-index: 5;
+  background: #fff;
+  border: 4px solid #000;
+  border-radius: 12px;
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
+  padding: 20px;
+  text-align: center;
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: transform 0.2s ease-in-out;
+  z-index: 5;
 }
 
 /* Textos de las cajas (Saqueo y Gacha) */
-.loot-col h2, .bonus-col h2, .gacha-col-new h2 { font-size: 1.6rem; color: #000; margin: 0; font-weight: 900; text-transform: uppercase; }
-.loot-col p, .bonus-col p, .gacha-col-new p { font-size: 1rem; color: #1d1d1d; margin: 0; font-weight: 600; line-height: 1.3; }
+.loot-col h2,
+.bonus-col h2,
+.gacha-col-new h2 {
+  font-size: 1.6rem;
+  color: #000;
+  margin: 0;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.loot-col p,
+.bonus-col p,
+.gacha-col-new p {
+  font-size: 1rem;
+  color: #1d1d1d;
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.3;
+}
 
 /* === LAS 3 CAJAS TORCIDITAS CON COLORES VIVOS === */
-.loot-col { transform: rotate(-2deg); background: #fffacd; } 
-.bonus-col { transform: rotate(2deg); background: #fffacd; z-index: 10; } 
-.gacha-col-new { transform: rotate(-2deg); background: #fffacd } 
+.loot-col {
+  transform: rotate(-2deg);
+  background: #fffacd;
+}
+.bonus-col {
+  transform: rotate(2deg);
+  background: #fffacd;
+  z-index: 10;
+}
+.gacha-col-new {
+  transform: rotate(-2deg);
+  background: #fffacd;
+}
 
 /* Efecto al pasar el ratón */
-.loot-col:hover { transform: scale(1.03) rotate(-2deg); z-index: 15; }
-.bonus-col:hover { transform: scale(1.03) rotate(2deg); z-index: 15; }
-.gacha-col-new:hover { transform: scale(1.03) rotate(-2deg); z-index: 15; }
+.loot-col:hover {
+  transform: scale(1.03) rotate(-2deg);
+  z-index: 15;
+}
+.bonus-col:hover {
+  transform: scale(1.03) rotate(2deg);
+  z-index: 15;
+}
+.gacha-col-new:hover {
+  transform: scale(1.03) rotate(-2deg);
+  z-index: 15;
+}
 
 /* =========================================
    BOTONES DEL HERO
    ========================================= */
-.btn-loot, .btn-claim-new, .btn-gacha-new {
-    font-family: 'Fredoka', sans-serif;
-    font-weight: 900;
-    font-size: 16px;
-    padding: 12px 20px;
-    border: 3px solid #000;
-    border-radius: 8px;
-    cursor: pointer;
-    width: 100%;
-    max-width: 250px;
-    box-shadow: 4px 4px 0px rgba(0,0,0,1);
-    transition: transform 0.1s, box-shadow 0.1s;
-    text-transform: uppercase;
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
-    margin-top: auto; /* Empuja el botón hacia abajo si hay espacio libre */
+.btn-loot,
+.btn-claim-new,
+.btn-gacha-new {
+  font-family: "Fredoka", sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  padding: 12px 20px;
+  border: 3px solid #000;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 250px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  transition:
+    transform 0.1s,
+    box-shadow 0.1s;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+  margin-top: auto; /* Empuja el botón hacia abajo si hay espacio libre */
 }
 
-.btn-loot:active, .btn-claim-new:active, .btn-gacha-new:active {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px rgba(0,0,0,1);
+.btn-loot:active,
+.btn-claim-new:active,
+.btn-gacha-new:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
 }
 
-.btn-loot { background-color: #fcb404; color: #000000; }
-.btn-claim-new { background-color: #fcb404; color: #000000; }
-.btn-gacha-new { background-color: #fcb404; color: #000000; }
+.btn-loot {
+  background-color: #fcb404;
+  color: #000000;
+}
+.btn-claim-new {
+  background-color: #fcb404;
+  color: #000000;
+}
+.btn-gacha-new {
+  background-color: #fcb404;
+  color: #000000;
+}
 
 .btn-claim-new.disabled {
-    background-color: #ccc;
-    color: #666;
-    cursor: default;
-    pointer-events: none;
-    box-shadow: 2px 2px 0px rgba(0,0,0,1);
+  background-color: #ccc;
+  color: #666;
+  cursor: default;
+  pointer-events: none;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
 }
 
-.loot-col i, .bonus-col i, .gacha-col-new i { margin-right: 8px; }
+.loot-col i,
+.bonus-col i,
+.gacha-col-new i {
+  margin-right: 8px;
+}
 
 @keyframes pulsar {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .pulsar-effect {
-    animation: pulsar 2s ease-in-out infinite;
-    display: inline-block;
+  animation: pulsar 2s ease-in-out infinite;
+  display: inline-block;
 }

@@ -6,45 +6,49 @@ let currentCartTotal = 0; // Guardará el total sin descuentos
 // --- DICCIONARIO DE ETIQUETAS (TAGS OCULTOS) ---
 // Le añadimos palabras clave "invisibles" a los juegos para que coincidan con siglas y alias.
 const searchTags = {
-    "grand theft auto": "gta gta5 gta v gta 5",
-    "baldur": "bg3",
-    "league of legends": "lol",
-    "call of duty": "cod",
-    "ea sports": "fifa fc24",
-    "rocket league": "rl",
-    "zelda": "the legend of zelda totk botw",
-    "cyberpunk": "cbp",
-    "red dead": "rdr2 rdr",
-    "counter-strike": "csgo cs2 cs",
-    "resident evil": "re",
-    "final fantasy": "ff"
+  "grand theft auto": "gta gta5 gta v gta 5",
+  baldur: "bg3",
+  "league of legends": "lol",
+  "call of duty": "cod",
+  "ea sports": "fifa fc24",
+  "rocket league": "rl",
+  zelda: "the legend of zelda totk botw",
+  cyberpunk: "cbp",
+  "red dead": "rdr2 rdr",
+  "counter-strike": "csgo cs2 cs",
+  "resident evil": "re",
+  "final fantasy": "ff",
 };
 
 // Función de búsqueda avanzada (Ignora acentos, busca palabras sueltas y usa tags)
 function checkSearchMatch(gameTitle, searchTerm) {
-    // 1. Quitar acentos y pasar a minúsculas
-    const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    
-    const normTitle = normalize(gameTitle);
-    const normSearch = normalize(searchTerm.trim());
+  // 1. Quitar acentos y pasar a minúsculas
+  const normalize = (str) =>
+    str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
 
-    if (!normSearch) return true;
+  const normTitle = normalize(gameTitle);
+  const normSearch = normalize(searchTerm.trim());
 
-    // 2. Expandir el título con etiquetas ocultas si procede
-    let expandedTitle = normTitle;
-    for (const [key, tags] of Object.entries(searchTags)) {
-        // Si el título contiene la clave (ej: "zelda"), le añadimos sus tags
-        if (normTitle.includes(key)) {
-            expandedTitle += " " + tags;
-        }
+  if (!normSearch) return true;
+
+  // 2. Expandir el título con etiquetas ocultas si procede
+  let expandedTitle = normTitle;
+  for (const [key, tags] of Object.entries(searchTags)) {
+    // Si el título contiene la clave (ej: "zelda"), le añadimos sus tags
+    if (normTitle.includes(key)) {
+      expandedTitle += " " + tags;
     }
+  }
 
-    // 3. Dividir la búsqueda del usuario en palabras sueltas
-    // (Ej: "zelda kingdom" se divide en ["zelda", "kingdom"])
-    const searchWords = normSearch.split(/\s+/).filter(word => word.length > 0);
+  // 3. Dividir la búsqueda del usuario en palabras sueltas
+  // (Ej: "zelda kingdom" se divide en ["zelda", "kingdom"])
+  const searchWords = normSearch.split(/\s+/).filter((word) => word.length > 0);
 
-    // 4. Match perfecto: TODAS las palabras que ha escrito el usuario deben estar en el título expandido
-    return searchWords.every(word => expandedTitle.includes(word));
+  // 4. Match perfecto: TODAS las palabras que ha escrito el usuario deben estar en el título expandido
+  return searchWords.every((word) => expandedTitle.includes(word));
 }
 
 // 2. Función asíncrona para ir a buscar los juegos al servidor
@@ -154,10 +158,13 @@ async function setCart(cart) {
         await fetch(`http://localhost:3000/users/${userId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cart: cart }) // Le pasamos el nuevo carrito
+          body: JSON.stringify({ cart: cart }), // Le pasamos el nuevo carrito
         });
       } catch (error) {
-        console.error("Error al sincronizar carrito con la base de datos:", error);
+        console.error(
+          "Error al sincronizar carrito con la base de datos:",
+          error,
+        );
       }
     }
   }
@@ -187,10 +194,13 @@ async function setFavorites(favs) {
         await fetch(`http://localhost:3000/users/${userId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ favorites: favs }) // Le pasamos los nuevos favoritos
+          body: JSON.stringify({ favorites: favs }), // Le pasamos los nuevos favoritos
         });
       } catch (error) {
-        console.error("Error al sincronizar favoritos con la base de datos:", error);
+        console.error(
+          "Error al sincronizar favoritos con la base de datos:",
+          error,
+        );
       }
     }
   }
@@ -287,11 +297,11 @@ document.addEventListener("click", (e) => {
   // --- LO NUEVO: DETECTAR EL BOTÓN DE PAGAR ---
   const btnCheckout = e.target.closest("#btn-checkout");
   if (btnCheckout) {
-      if (typeof processCheckout === "function") {
-          processCheckout();
-      } else {
-          console.error("Falta la función processCheckout()");
-      }
+    if (typeof processCheckout === "function") {
+      processCheckout();
+    } else {
+      console.error("Falta la función processCheckout()");
+    }
   }
 
   // 1. Abrir Modal del Carrito
@@ -387,41 +397,53 @@ document.addEventListener("click", (e) => {
   }
   // --- DETECCIÓN DEL GACHA ---
   const btnGacha = e.target.closest("#btn-gacha-new");
-  
+
   if (btnGacha) {
-      if (!requireLogin(false)) return; // Obligamos a estar logueado
-      tirarGacha();
+    if (!requireLogin(false)) return; // Obligamos a estar logueado
+    tirarGacha();
   }
 
   // --- DETECCIÓN DEL BOTÓN DE CUPONES ---
   const btnApplyCoupon = e.target.closest("#btn-apply-coupon");
   if (btnApplyCoupon) {
-      e.preventDefault();
-      const input = document.getElementById("coupon-input");
-      if (!input) return;
-      
-      const code = input.value.trim().toUpperCase();
-      if (!code) {
-          showToast("Escribe un código primero, listillo.", "error");
-          return;
-      }
+    e.preventDefault();
+    const input = document.getElementById("coupon-input");
+    if (!input) return;
 
-      // 🎟️ NUESTRO DICCIONARIO DE CUPONES
-      const discountCodes = {
-          "MEMEBA10": { type: "percent", value: 0.10, message: "¡10% de descuento aplicado! 💸" },
-          "POBREZA": { type: "fixed", value: 1.00, message: "¡1€ de limosna aplicado! (Puto pobreee) 🐀" },
-          "GABENEWELL": { type: "punish", value: 1.50, message: "¡Gabe te cobra un 50% de impuestos por gracioso! 📈" }
-      };
+    const code = input.value.trim().toUpperCase();
+    if (!code) {
+      showToast("Escribe un código primero, listillo.", "error");
+      return;
+    }
 
-      if (discountCodes[code]) {
-          appliedCoupon = discountCodes[code];
-          showToast("¡Código canjeado!", "success");
-      } else {
-          appliedCoupon = null;
-          showToast("Ese código no existe o está caducado.", "error");
-      }
-      
-      aplicarDescuentoUI(); // Recalculamos la pantalla
+    // 🎟️ NUESTRO DICCIONARIO DE CUPONES
+    const discountCodes = {
+      MEMEBA10: {
+        type: "percent",
+        value: 0.1,
+        message: "¡10% de descuento aplicado! 💸",
+      },
+      POBREZA: {
+        type: "fixed",
+        value: 1.0,
+        message: "¡1€ de limosna aplicado! (Puto pobreee) 🐀",
+      },
+      GABENEWELL: {
+        type: "punish",
+        value: 1.5,
+        message: "¡Gabe te cobra un 50% de impuestos por gracioso! 📈",
+      },
+    };
+
+    if (discountCodes[code]) {
+      appliedCoupon = discountCodes[code];
+      showToast("¡Código canjeado!", "success");
+    } else {
+      appliedCoupon = null;
+      showToast("Ese código no existe o está caducado.", "error");
+    }
+
+    aplicarDescuentoUI(); // Recalculamos la pantalla
   }
 });
 
@@ -450,7 +472,7 @@ window.applyFiltersGlobal = function () {
       (g) =>
         selectedPlatforms.includes(g.platform) &&
         g.newPrice <= maxPrice &&
-        checkSearchMatch(g.title, search)
+        checkSearchMatch(g.title, search),
     );
 
     if (sortValue === "price-asc") {
@@ -469,7 +491,9 @@ window.applyFiltersGlobal = function () {
   const lootGrid = document.getElementById("loot-grid");
   if (lootGrid) {
     let lootGames = gamesDatabase.filter((game) => {
-      const discount = Math.round(((game.oldPrice - game.newPrice) / game.oldPrice) * 100);
+      const discount = Math.round(
+        ((game.oldPrice - game.newPrice) / game.oldPrice) * 100,
+      );
       return discount >= 40 && checkSearchMatch(game.title, search); // <--- Y AQUÍ
     });
     renderGameCards(lootGames, lootGrid);
@@ -478,91 +502,96 @@ window.applyFiltersGlobal = function () {
 
 // --- FUNCIÓN DE CHECKOUT (PAGAR EL CARRITO) ---
 async function processCheckout() {
-    const userId = localStorage.getItem("memeba_currentUserId");
-    const cart = getCart();
+  const userId = localStorage.getItem("memeba_currentUserId");
+  const cart = getCart();
 
-    if (!userId || cart.length === 0) {
-        showToast("Tu carrito está vacío. ¡Añade algo primero!", "error");
-        return;
+  if (!userId || cart.length === 0) {
+    showToast("Tu carrito está vacío. ¡Añade algo primero!", "error");
+    return;
+  }
+
+  try {
+    // 1. Descargamos los datos más recientes del usuario y de la base de datos de juegos
+    const userRes = await fetch(`http://localhost:3000/users/${userId}`);
+    const user = await userRes.json();
+    const gamesRes = await fetch(`http://localhost:3000/gamesDatabase`);
+    const gamesDb = await gamesRes.json();
+
+    // 2. Calculamos el total a pagar y el ahorro total del carrito actual
+    let totalCosto = 0;
+    let totalAhorro = 0;
+    const comprasNuevas = [];
+
+    cart.forEach((cartItem) => {
+      const game = gamesDb.find((g) => String(g.id) === String(cartItem.id));
+      if (game) {
+        totalCosto += game.newPrice * cartItem.quantity;
+        totalAhorro += (game.oldPrice - game.newPrice) * cartItem.quantity;
+
+        // Preparamos el registro para el historial de compras
+        comprasNuevas.push({
+          gameId: game.id,
+          title: game.title,
+          pricePaid: game.newPrice,
+          quantity: cartItem.quantity,
+          date: new Date().toISOString(),
+        });
+      }
+    });
+
+    // --- APLICAR CUPÓN AL PRECIO FINAL A COBRAR ---
+    if (typeof appliedCoupon !== "undefined" && appliedCoupon) {
+      if (appliedCoupon.type === "percent") {
+        totalCosto = totalCosto - totalCosto * appliedCoupon.value;
+      } else if (appliedCoupon.type === "fixed") {
+        totalCosto = Math.max(0, totalCosto - appliedCoupon.value);
+      } else if (appliedCoupon.type === "punish") {
+        totalCosto = totalCosto * appliedCoupon.value;
+      }
     }
 
-    try {
-        // 1. Descargamos los datos más recientes del usuario y de la base de datos de juegos
-        const userRes = await fetch(`http://localhost:3000/users/${userId}`);
-        const user = await userRes.json();
-        const gamesRes = await fetch(`http://localhost:3000/gamesDatabase`);
-        const gamesDb = await gamesRes.json();
+    const saldoActual = user.balance || 0;
 
-        // 2. Calculamos el total a pagar y el ahorro total del carrito actual
-        let totalCosto = 0;
-        let totalAhorro = 0;
-        const comprasNuevas = [];
+    // 3. Comprobamos si hay suficiente guita
+    if (saldoActual < totalCosto) {
+      showToast(
+        `¡Pobreza detectada! Te faltan ${(totalCosto - saldoActual).toFixed(2)}€`,
+        "error",
+      );
+      // Aquí podríamos redirigir a añadir fondos, o abrir el modal de fondos
+      return;
+    }
 
-        cart.forEach(cartItem => {
-            const game = gamesDb.find(g => String(g.id) === String(cartItem.id));
-            if (game) {
-                totalCosto += (game.newPrice * cartItem.quantity);
-                totalAhorro += ((game.oldPrice - game.newPrice) * cartItem.quantity);
-                
-                // Preparamos el registro para el historial de compras
-                comprasNuevas.push({
-                    gameId: game.id,
-                    title: game.title,
-                    pricePaid: game.newPrice,
-                    quantity: cartItem.quantity,
-                    date: new Date().toISOString()
-                });
-            }
-        });
+    // 4. Si hay dinero, realizamos la transacción
+    const nuevoSaldo = saldoActual - totalCosto;
+    const nuevoGastoTotal = (user.totalSpent || 0) + totalCosto;
+    const nuevoAhorroTotal = (user.savings || 0) + totalAhorro;
 
-        // --- APLICAR CUPÓN AL PRECIO FINAL A COBRAR ---
-        if (typeof appliedCoupon !== 'undefined' && appliedCoupon) {
-            if (appliedCoupon.type === "percent") {
-                totalCosto = totalCosto - (totalCosto * appliedCoupon.value);
-            } else if (appliedCoupon.type === "fixed") {
-                totalCosto = Math.max(0, totalCosto - appliedCoupon.value);
-            } else if (appliedCoupon.type === "punish") {
-                totalCosto = totalCosto * appliedCoupon.value;
-            }
-        }
+    // Unimos las compras antiguas con las nuevas
+    const historialCompras = user.purchases
+      ? [...user.purchases, ...comprasNuevas]
+      : comprasNuevas;
 
-        const saldoActual = user.balance || 0;
+    // 5. Actualizamos el servidor
+    const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        balance: nuevoSaldo,
+        totalSpent: nuevoGastoTotal,
+        savings: nuevoAhorroTotal,
+        purchases: historialCompras,
+        cart: [], // ¡Vaciamos el carrito en el servidor!
+      }),
+    });
 
-        // 3. Comprobamos si hay suficiente guita
-        if (saldoActual < totalCosto) {
-            showToast(`¡Pobreza detectada! Te faltan ${(totalCosto - saldoActual).toFixed(2)}€`, "error");
-            // Aquí podríamos redirigir a añadir fondos, o abrir el modal de fondos
-            return;
-        }
+    if (patchRes.ok) {
+      // 6. Si el servidor dice OK, actualizamos el navegador
+      localStorage.setItem(`memeba_cart_${user.username}`, JSON.stringify([])); // Vaciamos local
+      updateCartBadge(); // Resetea el numerito a 0
 
-        // 4. Si hay dinero, realizamos la transacción
-        const nuevoSaldo = saldoActual - totalCosto;
-        const nuevoGastoTotal = (user.totalSpent || 0) + totalCosto;
-        const nuevoAhorroTotal = (user.savings || 0) + totalAhorro;
-        
-        // Unimos las compras antiguas con las nuevas
-        const historialCompras = user.purchases ? [...user.purchases, ...comprasNuevas] : comprasNuevas;
-
-        // 5. Actualizamos el servidor
-        const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                balance: nuevoSaldo,
-                totalSpent: nuevoGastoTotal,
-                savings: nuevoAhorroTotal,
-                purchases: historialCompras,
-                cart: [] // ¡Vaciamos el carrito en el servidor!
-            })
-        });
-
-        if (patchRes.ok) {
-            // 6. Si el servidor dice OK, actualizamos el navegador
-            localStorage.setItem(`memeba_cart_${user.username}`, JSON.stringify([])); // Vaciamos local
-            updateCartBadge(); // Resetea el numerito a 0
-            
-            // Efecto visual épico de compra
-            document.getElementById("cart-items-container").innerHTML = `
+      // Efecto visual épico de compra
+      document.getElementById("cart-items-container").innerHTML = `
                 <div style="text-align: center; padding: 50px;">
                     <i class="fas fa-check-circle" style="font-size: 80px; color: var(--price-green); margin-bottom: 20px;"></i>
                     <h2 style="color: var(--primary-purple); font-size: 32px; margin-top: 0;">¡Compra Exitosa!</h2>
@@ -570,23 +599,22 @@ async function processCheckout() {
                     <a href="index.html" class="btn-primary" style="margin-top: 20px;">Seguir Saqueando</a>
                 </div>
             `;
-            
-            // Ocultamos el bloque de pagar
-            const summaryBox = document.querySelector(".cart-summary");
-            if(summaryBox) summaryBox.style.display = "none";
-            
-            // Actualizamos el saldo del header al instante
-            const headerBal = document.getElementById("global-balance-text");
-            if (headerBal) headerBal.textContent = `${nuevoSaldo.toFixed(2)}€`;
-            
-            showToast("¡Pago completado! Disfruta de los juegazos.", "success");
-            appliedCoupon = null; // Reseteamos el cupón después de usarlo
-        }
 
-    } catch (error) {
-        console.error("Error durante el checkout:", error);
-        showToast("Error conectando con el banco de Memeba.", "error");
+      // Ocultamos el bloque de pagar
+      const summaryBox = document.querySelector(".cart-summary");
+      if (summaryBox) summaryBox.style.display = "none";
+
+      // Actualizamos el saldo del header al instante
+      const headerBal = document.getElementById("global-balance-text");
+      if (headerBal) headerBal.textContent = `${nuevoSaldo.toFixed(2)}€`;
+
+      showToast("¡Pago completado! Disfruta de los juegazos.", "success");
+      appliedCoupon = null; // Reseteamos el cupón después de usarlo
     }
+  } catch (error) {
+    console.error("Error durante el checkout:", error);
+    showToast("Error conectando con el banco de Memeba.", "error");
+  }
 }
 
 // --- INICIALIZACIÓN PRINCIPAL ---
@@ -599,46 +627,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const user = getCurrentUser();
       const accountBtn = document.getElementById("account-btn");
-    if (user && accountBtn) {
+      if (user && accountBtn) {
         accountBtn.innerHTML = `<i class="fas fa-user-circle"></i><span>PERFIL</span>`;
-        accountBtn.href = "profile.html"; 
+        accountBtn.href = "profile.html";
         accountBtn.title = `Sesión iniciada como: ${user}`;
 
         // --- 1. INYECTAR BOTÓN DE SALDO ARREGLADO ---
-        const navContainer = accountBtn.parentNode; 
-        
+        const navContainer = accountBtn.parentNode;
+
         if (navContainer && !document.getElementById("header-wallet-btn")) {
-            const walletBtn = document.createElement("a");
-            walletBtn.href = "#";
-            walletBtn.id = "header-wallet-btn";
-            walletBtn.className = accountBtn.className; 
-            walletBtn.style.textDecoration = "none"; 
-            
-            // --- SIN COLORES FORZADOS: Dejamos que el CSS haga su magia ---
-            walletBtn.innerHTML = `
+          const walletBtn = document.createElement("a");
+          walletBtn.href = "#";
+          walletBtn.id = "header-wallet-btn";
+          walletBtn.className = accountBtn.className;
+          walletBtn.style.textDecoration = "none";
+
+          // --- SIN COLORES FORZADOS: Dejamos que el CSS haga su magia ---
+          walletBtn.innerHTML = `
                 <i class="fas fa-wallet"></i>
                 <span id="global-balance-text" style="font-weight: 900; font-size: 14px;">0.00€</span>
             `;
-            
-            // Lo insertamos UNA sola vez
-            navContainer.insertBefore(walletBtn, accountBtn);
 
-            // Cargar saldo al iniciar
-            const userId = localStorage.getItem("memeba_currentUserId");
-            fetch(`http://localhost:3000/users/${userId}`)
-              .then(res => res.json())
-              .then(userData => {
-                  const balance = userData.balance || 0;
-                  document.getElementById("global-balance-text").textContent = `${balance.toFixed(2)}€`;
-              });
+          // Lo insertamos UNA sola vez
+          navContainer.insertBefore(walletBtn, accountBtn);
 
-            // --- 2. CREAR EL MODAL CÓMIC DE INGRESO (Se inyecta en el body) ---
-            let fundsModal = document.getElementById("quick-funds-modal");
-            if (!fundsModal) {
-                fundsModal = document.createElement("div");
-                fundsModal.id = "quick-funds-modal";
-                fundsModal.className = "modal-overlay hidden"; // Reutilizamos tu clase de modal oscuro
-                fundsModal.innerHTML = `
+          // Cargar saldo al iniciar
+          const userId = localStorage.getItem("memeba_currentUserId");
+          fetch(`http://localhost:3000/users/${userId}`)
+            .then((res) => res.json())
+            .then((userData) => {
+              const balance = userData.balance || 0;
+              document.getElementById("global-balance-text").textContent =
+                `${balance.toFixed(2)}€`;
+            });
+
+          // --- 2. CREAR EL MODAL CÓMIC DE INGRESO (Se inyecta en el body) ---
+          let fundsModal = document.getElementById("quick-funds-modal");
+          if (!fundsModal) {
+            fundsModal = document.createElement("div");
+            fundsModal.id = "quick-funds-modal";
+            fundsModal.className = "modal-overlay hidden"; // Reutilizamos tu clase de modal oscuro
+            fundsModal.innerHTML = `
                   <div class="modal-content" style="max-width: 400px;">
                     <h3 style="color: var(--price-green); font-size: 26px; margin-top: 0; margin-bottom: 10px;">
                       <i class="fas fa-money-bill-wave"></i> Ingreso Rápido
@@ -652,69 +681,85 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button id="btn-cancel-funds" class="btn-secondary" style="width: 100%; padding: 10px; cursor: pointer;">Cancelar</button>
                   </div>
                 `;
-                document.body.appendChild(fundsModal);
+            document.body.appendChild(fundsModal);
 
-                // Lógica de los botones del modal
-                document.getElementById("btn-cancel-funds").addEventListener("click", () => {
-                    fundsModal.classList.add("hidden");
-                });
+            // Lógica de los botones del modal
+            document
+              .getElementById("btn-cancel-funds")
+              .addEventListener("click", () => {
+                fundsModal.classList.add("hidden");
+              });
 
-                document.getElementById("btn-confirm-funds").addEventListener("click", async () => {
-                    const inputVal = document.getElementById("quick-funds-input").value;
-                    const num = parseFloat(inputVal);
-                    
-                    if (num > 0 && num <= 1000) {
-                        await processAddFunds(num); // Usa la función global que creamos antes
-                        fundsModal.classList.add("hidden");
-                        document.getElementById("quick-funds-input").value = ""; // Limpia el input
-                    } else {
-                        showToast("Cantidad inválida. Máximo 1000€.", "error");
-                    }
-                });
-            }
+            document
+              .getElementById("btn-confirm-funds")
+              .addEventListener("click", async () => {
+                const inputVal =
+                  document.getElementById("quick-funds-input").value;
+                const num = parseFloat(inputVal);
 
-            // --- 3. ABRIR EL MODAL AL HACER CLIC EN EL HEADER ---
-            walletBtn.addEventListener("click", (e) => {
-                e.preventDefault();
-                document.getElementById("quick-funds-modal").classList.remove("hidden");
-                document.getElementById("quick-funds-input").focus(); // Pone el cursor directo para escribir
-            });
+                if (num > 0 && num <= 1000) {
+                  await processAddFunds(num); // Usa la función global que creamos antes
+                  fundsModal.classList.add("hidden");
+                  document.getElementById("quick-funds-input").value = ""; // Limpia el input
+                } else {
+                  showToast("Cantidad inválida. Máximo 1000€.", "error");
+                }
+              });
+          }
+
+          // --- 3. ABRIR EL MODAL AL HACER CLIC EN EL HEADER ---
+          walletBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            document
+              .getElementById("quick-funds-modal")
+              .classList.remove("hidden");
+            document.getElementById("quick-funds-input").focus(); // Pone el cursor directo para escribir
+          });
         }
       }
 
       updateCartBadge();
-      
+
       // ==========================================
       // MOTOR DE BÚSQUEDA INTERACTIVO Y GLOBAL
       // ==========================================
       const searchBar = document.getElementById("search-bar");
-      const searchContainer = searchBar ? searchBar.closest('.search-container') : null;
+      const searchContainer = searchBar
+        ? searchBar.closest(".search-container")
+        : null;
 
       if (searchBar && searchContainer) {
-          // 1. Inyectamos la cajita de sugerencias en el HTML
-          const suggestionsBox = document.createElement("div");
-          suggestionsBox.className = "search-suggestions";
-          searchContainer.appendChild(suggestionsBox);
+        // 1. Inyectamos la cajita de sugerencias en el HTML
+        const suggestionsBox = document.createElement("div");
+        suggestionsBox.className = "search-suggestions";
+        searchContainer.appendChild(suggestionsBox);
 
-          // 2. Al escribir, mostramos sugerencias en vivo
-          searchBar.addEventListener("input", (e) => {
-              const term = e.target.value.trim();
-              
-              // Si está en el index, aplicamos el filtro normal debajo también
-              if (window.location.pathname.includes("index.html") || window.location.pathname === "/") {
-                  applyFiltersGlobal();
-              }
+        // 2. Al escribir, mostramos sugerencias en vivo
+        searchBar.addEventListener("input", (e) => {
+          const term = e.target.value.trim();
 
-              if (term.length < 2) {
-                  suggestionsBox.style.display = "none";
-                  return;
-              }
+          // Si está en el index, aplicamos el filtro normal debajo también
+          if (
+            window.location.pathname.includes("index.html") ||
+            window.location.pathname === "/"
+          ) {
+            applyFiltersGlobal();
+          }
 
-              // Buscamos coincidencias inteligentes
-              const matches = gamesDatabase.filter(g => checkSearchMatch(g.title, term)).slice(0, 5); // Máximo 5 resultados
+          if (term.length < 2) {
+            suggestionsBox.style.display = "none";
+            return;
+          }
 
-              if (matches.length > 0) {
-                  suggestionsBox.innerHTML = matches.map(g => `
+          // Buscamos coincidencias inteligentes
+          const matches = gamesDatabase
+            .filter((g) => checkSearchMatch(g.title, term))
+            .slice(0, 5); // Máximo 5 resultados
+
+          if (matches.length > 0) {
+            suggestionsBox.innerHTML = matches
+              .map(
+                (g) => `
                       <a href="game.html?id=${g.id}" class="suggestion-item">
                           <img src="${g.img}" alt="${g.title}">
                           <div>
@@ -722,59 +767,67 @@ document.addEventListener("DOMContentLoaded", () => {
                               <div style="font-size: 14px; color: var(--price-green); font-weight: 900;">${parseFloat(g.newPrice).toFixed(2)}€</div>
                           </div>
                       </a>
-                  `).join("");
-              } else {
-                  suggestionsBox.innerHTML = `<div style="padding: 15px; text-align: center; color: #666; font-weight: 600;">No hay rastro de "${term}" 🕵️‍♂️</div>`;
-              }
-              suggestionsBox.style.display = "block";
-          });
-
-          // 3. Ocultar sugerencias si pinchamos fuera
-          document.addEventListener("click", (evt) => {
-              if (!searchContainer.contains(evt.target)) {
-                  suggestionsBox.style.display = "none";
-              }
-          });
-
-          // 4. Lógica de Redirección (Al pulsar Enter o hacer click en la Lupa)
-          const executeSearchRedirect = () => {
-              const term = searchBar.value.trim();
-              if (term) {
-                  if (window.location.pathname.includes("index.html") || window.location.pathname === "/") {
-                      applyFiltersGlobal();
-                      suggestionsBox.style.display = "none";
-                  } else {
-                      // Si no estamos en el Index, saltamos hacia allá pasándole la búsqueda por la URL
-                      window.location.href = `index.html?search=${encodeURIComponent(term)}`;
-                  }
-              }
-          };
-
-          searchBar.addEventListener("keypress", (e) => {
-              if (e.key === "Enter") {
-                  e.preventDefault();
-                  executeSearchRedirect();
-              }
-          });
-
-          const searchButton = searchContainer.querySelector("button");
-          if (searchButton) {
-              searchButton.addEventListener("click", (e) => {
-                  e.preventDefault();
-                  executeSearchRedirect();
-              });
+                  `,
+              )
+              .join("");
+          } else {
+            suggestionsBox.innerHTML = `<div style="padding: 15px; text-align: center; color: #666; font-weight: 600;">No hay rastro de "${term}" 🕵️‍♂️</div>`;
           }
-          
-          // 5. Autocompletar la barra si venimos rebotados de otra página con búsqueda
-          const urlParams = new URLSearchParams(window.location.search);
-          const searchQuery = urlParams.get("search");
-          if (searchQuery) {
-              searchBar.value = searchQuery;
-              // Le damos un respiro al DOM para cargar y aplicamos el filtro
-              if (window.location.pathname.includes("index.html") || window.location.pathname === "/") {
-                  setTimeout(applyFiltersGlobal, 200);
-              }
+          suggestionsBox.style.display = "block";
+        });
+
+        // 3. Ocultar sugerencias si pinchamos fuera
+        document.addEventListener("click", (evt) => {
+          if (!searchContainer.contains(evt.target)) {
+            suggestionsBox.style.display = "none";
           }
+        });
+
+        // 4. Lógica de Redirección (Al pulsar Enter o hacer click en la Lupa)
+        const executeSearchRedirect = () => {
+          const term = searchBar.value.trim();
+          if (term) {
+            if (
+              window.location.pathname.includes("index.html") ||
+              window.location.pathname === "/"
+            ) {
+              applyFiltersGlobal();
+              suggestionsBox.style.display = "none";
+            } else {
+              // Si no estamos en el Index, saltamos hacia allá pasándole la búsqueda por la URL
+              window.location.href = `index.html?search=${encodeURIComponent(term)}`;
+            }
+          }
+        };
+
+        searchBar.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            executeSearchRedirect();
+          }
+        });
+
+        const searchButton = searchContainer.querySelector("button");
+        if (searchButton) {
+          searchButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            executeSearchRedirect();
+          });
+        }
+
+        // 5. Autocompletar la barra si venimos rebotados de otra página con búsqueda
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get("search");
+        if (searchQuery) {
+          searchBar.value = searchQuery;
+          // Le damos un respiro al DOM para cargar y aplicamos el filtro
+          if (
+            window.location.pathname.includes("index.html") ||
+            window.location.pathname === "/"
+          ) {
+            setTimeout(applyFiltersGlobal, 200);
+          }
+        }
       }
 
       document.body.classList.add("page-loaded");
@@ -959,60 +1012,60 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- LÓGICA DEL DESPLEGABLE ESTILO CÓMIC ---
-  const customSelectWrapper = document.querySelector('.custom-select-wrapper');
+  const customSelectWrapper = document.querySelector(".custom-select-wrapper");
   if (customSelectWrapper) {
-      const trigger = customSelectWrapper.querySelector('.custom-select-trigger');
-      const triggerText = trigger.querySelector('span');
-      const options = customSelectWrapper.querySelectorAll('.custom-option');
-      const hiddenSelect = document.getElementById('sort-filter');
+    const trigger = customSelectWrapper.querySelector(".custom-select-trigger");
+    const triggerText = trigger.querySelector("span");
+    const options = customSelectWrapper.querySelectorAll(".custom-option");
+    const hiddenSelect = document.getElementById("sort-filter");
 
-      // Abrir/cerrar al hacer clic
-      trigger.addEventListener('click', function(e) {
-          e.stopPropagation(); // Evita que el clic se propague al document
-          customSelectWrapper.classList.toggle('open');
-      });
+    // Abrir/cerrar al hacer clic
+    trigger.addEventListener("click", function (e) {
+      e.stopPropagation(); // Evita que el clic se propague al document
+      customSelectWrapper.classList.toggle("open");
+    });
 
-      // Seleccionar una opción
-      options.forEach(option => {
-          option.addEventListener('click', function(e) {
-              e.stopPropagation();
-              // Cambiar el texto mostrado
-              triggerText.textContent = this.textContent;
-              
-              // Marcar cuál está seleccionada para el CSS
-              options.forEach(opt => opt.classList.remove('selected'));
-              this.classList.add('selected');
-              
-              // Cerrar el menú
-              customSelectWrapper.classList.remove('open');
-              
-              // Actualizar el select original oculto y disparar la orden de filtrar
-              hiddenSelect.value = this.dataset.value;
-              applyFiltersGlobal(); 
-          });
-      });
+    // Seleccionar una opción
+    options.forEach((option) => {
+      option.addEventListener("click", function (e) {
+        e.stopPropagation();
+        // Cambiar el texto mostrado
+        triggerText.textContent = this.textContent;
 
-      // Cerrar si se hace clic fuera del menú
-      document.addEventListener('click', function(e) {
-          if (!customSelectWrapper.contains(e.target)) {
-              customSelectWrapper.classList.remove('open');
-          }
+        // Marcar cuál está seleccionada para el CSS
+        options.forEach((opt) => opt.classList.remove("selected"));
+        this.classList.add("selected");
+
+        // Cerrar el menú
+        customSelectWrapper.classList.remove("open");
+
+        // Actualizar el select original oculto y disparar la orden de filtrar
+        hiddenSelect.value = this.dataset.value;
+        applyFiltersGlobal();
       });
-      
-      // Conectar el botón de "Restablecer Filtros" para que también limpie este menú
-      const resetBtn = document.getElementById("reset-filters-btn");
-      if (resetBtn) {
-          resetBtn.addEventListener("click", () => {
-              triggerText.textContent = "Relevancia";
-              options.forEach(opt => opt.classList.remove('selected'));
-              options[0].classList.add('selected'); // Vuelve a marcar el primero
-          });
+    });
+
+    // Cerrar si se hace clic fuera del menú
+    document.addEventListener("click", function (e) {
+      if (!customSelectWrapper.contains(e.target)) {
+        customSelectWrapper.classList.remove("open");
       }
+    });
+
+    // Conectar el botón de "Restablecer Filtros" para que también limpie este menú
+    const resetBtn = document.getElementById("reset-filters-btn");
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        triggerText.textContent = "Relevancia";
+        options.forEach((opt) => opt.classList.remove("selected"));
+        options[0].classList.add("selected"); // Vuelve a marcar el primero
+      });
+    }
   }
 
   // Llama a la función del bono SOLO CUANDO el HTML esté listo
-  if (document.getElementById('daily-bonus-col-container')) {
-      renderDailyBonus(); 
+  if (document.getElementById("daily-bonus-col-container")) {
+    renderDailyBonus();
   }
 });
 
@@ -1060,11 +1113,11 @@ function loadCartPage() {
     cartContainer.innerHTML =
       '<h3 style="text-align: center; padding: 40px;">Tu carrito está más vacío que mi cartera 🥲</h3>';
     totalPriceEl.textContent = "0.00€";
-    
+
     // --- NUEVO: Ocultamos la caja de pagar si no hay juegos ---
     const summaryBox = document.querySelector(".cart-summary");
     if (summaryBox) summaryBox.style.display = "none";
-    
+
     return;
   } else {
     // --- NUEVO: Nos aseguramos de que se vea si SÍ hay juegos ---
@@ -1104,7 +1157,7 @@ function loadCartPage() {
     cartContainer.insertAdjacentHTML("beforeend", itemHTML);
   });
   currentCartTotal = total; // Guardamos el total en crudo
-  aplicarDescuentoUI();     // Que la función decida si hay que rebajarlo
+  aplicarDescuentoUI(); // Que la función decida si hay que rebajarlo
 }
 
 window.removeFromCart = function (id) {
@@ -1163,7 +1216,9 @@ async function loadGamePage() {
 
   try {
     // Le pedimos los datos directamente a tu json-server (Puerto 3000)
-    const response = await fetch(`http://localhost:3000/gamesDatabase/${gameId}`);
+    const response = await fetch(
+      `http://localhost:3000/gamesDatabase/${gameId}`,
+    );
 
     if (!response.ok) throw new Error("Juego no encontrado en el servidor");
 
@@ -1174,23 +1229,26 @@ async function loadGamePage() {
     document.getElementById("g-title").textContent = game.title;
     document.getElementById("g-img").src = game.img;
     document.getElementById("g-platform").textContent = game.platform || "N/A";
-    document.getElementById("g-old-price").textContent = `${parseFloat(game.oldPrice).toFixed(2)}€`;
-    document.getElementById("g-new-price").textContent = `${parseFloat(game.newPrice).toFixed(2)}€`;
-    document.getElementById("g-desc").textContent = game.description || "Descripción no disponible.";
+    document.getElementById("g-old-price").textContent =
+      `${parseFloat(game.oldPrice).toFixed(2)}€`;
+    document.getElementById("g-new-price").textContent =
+      `${parseFloat(game.newPrice).toFixed(2)}€`;
+    document.getElementById("g-desc").textContent =
+      game.description || "Descripción no disponible.";
 
     // 2. Cálculo de media de estrellas REAL
     let avgRating = 0;
     if (game.reviews && game.reviews.length > 0) {
-        const totalScore = game.reviews.reduce((sum, rev) => sum + rev.score, 0);
-        avgRating = parseFloat((totalScore / game.reviews.length).toFixed(2));
+      const totalScore = game.reviews.reduce((sum, rev) => sum + rev.score, 0);
+      avgRating = parseFloat((totalScore / game.reviews.length).toFixed(2));
     } else {
-        avgRating = parseFloat(game.rating) || 0;
+      avgRating = parseFloat(game.rating) || 0;
     }
 
     const starPercentage = (avgRating / 5) * 100;
     const ratingContainer = document.querySelector(".average-rating");
     if (ratingContainer) {
-        ratingContainer.innerHTML = `
+      ratingContainer.innerHTML = `
             <div class="stars-outer">
                 <div class="stars-inner" style="width: ${starPercentage}%"></div>
             </div>
@@ -1201,12 +1259,12 @@ async function loadGamePage() {
     // 3. Conectamos botones
     const btnCart = document.getElementById("g-btn-cart");
     const btnFav = document.getElementById("g-btn-fav");
-    if(btnCart) btnCart.dataset.id = game.id;
-    if(btnFav) btnFav.dataset.id = game.id;
+    if (btnCart) btnCart.dataset.id = game.id;
+    if (btnFav) btnFav.dataset.id = game.id;
 
     const favsStr = getFavorites().map(String);
     if (btnFav && favsStr.includes(String(game.id))) {
-        btnFav.classList.add("liked");
+      btnFav.classList.add("liked");
     }
 
     // 4. Pintar reseñas
@@ -1214,12 +1272,15 @@ async function loadGamePage() {
     reviewsBox.innerHTML = "";
 
     if (game.reviews && game.reviews.length > 0) {
-        game.reviews.forEach(review => {
-          let starsHTML = "";
-          for (let i = 1; i <= 5; i++) {
-            starsHTML += i <= review.score ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
-          }
-          reviewsBox.innerHTML += `
+      game.reviews.forEach((review) => {
+        let starsHTML = "";
+        for (let i = 1; i <= 5; i++) {
+          starsHTML +=
+            i <= review.score
+              ? '<i class="fas fa-star"></i>'
+              : '<i class="far fa-star"></i>';
+        }
+        reviewsBox.innerHTML += `
             <div class="review-card">
               <div class="review-meta">
                   <span class="review-user"><i class="fas fa-user-circle"></i> ${review.user}</span>
@@ -1227,116 +1288,127 @@ async function loadGamePage() {
               </div>
               <p class="review-comment">"${review.comment}"</p>
             </div>`;
-        });
+      });
     } else {
-        reviewsBox.innerHTML = "<p style='font-weight: 800; font-size: 18px;'>Aún no hay reseñas para este juego. ¡Sé el primero!</p>";
+      reviewsBox.innerHTML =
+        "<p style='font-weight: 800; font-size: 18px;'>Aún no hay reseñas para este juego. ¡Sé el primero!</p>";
     }
     // 5. LÓGICA DEL FORMULARIO DE RESEÑAS (NUEVO)
-    const interactiveStars = document.querySelectorAll("#interactive-stars .fa-star");
+    const interactiveStars = document.querySelectorAll(
+      "#interactive-stars .fa-star",
+    );
     const scoreInput = document.getElementById("review-score");
 
     // Función para pintar las estrellas de amarillo
     function iluminarEstrellas(valor) {
-        interactiveStars.forEach(star => {
-            if (parseInt(star.dataset.value) <= valor) {
-                // Amarillo con borde negro estilo cómic
-                star.style.color = "var(--accent-yellow)";
-                star.style.textShadow = "2px 2px 0px #000"; 
-            } else {
-                // Gris sin borde
-                star.style.color = "#ccc";
-                star.style.textShadow = "none";
-            }
-        });
+      interactiveStars.forEach((star) => {
+        if (parseInt(star.dataset.value) <= valor) {
+          // Amarillo con borde negro estilo cómic
+          star.style.color = "var(--accent-yellow)";
+          star.style.textShadow = "2px 2px 0px #000";
+        } else {
+          // Gris sin borde
+          star.style.color = "#ccc";
+          star.style.textShadow = "none";
+        }
+      });
     }
 
     // Iluminar por defecto al valor inicial (1)
     if (scoreInput && interactiveStars.length > 0) {
-        iluminarEstrellas(scoreInput.value);
+      iluminarEstrellas(scoreInput.value);
 
-        interactiveStars.forEach(star => {
-            // ¡ELIMINADOS LOS EVENTOS MOUSEOVER Y MOUSEOUT!
-            
-            // Al hacer clic (se queda fijado y hace 'pop')
-            star.addEventListener("click", function() {
-                scoreInput.value = this.dataset.value;
-                iluminarEstrellas(this.dataset.value);
-                
-                // Efecto "pop" al hacer clic
-                this.style.transform = "scale(1.4)";
-                setTimeout(() => this.style.transform = "scale(1)", 150);
-            });
+      interactiveStars.forEach((star) => {
+        // ¡ELIMINADOS LOS EVENTOS MOUSEOVER Y MOUSEOUT!
+
+        // Al hacer clic (se queda fijado y hace 'pop')
+        star.addEventListener("click", function () {
+          scoreInput.value = this.dataset.value;
+          iluminarEstrellas(this.dataset.value);
+
+          // Efecto "pop" al hacer clic
+          this.style.transform = "scale(1.4)";
+          setTimeout(() => (this.style.transform = "scale(1)"), 150);
         });
+      });
     }
-    
+
     const reviewForm = document.getElementById("review-form");
     if (reviewForm) {
-        reviewForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
+      reviewForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-            // Protegemos el formulario: Solo usuarios logueados pueden comentar
-            if (!requireLogin(false)) return;
+        // Protegemos el formulario: Solo usuarios logueados pueden comentar
+        if (!requireLogin(false)) return;
 
-            const currentUser = getCurrentUser();
-            const score = parseInt(document.getElementById("review-score").value);
-            const comment = document.getElementById("review-comment").value.trim();
+        const currentUser = getCurrentUser();
+        const score = parseInt(document.getElementById("review-score").value);
+        const comment = document.getElementById("review-comment").value.trim();
 
-            if (!comment) {
-                showToast("¡Escribe algo, no seas soso!", "error");
-                return;
-            }
+        if (!comment) {
+          showToast("¡Escribe algo, no seas soso!", "error");
+          return;
+        }
 
-            try {
-                // Preparamos el paquete con la nueva reseña
-                const newReview = {
-                    user: currentUser,
-                    score: score,
-                    comment: comment,
-                    date: new Date().toISOString()
-                };
+        try {
+          // Preparamos el paquete con la nueva reseña
+          const newReview = {
+            user: currentUser,
+            score: score,
+            comment: comment,
+            date: new Date().toISOString(),
+          };
 
-                // Recuperamos las reseñas que ya tenía el juego y le sumamos la nueva
-                const updatedReviews = game.reviews ? [...game.reviews, newReview] : [newReview];
+          // Recuperamos las reseñas que ya tenía el juego y le sumamos la nueva
+          const updatedReviews = game.reviews
+            ? [...game.reviews, newReview]
+            : [newReview];
 
-                // Enviamos el parche (PATCH) a tu base de datos para actualizar este juego concreto
-                const patchRes = await fetch(`http://localhost:3000/gamesDatabase/${gameId}`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ reviews: updatedReviews })
-                });
+          // Enviamos el parche (PATCH) a tu base de datos para actualizar este juego concreto
+          const patchRes = await fetch(
+            `http://localhost:3000/gamesDatabase/${gameId}`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ reviews: updatedReviews }),
+            },
+          );
 
-                if (patchRes.ok) {
-                    showToast("¡Reseña publicada! Eres un crítico de verdad 📝", "success");
-                    
-                    // Limpiamos el formulario
-                    document.getElementById("review-comment").value = "";
-                    
-                    // Recargamos la página elegantemente para que se vuelva a calcular la media y salga el comentario
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
-                } else {
-                    throw new Error("Fallo al guardar la reseña en el servidor.");
-                }
-            } catch (error) {
-                console.error("Error al publicar la reseña:", error);
-                showToast("El servidor de reseñas está echando humo.", "error");
-            }
-        });
+          if (patchRes.ok) {
+            showToast(
+              "¡Reseña publicada! Eres un crítico de verdad 📝",
+              "success",
+            );
+
+            // Limpiamos el formulario
+            document.getElementById("review-comment").value = "";
+
+            // Recargamos la página elegantemente para que se vuelva a calcular la media y salga el comentario
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          } else {
+            throw new Error("Fallo al guardar la reseña en el servidor.");
+          }
+        } catch (error) {
+          console.error("Error al publicar la reseña:", error);
+          showToast("El servidor de reseñas está echando humo.", "error");
+        }
+      });
     }
-
   } catch (error) {
     console.error("Error al cargar los detalles:", error);
-    showError("El servidor json-server no responde o el juego ha desaparecido en un agujero negro.");
+    showError(
+      "El servidor json-server no responde o el juego ha desaparecido en un agujero negro.",
+    );
   }
 }
-
 
 // --- FUNCIÓN PARA CARGAR LA PÁGINA DE PERFIL ---
 async function loadProfilePage() {
   if (!window.location.pathname.includes("profile.html")) return;
 
-  if (!requireLogin(true)) return; 
+  if (!requireLogin(true)) return;
 
   // Intentamos recuperar el ID
   const userId = localStorage.getItem("memeba_currentUserId");
@@ -1344,17 +1416,19 @@ async function loadProfilePage() {
 
   // Si no hay ID (es un usuario fantasma del código viejo), lo echamos al login
   if (!userId) {
-      showToast("Sesión caducada. Por favor, vuelve a entrar.", "error");
-      localStorage.removeItem("memeba_currentUser");
-      setTimeout(() => { window.location.href = "login.html"; }, 1500);
-      return;
+    showToast("Sesión caducada. Por favor, vuelve a entrar.", "error");
+    localStorage.removeItem("memeba_currentUser");
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1500);
+    return;
   }
 
   try {
     // Le pedimos al servidor los datos frescos de este usuario
     const response = await fetch(`http://localhost:3000/users/${userId}`);
     if (!response.ok) throw new Error("Usuario no encontrado en la BD");
-    
+
     const userData = await response.json();
 
     // Pintamos sus datos en el HTML
@@ -1365,59 +1439,65 @@ async function loadProfilePage() {
     let tituloRango = "Rata de Alcantarilla 🐀"; // Rango base (0€)
 
     if (totalGastado >= 1000) {
-        tituloRango = "Amigo Personal de Abraham Reyes Nuñez";
+      tituloRango = "Amigo Personal de Abraham Reyes Nuñez";
     } else if (totalGastado >= 500) {
-        tituloRango = "VIP de Memeba";
+      tituloRango = "VIP de Memeba";
     } else if (totalGastado >= 200) {
-        tituloRango = "Ludópata en Potencia";
+      tituloRango = "Ludópata en Potencia";
     } else if (totalGastado >= 50) {
-        tituloRango = "Gamer Promedio";
+      tituloRango = "Gamer Promedio";
     } else if (totalGastado > 0) {
-        tituloRango = "Tieso absoluto";
+      tituloRango = "Tieso absoluto";
     }
 
     const titleElement = document.getElementById("p-title");
     if (titleElement) {
-        titleElement.textContent = tituloRango;
-        
-        // Le damos un color especial si es muy rico
-        if (totalGastado >= 500) {
-            titleElement.style.color = "#ff0044"; // Rojo mítico para los VIP
-            titleElement.style.textShadow = "1px 1px 0px #000";
-        } else {
-            titleElement.style.color = "var(--accent-yellow)"; // Amarillo normal
-            titleElement.style.textShadow = "none";
-        }
+      titleElement.textContent = tituloRango;
+
+      // Le damos un color especial si es muy rico
+      if (totalGastado >= 500) {
+        titleElement.style.color = "#ff0044"; // Rojo mítico para los VIP
+        titleElement.style.textShadow = "1px 1px 0px #000";
+      } else {
+        titleElement.style.color = "var(--accent-yellow)"; // Amarillo normal
+        titleElement.style.textShadow = "none";
+      }
     }
-    
+
     // Contamos cuántos favoritos y juegos en el carrito tiene
     const favCount = userData.favorites ? userData.favorites.length : 0;
-    const cartCount = userData.cart ? userData.cart.reduce((sum, item) => sum + item.quantity, 0) : 0;
+    const cartCount = userData.cart
+      ? userData.cart.reduce((sum, item) => sum + item.quantity, 0)
+      : 0;
 
     document.getElementById("p-fav-count").textContent = favCount;
     document.getElementById("p-cart-count").textContent = cartCount;
-    document.getElementById("w-current-balance").textContent = `${(userData.balance || 0).toFixed(2)}€`;
-    document.getElementById("w-total-deposited").textContent = `${(userData.totalDeposited || 0).toFixed(2)}€`;
-    document.getElementById("w-total-spent").textContent = `${(userData.totalSpent || 0).toFixed(2)}€`;
+    document.getElementById("w-current-balance").textContent =
+      `${(userData.balance || 0).toFixed(2)}€`;
+    document.getElementById("w-total-deposited").textContent =
+      `${(userData.totalDeposited || 0).toFixed(2)}€`;
+    document.getElementById("w-total-spent").textContent =
+      `${(userData.totalSpent || 0).toFixed(2)}€`;
 
     // Configurar el botón de Cerrar Sesión
     const btnLogout = document.getElementById("btn-logout");
-    if(btnLogout) {
-        btnLogout.addEventListener("click", () => {
-          localStorage.removeItem("memeba_currentUser");
-          localStorage.removeItem("memeba_currentUserId");
-          showToast("¡Sesión cerrada! Vuelve pronto.", "success");
-          setTimeout(() => {
-            window.location.href = "index.html";
-          }, 1000);
-        });
+    if (btnLogout) {
+      btnLogout.addEventListener("click", () => {
+        localStorage.removeItem("memeba_currentUser");
+        localStorage.removeItem("memeba_currentUserId");
+        showToast("¡Sesión cerrada! Vuelve pronto.", "success");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1000);
+      });
     }
 
     // --- NUEVO: Rellenar el Ahorro Total ---
     // En el futuro, sumaremos (oldPrice - newPrice) de los juegos en "userData.purchases".
     // Por ahora, simulamos 0.00€ o lo que tenga la base de datos en "savings".
     const totalSavings = userData.savings ? userData.savings : 0;
-    document.getElementById("p-saved-money").textContent = `${totalSavings.toFixed(2)}€`;
+    document.getElementById("p-saved-money").textContent =
+      `${totalSavings.toFixed(2)}€`;
 
     // --- NUEVO: Lógica del Modal de Ajustes de Perfil ---
     const linkEditProfile = document.getElementById("link-edit-profile");
@@ -1454,37 +1534,54 @@ async function loadProfilePage() {
         try {
           // Comprobamos si el nuevo nombre ya está pillado (solo si lo ha cambiado)
           if (newUsername !== userData.username) {
-            const checkRes = await fetch(`http://localhost:3000/users?username=${newUsername}`);
+            const checkRes = await fetch(
+              `http://localhost:3000/users?username=${newUsername}`,
+            );
             const existingUsers = await checkRes.json();
             if (existingUsers.length > 0) {
-              showToast("Ese nombre ya está pillado. Sé más original.", "error");
+              showToast(
+                "Ese nombre ya está pillado. Sé más original.",
+                "error",
+              );
               return;
             }
           }
 
           // Enviamos la actualización (PATCH) a la base de datos
-          const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username: newUsername, password: newPassword })
-          });
+          const patchRes = await fetch(
+            `http://localhost:3000/users/${userId}`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                username: newUsername,
+                password: newPassword,
+              }),
+            },
+          );
 
           if (patchRes.ok) {
             showToast("¡Perfil actualizado con éxito!", "success");
-            
+
             // EL TRUCO SENIOR: Migramos las claves del localStorage si cambió el nombre
             if (newUsername !== userData.username) {
               localStorage.removeItem(`memeba_cart_${userData.username}`);
               localStorage.removeItem(`memeba_favs_${userData.username}`);
-              
+
               localStorage.setItem("memeba_currentUser", newUsername);
-              localStorage.setItem(`memeba_cart_${newUsername}`, JSON.stringify(userData.cart || []));
-              localStorage.setItem(`memeba_favs_${newUsername}`, JSON.stringify(userData.favorites || []));
+              localStorage.setItem(
+                `memeba_cart_${newUsername}`,
+                JSON.stringify(userData.cart || []),
+              );
+              localStorage.setItem(
+                `memeba_favs_${newUsername}`,
+                JSON.stringify(userData.favorites || []),
+              );
             }
-            
+
             // Actualizamos la pantalla y cerramos el modal sin tener que recargar
             document.getElementById("p-username").textContent = newUsername;
-            userData.username = newUsername; 
+            userData.username = newUsername;
             userData.password = newPassword;
             settingsModal.classList.add("hidden");
           }
@@ -1499,53 +1596,56 @@ async function loadProfilePage() {
     const linkSummary = document.getElementById("link-summary");
     const linkWallet = document.getElementById("link-wallet");
     const linkPurchases = document.getElementById("link-purchases"); // NUEVO
-    
+
     const viewSummary = document.getElementById("view-summary");
     const viewWallet = document.getElementById("view-wallet");
     const viewPurchases = document.getElementById("view-purchases"); // NUEVO
 
     // Función auxiliar para limpiar colores del menú y ocultar todas las vistas
     const resetViews = () => {
-        if(linkSummary) linkSummary.style.background = "transparent";
-        if(linkWallet) linkWallet.style.background = "transparent";
-        if(linkPurchases) linkPurchases.style.background = "transparent";
-        
-        if(viewSummary) viewSummary.classList.add("hidden");
-        if(viewWallet) viewWallet.classList.add("hidden");
-        if(viewPurchases) viewPurchases.classList.add("hidden");
+      if (linkSummary) linkSummary.style.background = "transparent";
+      if (linkWallet) linkWallet.style.background = "transparent";
+      if (linkPurchases) linkPurchases.style.background = "transparent";
+
+      if (viewSummary) viewSummary.classList.add("hidden");
+      if (viewWallet) viewWallet.classList.add("hidden");
+      if (viewPurchases) viewPurchases.classList.add("hidden");
     };
 
     if (linkSummary && linkWallet && linkPurchases) {
-        linkSummary.addEventListener("click", (e) => {
-            e.preventDefault();
-            resetViews();
-            linkSummary.style.background = "#fffacd";
-            viewSummary.classList.remove("hidden");
-        });
+      linkSummary.addEventListener("click", (e) => {
+        e.preventDefault();
+        resetViews();
+        linkSummary.style.background = "#fffacd";
+        viewSummary.classList.remove("hidden");
+      });
 
-        linkWallet.addEventListener("click", (e) => {
-            e.preventDefault();
-            resetViews();
-            linkWallet.style.background = "#fffacd";
-            viewWallet.classList.remove("hidden");
-        });
+      linkWallet.addEventListener("click", (e) => {
+        e.preventDefault();
+        resetViews();
+        linkWallet.style.background = "#fffacd";
+        viewWallet.classList.remove("hidden");
+      });
 
-        // NUEVO EVENTO PARA LA PESTAÑA COMPRAS
-        linkPurchases.addEventListener("click", (e) => {
-            e.preventDefault();
-            resetViews();
-            linkPurchases.style.background = "#fffacd";
-            viewPurchases.classList.remove("hidden");
-        });
+      // NUEVO EVENTO PARA LA PESTAÑA COMPRAS
+      linkPurchases.addEventListener("click", (e) => {
+        e.preventDefault();
+        resetViews();
+        linkPurchases.style.background = "#fffacd";
+        viewPurchases.classList.remove("hidden");
+      });
     }
 
     // --- PINTAR EL HISTORIAL DE COMPRAS ---
     const purchasesList = document.getElementById("purchases-list");
     if (purchasesList) {
-        // Comprobamos si el usuario tiene compras en la base de datos
-        if (userData.purchases && userData.purchases.length > 0) {
-            // Le damos la vuelta (reverse) para que las compras más recientes salgan arriba del todo
-            purchasesList.innerHTML = userData.purchases.reverse().map(p => `
+      // Comprobamos si el usuario tiene compras en la base de datos
+      if (userData.purchases && userData.purchases.length > 0) {
+        // Le damos la vuelta (reverse) para que las compras más recientes salgan arriba del todo
+        purchasesList.innerHTML = userData.purchases
+          .reverse()
+          .map(
+            (p) => `
                 <div style="background: #fff; border: 2px solid #000; border-radius: 8px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 3px 3px 0px rgba(0,0,0,1);">
                     <div>
                         <h4 style="margin: 0; font-size: 18px; color: var(--primary-purple);">${p.title}</h4>
@@ -1558,17 +1658,19 @@ async function loadProfilePage() {
                         <span style="font-size: 13px; font-weight: 600; color: #666;">Copias: ${p.quantity}</span>
                     </div>
                 </div>
-            `).join("");
-        } else {
-            // Diseño por si el historial está vacío
-            purchasesList.innerHTML = `
+            `,
+          )
+          .join("");
+      } else {
+        // Diseño por si el historial está vacío
+        purchasesList.innerHTML = `
                 <div style="text-align: center; padding: 30px; background: #fffacd; border: 2px dashed #000; border-radius: 12px;">
                     <i class="fas fa-ghost" style="font-size: 40px; color: var(--primary-purple); margin-bottom: 10px;"></i>
                     <h3 style="margin: 0; color: #333;">Aún no has saqueado nada</h3>
                     <p style="color: #666; font-weight: 600;">¿A qué esperas para vaciar la tienda?</p>
                 </div>
             `;
-        }
+      }
     }
 
     // --- BOTÓN DE AÑADIR SALDO DESDE LA VISTA CARTERA ---
@@ -1576,17 +1678,16 @@ async function loadProfilePage() {
     const inputFunds = document.getElementById("input-add-funds");
 
     if (btnAddFunds) {
-        btnAddFunds.addEventListener("click", async () => {
-            const amount = parseFloat(inputFunds.value);
-            if (amount > 0 && amount <= 1000) {
-                await processAddFunds(amount);
-                inputFunds.value = ""; // Limpiar el input
-            } else {
-                showToast("Introduce una cantidad válida (Max: 1000€)", "error");
-            }
-        });
+      btnAddFunds.addEventListener("click", async () => {
+        const amount = parseFloat(inputFunds.value);
+        if (amount > 0 && amount <= 1000) {
+          await processAddFunds(amount);
+          inputFunds.value = ""; // Limpiar el input
+        } else {
+          showToast("Introduce una cantidad válida (Max: 1000€)", "error");
+        }
+      });
     }
-
   } catch (error) {
     console.error("Error al cargar el perfil:", error);
     // Caja de error con opción a forzar cierre de sesión
@@ -1601,12 +1702,14 @@ async function loadProfilePage() {
         <i class="fas fa-sign-out-alt"></i> Forzar Cierre de Sesión
       </button>
     `;
-    
-    document.getElementById("btn-force-logout").addEventListener("click", () => {
+
+    document
+      .getElementById("btn-force-logout")
+      .addEventListener("click", () => {
         localStorage.removeItem("memeba_currentUser");
         localStorage.removeItem("memeba_currentUserId");
         window.location.href = "login.html";
-    });
+      });
   }
 }
 
@@ -1616,38 +1719,45 @@ async function processAddFunds(amount) {
   if (!userId) return;
 
   try {
-      // 1. Descargamos los datos actuales
-      const res = await fetch(`http://localhost:3000/users/${userId}`);
-      const user = await res.json();
+    // 1. Descargamos los datos actuales
+    const res = await fetch(`http://localhost:3000/users/${userId}`);
+    const user = await res.json();
 
-      // 2. Calculamos los nuevos totales (si no existen en la BD, empiezan en 0)
-      const newBalance = (user.balance || 0) + amount;
-      const newDeposited = (user.totalDeposited || 0) + amount;
+    // 2. Calculamos los nuevos totales (si no existen en la BD, empiezan en 0)
+    const newBalance = (user.balance || 0) + amount;
+    const newDeposited = (user.totalDeposited || 0) + amount;
 
-      // 3. Subimos los datos al servidor (PATCH)
-      const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ balance: newBalance, totalDeposited: newDeposited })
-      });
+    // 3. Subimos los datos al servidor (PATCH)
+    const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        balance: newBalance,
+        totalDeposited: newDeposited,
+      }),
+    });
 
-      if (patchRes.ok) {
-          showToast(`¡Has añadido ${amount.toFixed(2)}€ a tu cartera! 💸`, "success");
-          
-          // 4. Actualizamos el número del Header
-          const headerBal = document.getElementById("global-balance-text");
-          if (headerBal) headerBal.textContent = `${newBalance.toFixed(2)}€`;
+    if (patchRes.ok) {
+      showToast(
+        `¡Has añadido ${amount.toFixed(2)}€ a tu cartera! 💸`,
+        "success",
+      );
 
-          // 5. Si estamos en la página de perfil, actualizamos las cajas también
-          const profileBal = document.getElementById("w-current-balance");
-          if (profileBal) {
-              profileBal.textContent = `${newBalance.toFixed(2)}€`;
-              document.getElementById("w-total-deposited").textContent = `${newDeposited.toFixed(2)}€`;
-          }
+      // 4. Actualizamos el número del Header
+      const headerBal = document.getElementById("global-balance-text");
+      if (headerBal) headerBal.textContent = `${newBalance.toFixed(2)}€`;
+
+      // 5. Si estamos en la página de perfil, actualizamos las cajas también
+      const profileBal = document.getElementById("w-current-balance");
+      if (profileBal) {
+        profileBal.textContent = `${newBalance.toFixed(2)}€`;
+        document.getElementById("w-total-deposited").textContent =
+          `${newDeposited.toFixed(2)}€`;
       }
+    }
   } catch (error) {
-      console.error("Error al añadir fondos:", error);
-      showToast("No tienes ni un duro cabron, no podemos añadir saldo", "error");
+    console.error("Error al añadir fondos:", error);
+    showToast("No tienes ni un duro cabron, no podemos añadir saldo", "error");
   }
 }
 
@@ -1655,12 +1765,12 @@ async function processAddFunds(amount) {
 document.addEventListener("DOMContentLoaded", () => {
   // Arranca la lógica de la página del juego (si estamos en game.html)
   if (typeof loadGamePage === "function") {
-      loadGamePage();
+    loadGamePage();
   }
-  
+
   // Arranca la lógica de la página de perfil (si estamos en profile.html)
   if (typeof loadProfilePage === "function") {
-      loadProfilePage();
+    loadProfilePage();
   }
 });
 
@@ -1668,91 +1778,94 @@ document.addEventListener("DOMContentLoaded", () => {
 // 🎰 SISTEMA GACHA (LA CAJA DE BOTÍN)
 // ==========================================
 async function tirarGacha() {
-    const userId = localStorage.getItem("memeba_currentUserId");
-    if (!userId) return;
+  const userId = localStorage.getItem("memeba_currentUserId");
+  if (!userId) return;
 
-    if (!gamesDatabase || gamesDatabase.length === 0) {
-        showToast("La tienda está vacía. Vuelve luego.", "error");
-        return;
+  if (!gamesDatabase || gamesDatabase.length === 0) {
+    showToast("La tienda está vacía. Vuelve luego.", "error");
+    return;
+  }
+
+  try {
+    // 1. Miramos la cartera del usuario
+    const userRes = await fetch(`http://localhost:3000/users/${userId}`);
+    const user = await userRes.json();
+    const PRECIO_GACHA = 15;
+
+    const saldoActual = user.balance || 0;
+    if (saldoActual < PRECIO_GACHA) {
+      showToast("¡No tienes 15€! Deja de mendigar y añade saldo.", "error");
+      return;
     }
 
-    try {
-        // 1. Miramos la cartera del usuario
-        const userRes = await fetch(`http://localhost:3000/users/${userId}`);
-        const user = await userRes.json();
-        const PRECIO_GACHA = 15;
+    const gachaSound = new Audio("assets/Gacha.mp3");
+    gachaSound.play();
 
-        const saldoActual = user.balance || 0;
-        if (saldoActual < PRECIO_GACHA) {
-            showToast("¡No tienes 15€! Deja de mendigar y añade saldo.", "error");
-            return;
-        }
+    // 2. LA RULETA: Elegimos un juego aleatorio
+    const randomIndex = Math.floor(Math.random() * gamesDatabase.length);
+    const premio = gamesDatabase[randomIndex];
 
-        const gachaSound = new Audio('assets/Gacha.mp3');
-        gachaSound.play();
+    // 3. Cobramos los 15€ y guardamos la compra en el historial
+    const nuevoSaldo = saldoActual - PRECIO_GACHA;
+    const nuevoGastoTotal = (user.totalSpent || 0) + PRECIO_GACHA;
 
-        // 2. LA RULETA: Elegimos un juego aleatorio
-        const randomIndex = Math.floor(Math.random() * gamesDatabase.length);
-        const premio = gamesDatabase[randomIndex];
+    const nuevaCompra = {
+      gameId: premio.id,
+      title: `[GACHA] ${premio.title}`, // Le ponemos etiqueta Gacha
+      pricePaid: PRECIO_GACHA, // Pagó 15€ por él
+      quantity: 1,
+      date: new Date().toISOString(),
+    };
 
-        // 3. Cobramos los 15€ y guardamos la compra en el historial
-        const nuevoSaldo = saldoActual - PRECIO_GACHA;
-        const nuevoGastoTotal = (user.totalSpent || 0) + PRECIO_GACHA;
-        
-        const nuevaCompra = {
-            gameId: premio.id,
-            title: `[GACHA] ${premio.title}`, // Le ponemos etiqueta Gacha
-            pricePaid: PRECIO_GACHA, // Pagó 15€ por él
-            quantity: 1,
-            date: new Date().toISOString()
-        };
+    const historialCompras = user.purchases
+      ? [...user.purchases, nuevaCompra]
+      : [nuevaCompra];
 
-        const historialCompras = user.purchases ? [...user.purchases, nuevaCompra] : [nuevaCompra];
+    // 4. Actualizamos el servidor
+    const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        balance: nuevoSaldo,
+        totalSpent: nuevoGastoTotal,
+        purchases: historialCompras,
+      }),
+    });
 
-        // 4. Actualizamos el servidor
-        const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                balance: nuevoSaldo,
-                totalSpent: nuevoGastoTotal,
-                purchases: historialCompras
-            })
-        });
+    if (patchRes.ok) {
+      // Actualizamos la pasta en el Header de inmediato
+      const headerBal = document.getElementById("global-balance-text");
+      if (headerBal) headerBal.textContent = `${nuevoSaldo.toFixed(2)}€`;
 
-        if (patchRes.ok) {
-            // Actualizamos la pasta en el Header de inmediato
-            const headerBal = document.getElementById("global-balance-text");
-            if (headerBal) headerBal.textContent = `${nuevoSaldo.toFixed(2)}€`;
-            
-            // ¡Mostramos el pantallazo épico del premio!
-            mostrarPremioGacha(premio);
-        }
-
-    } catch (error) {
-        console.error("Error en el Gacha:", error);
-        showToast("El casino se ha roto. Inténtalo de nuevo.", "error");
+      // ¡Mostramos el pantallazo épico del premio!
+      mostrarPremioGacha(premio);
     }
+  } catch (error) {
+    console.error("Error en el Gacha:", error);
+    showToast("El casino se ha roto. Inténtalo de nuevo.", "error");
+  }
 }
 
 // Ventana emergente estilo cómic para el premio animado (TAMAÑO CINE)
 function mostrarPremioGacha(premio) {
-    let modal = document.getElementById("gacha-modal");
-    if (!modal) {
-        modal = document.createElement("div");
-        modal.id = "gacha-modal";
-        modal.className = "modal-overlay hidden";
-        document.body.appendChild(modal);
-    }
-    
-    // Calculamos si ha ganado dinero (STONKS) o lo ha perdido (TIMADA)
-    const isStonks = premio.newPrice > 15;
-    const mensajeStonks = isStonks ? "¡GAMBLING ALWAYS WIN! 📈" : "¡TIMADA MESOPOTAMICA! 📉";
-    const colorStonks = isStonks ? "var(--price-green)" : "#ff0044";
-    const bgStonks = isStonks ? "#e6ffed" : "#ffe6e6";
+  let modal = document.getElementById("gacha-modal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "gacha-modal";
+    modal.className = "modal-overlay hidden";
+    document.body.appendChild(modal);
+  }
 
-    // Hemos pasado el max-width a 800px y aumentado todos los márgenes y textos
-    modal.innerHTML = `
+  // Calculamos si ha ganado dinero (STONKS) o lo ha perdido (TIMADA)
+  const isStonks = premio.newPrice > 15;
+  const mensajeStonks = isStonks
+    ? "¡GAMBLING ALWAYS WIN! 📈"
+    : "¡TIMADA MESOPOTAMICA! 📉";
+  const colorStonks = isStonks ? "var(--price-green)" : "#ff0044";
+  const bgStonks = isStonks ? "#e6ffed" : "#ffe6e6";
+
+  // Hemos pasado el max-width a 800px y aumentado todos los márgenes y textos
+  modal.innerHTML = `
         <div class="modal-content" style="text-align: center; max-width: 600px; width: 60%; background: ${bgStonks}; transition: all 0.3s; position: relative; padding: 40px;">
             <h2 style="color: var(--primary-purple); font-size: 42px; margin-top: 0; text-transform: uppercase; text-shadow: 2px 2px #fff;">
                 <i class="fas fa-gift"></i> ¡GAMBLING A TOPE!
@@ -1778,77 +1891,84 @@ function mostrarPremioGacha(premio) {
             <button id="btn-cerrar-gacha" class="btn-primary" style="width: 100%; font-size: 26px; padding: 20px; display: none; cursor: pointer;">ACEPTAR MI DESTINO</button>
         </div>
     `;
-    
-    modal.classList.remove("hidden");
 
-    animarRuletaGacha(premio);
+  modal.classList.remove("hidden");
 
-    document.getElementById("btn-cerrar-gacha").addEventListener("click", () => {
-        modal.classList.add("hidden");
-    });
+  animarRuletaGacha(premio);
+
+  document.getElementById("btn-cerrar-gacha").addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
 }
 
 // ==========================================
 // 🎲 ANIMACIÓN DE RULETA GACHA (LA DEFINITIVA)
 // ==========================================
 function animarRuletaGacha(premio) {
-    const rouletteContainer = document.getElementById("gacha-roulette-container");
-    const roulette = document.getElementById("gacha-roulette");
-    const premioImg = document.getElementById("gacha-premio-img");
-    const premioTitle = document.getElementById("gacha-premio-title");
-    const stonksBox = document.getElementById("gacha-stonks-box");
-    const btnCerrar = document.getElementById("btn-cerrar-gacha");
+  const rouletteContainer = document.getElementById("gacha-roulette-container");
+  const roulette = document.getElementById("gacha-roulette");
+  const premioImg = document.getElementById("gacha-premio-img");
+  const premioTitle = document.getElementById("gacha-premio-title");
+  const stonksBox = document.getElementById("gacha-stonks-box");
+  const btnCerrar = document.getElementById("btn-cerrar-gacha");
 
-    rouletteContainer.style.display = "block"; 
-    roulette.innerHTML = ""; 
-    roulette.style.transition = "none"; 
-    roulette.style.transform = "translateX(0px)";
+  rouletteContainer.style.display = "block";
+  roulette.innerHTML = "";
+  roulette.style.transition = "none";
+  roulette.style.transform = "translateX(0px)";
 
-    const iteraciones = 40; 
-    
-    // --- IMÁGENES TAMAÑO CINE ---
-    const itemWidth = 300; 
-    const spaceBetween = 20; 
-    const fullItemWidth = itemWidth + spaceBetween;
-    const winnerIndex = 32; 
+  const iteraciones = 40;
 
-    for (let i = 0; i < iteraciones; i++) {
-        const gameToInsert = (i === winnerIndex) ? premio : gamesDatabase[Math.floor(Math.random() * gamesDatabase.length)];
-        
-        const img = document.createElement("img");
-        img.src = gameToInsert.img;
-        
-        img.style.boxSizing = "border-box"; 
-        img.style.width = `${itemWidth}px`;
-        img.style.height = "220px"; // Mucho más altas
-        img.style.objectFit = "cover";
-        img.style.marginRight = `${spaceBetween}px`;
-        img.style.borderRadius = "10px";
-        img.style.border = "4px solid #fff"; 
-        img.style.flexShrink = "0"; 
-        
-        roulette.appendChild(img);
-    }
+  // --- IMÁGENES TAMAÑO CINE ---
+  const itemWidth = 300;
+  const spaceBetween = 20;
+  const fullItemWidth = itemWidth + spaceBetween;
+  const winnerIndex = 32;
 
-    const containerWidth = rouletteContainer.clientWidth; 
-    const offsetToCenter = (containerWidth / 2) - (itemWidth / 2); 
-    
-    const distanceToScroll = (winnerIndex * fullItemWidth) - offsetToCenter;
+  for (let i = 0; i < iteraciones; i++) {
+    const gameToInsert =
+      i === winnerIndex
+        ? premio
+        : gamesDatabase[Math.floor(Math.random() * gamesDatabase.length)];
 
-    setTimeout(() => {
-        roulette.style.transition = "transform 5s cubic-bezier(0.15, 0.85, 0.3, 1)"; 
-        roulette.style.transform = `translateX(-${distanceToScroll}px)`;
-    }, 50);
+    const img = document.createElement("img");
+    img.src = gameToInsert.img;
 
-    roulette.addEventListener("transitionend", () => {
-        setTimeout(() => {
-            rouletteContainer.style.display = "none"; 
-            premioImg.style.display = "block"; 
-            premioTitle.style.display = "block"; 
-            stonksBox.style.display = "block"; 
-            btnCerrar.style.display = "block";
-        }, 600);
-    }, { once: true });
+    img.style.boxSizing = "border-box";
+    img.style.width = `${itemWidth}px`;
+    img.style.height = "220px"; // Mucho más altas
+    img.style.objectFit = "cover";
+    img.style.marginRight = `${spaceBetween}px`;
+    img.style.borderRadius = "10px";
+    img.style.border = "4px solid #fff";
+    img.style.flexShrink = "0";
+
+    roulette.appendChild(img);
+  }
+
+  const containerWidth = rouletteContainer.clientWidth;
+  const offsetToCenter = containerWidth / 2 - itemWidth / 2;
+
+  const distanceToScroll = winnerIndex * fullItemWidth - offsetToCenter;
+
+  setTimeout(() => {
+    roulette.style.transition = "transform 5s cubic-bezier(0.15, 0.85, 0.3, 1)";
+    roulette.style.transform = `translateX(-${distanceToScroll}px)`;
+  }, 50);
+
+  roulette.addEventListener(
+    "transitionend",
+    () => {
+      setTimeout(() => {
+        rouletteContainer.style.display = "none";
+        premioImg.style.display = "block";
+        premioTitle.style.display = "block";
+        stonksBox.style.display = "block";
+        btnCerrar.style.display = "block";
+      }, 600);
+    },
+    { once: true },
+  );
 }
 
 // ==========================================
@@ -1857,41 +1977,41 @@ function animarRuletaGacha(premio) {
 
 let teclasPulsadas = "";
 
-document.addEventListener('keydown', function(e) {
-    // Solo guardamos letras normales (ignoramos Shift, Enter, etc.)
-    if (e.key.length > 1) return;
+document.addEventListener("keydown", function (e) {
+  // Solo guardamos letras normales (ignoramos Shift, Enter, etc.)
+  if (e.key.length > 1) return;
 
-    // Añadimos la tecla pulsada y la pasamos a minúscula
-    teclasPulsadas += e.key.toLowerCase();
+  // Añadimos la tecla pulsada y la pasamos a minúscula
+  teclasPulsadas += e.key.toLowerCase();
 
-    // Solo nos interesan las últimas 5 letras ("betis" tiene 5)
-    if (teclasPulsadas.length > 5) {
-        teclasPulsadas = teclasPulsadas.slice(-5);
-    }
+  // Solo nos interesan las últimas 5 letras ("betis" tiene 5)
+  if (teclasPulsadas.length > 5) {
+    teclasPulsadas = teclasPulsadas.slice(-5);
+  }
 
-    // Si coincide... ¡DESATAMOS LA LOCURA!
-    if (teclasPulsadas === "betis") {
-        desatarLocuraBetica();
-        teclasPulsadas = ""; // Reseteamos por si lo quiere escribir otra vez
-    }
+  // Si coincide... ¡DESATAMOS LA LOCURA!
+  if (teclasPulsadas === "betis") {
+    desatarLocuraBetica();
+    teclasPulsadas = ""; // Reseteamos por si lo quiere escribir otra vez
+  }
 });
 
 function desatarLocuraBetica() {
-    // Si ya está abierto, no hacemos nada
-    if (document.getElementById("betis-modal")) return;
+  // Si ya está abierto, no hacemos nada
+  if (document.getElementById("betis-modal")) return;
 
-    // Creamos la pantalla gigante
-    const modal = document.createElement("div");
-    modal.id = "betis-modal";
-    modal.className = "modal-overlay";
-    modal.style.zIndex = "999999"; // Por encima de todo
-    modal.style.display = "flex";
-    modal.style.flexDirection = "column";
-    modal.style.justifyContent = "center";
-    modal.style.alignItems = "center";
-    modal.style.background = "rgba(0, 154, 68, 0.9)"; // Fondo verde bético transparente
+  // Creamos la pantalla gigante
+  const modal = document.createElement("div");
+  modal.id = "betis-modal";
+  modal.className = "modal-overlay";
+  modal.style.zIndex = "999999"; // Por encima de todo
+  modal.style.display = "flex";
+  modal.style.flexDirection = "column";
+  modal.style.justifyContent = "center";
+  modal.style.alignItems = "center";
+  modal.style.background = "rgba(0, 154, 68, 0.9)"; // Fondo verde bético transparente
 
-    modal.innerHTML = `
+  modal.innerHTML = `
         <div style="text-align: center; transform: scale(0); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);" id="betis-content">
             <img src="assets/BetisMeme.jpg" alt="Logo Betis" style="width: 500betispx; filter: drop-shadow(0px 0px 30px #fff); margin-bottom: 20px;">
                  <style="width: 300px; filter: drop-shadow(0px 0px 30px #fff); margin-bottom: 20px;">
@@ -1911,50 +2031,51 @@ function desatarLocuraBetica() {
         <audio id="audio-betis" src="assets/himno-betis.mp3" autoplay></audio>
     `;
 
-    document.body.appendChild(modal);
+  document.body.appendChild(modal);
 
-    // Pequeño truco para que haga el efecto de "explotar" hacia la pantalla
-    setTimeout(() => {
-        document.getElementById("betis-content").style.transform = "scale(1)";
-    }, 50);
+  // Pequeño truco para que haga el efecto de "explotar" hacia la pantalla
+  setTimeout(() => {
+    document.getElementById("betis-content").style.transform = "scale(1)";
+  }, 50);
 
-    // Botón para cerrar y apagar la música
-    document.getElementById("cerrar-betis").addEventListener("click", () => {
-        const audio = document.getElementById("audio-betis");
-        if(audio) audio.pause(); // Apagamos el himno
-        modal.remove(); // Destruimos la prueba del delito
-    });
+  // Botón para cerrar y apagar la música
+  document.getElementById("cerrar-betis").addEventListener("click", () => {
+    const audio = document.getElementById("audio-betis");
+    if (audio) audio.pause(); // Apagamos el himno
+    modal.remove(); // Destruimos la prueba del delito
+  });
 }
 
 // --- FUNCIÓN PARA RECALCULAR EL CARRITO CON CUPONES ---
 function aplicarDescuentoUI() {
-    const totalPriceEl = document.getElementById("cart-total-price");
-    const msgEl = document.getElementById("coupon-msg");
-    if (!totalPriceEl) return;
+  const totalPriceEl = document.getElementById("cart-total-price");
+  const msgEl = document.getElementById("coupon-msg");
+  if (!totalPriceEl) return;
 
-    let finalTotal = currentCartTotal;
+  let finalTotal = currentCartTotal;
 
-    if (appliedCoupon) {
-        // Matemáticas del descuento
-        if (appliedCoupon.type === "percent") {
-            finalTotal = finalTotal - (finalTotal * appliedCoupon.value);
-        } else if (appliedCoupon.type === "fixed") {
-            finalTotal = Math.max(0, finalTotal - appliedCoupon.value); // Evita que baje de 0€
-        } else if (appliedCoupon.type === "punish") {
-            finalTotal = finalTotal * appliedCoupon.value; // El castigo de Gabe
-        }
-
-        // Mostrar el mensajito
-        if (msgEl) {
-            msgEl.textContent = appliedCoupon.message;
-            msgEl.style.color = appliedCoupon.type === "punish" ? "#ff0044" : "var(--price-green)";
-            msgEl.style.display = "block";
-        }
-    } else {
-        if (msgEl) msgEl.style.display = "none";
+  if (appliedCoupon) {
+    // Matemáticas del descuento
+    if (appliedCoupon.type === "percent") {
+      finalTotal = finalTotal - finalTotal * appliedCoupon.value;
+    } else if (appliedCoupon.type === "fixed") {
+      finalTotal = Math.max(0, finalTotal - appliedCoupon.value); // Evita que baje de 0€
+    } else if (appliedCoupon.type === "punish") {
+      finalTotal = finalTotal * appliedCoupon.value; // El castigo de Gabe
     }
 
-    totalPriceEl.textContent = finalTotal.toFixed(2) + "€";
+    // Mostrar el mensajito
+    if (msgEl) {
+      msgEl.textContent = appliedCoupon.message;
+      msgEl.style.color =
+        appliedCoupon.type === "punish" ? "#ff0044" : "var(--price-green)";
+      msgEl.style.display = "block";
+    }
+  } else {
+    if (msgEl) msgEl.style.display = "none";
+  }
+
+  totalPriceEl.textContent = finalTotal.toFixed(2) + "€";
 }
 
 // ==========================================
@@ -1962,18 +2083,18 @@ function aplicarDescuentoUI() {
 // ==========================================
 
 async function renderDailyBonus() {
-    const container = document.getElementById('daily-bonus-col-container');
-    if (!container) return; 
+  const container = document.getElementById("daily-bonus-col-container");
+  if (!container) return;
 
-    // Limpiamos intervalos anteriores
-    if (window.countdownInterval) clearInterval(window.countdownInterval);
+  // Limpiamos intervalos anteriores
+  if (window.countdownInterval) clearInterval(window.countdownInterval);
 
-    // Recuperamos el ID del usuario real
-    const userId = localStorage.getItem("memeba_currentUserId");
+  // Recuperamos el ID del usuario real
+  const userId = localStorage.getItem("memeba_currentUserId");
 
-    // 1. SI NO ESTÁS LOGUEADO
-    if (!userId) {
-        container.innerHTML = `
+  // 1. SI NO ESTÁS LOGUEADO
+  if (!userId) {
+    container.innerHTML = `
             <h2>RASCADA DIARIA</h2>
             <p><strong>¿De verdad eres tan rata compadre?</strong></p>
             <p>Mira como aqui en memeba somos empaticos con los pobres como tu, si nos haces el favor de loguearte una vez al dia (Lo que hace que nosotros ganemos un paston por vender tu informacion personal) te daremos <br>UN MISERO EURO</p>
@@ -1982,52 +2103,54 @@ async function renderDailyBonus() {
                 <i class="fas fa-lock"></i> INICIAR SESIÓN
             </button>
         `;
-        return;
-    }
+    return;
+  }
 
-    // 2. SI ESTÁS LOGUEADO
-    const todayStr = new Date().toISOString().split('T')[0];
-    const lastClaimedStr = localStorage.getItem(`daily_bonus_${userId}`);
-    const canClaim = (lastClaimedStr !== todayStr);
+  // 2. SI ESTÁS LOGUEADO
+  const todayStr = new Date().toISOString().split("T")[0];
+  const lastClaimedStr = localStorage.getItem(`daily_bonus_${userId}`);
+  const canClaim = lastClaimedStr !== todayStr;
 
-    try {
-        // 2. SI ESTÁS LOGUEADO: Leemos los datos directos de tu BD
-        const res = await fetch(`http://localhost:3000/users/${userId}`);
-        const user = await res.json();
+  try {
+    // 2. SI ESTÁS LOGUEADO: Leemos los datos directos de tu BD
+    const res = await fetch(`http://localhost:3000/users/${userId}`);
+    const user = await res.json();
 
-        // Matemáticas del tiempo (24 horas = 86400000 milisegundos)
-        const exactClaimTime = user.lastClaimedTime || 0; // Si no existe, es 0
-        const now = new Date().getTime();
-        const timePassed = now - exactClaimTime;
-        const cooldown = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
-        
-        const canClaim = (timePassed >= cooldown);
+    // Matemáticas del tiempo (24 horas = 86400000 milisegundos)
+    const exactClaimTime = user.lastClaimedTime || 0; // Si no existe, es 0
+    const now = new Date().getTime();
+    const timePassed = now - exactClaimTime;
+    const cooldown = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
+
+    const canClaim = timePassed >= cooldown;
 
     // Título igual que los demás (H2)
     const title = `<h2>BONO DIARIO</h2>`;
-    
+
     // El Euro gigante en el centro
     const amount = `
-        <div class="${canClaim ? 'pulsar-effect' : ''}" style="font-size: 55px; font-weight: 900; color: var(--primary-purple); text-shadow: 2px 2px 0 #000; line-height: 1; margin: 5px 0; width: 100%; text-align: center;">
+        <div class="${canClaim ? "pulsar-effect" : ""}" style="font-size: 55px; font-weight: 900; color: var(--primary-purple); text-shadow: 2px 2px 0 #000; line-height: 1; margin: 5px 0; width: 100%; text-align: center;">
             1€
         </div>
     `;
 
     // Mensaje o cuenta atrás
-    let messageAndCountdown = '';
+    let messageAndCountdown = "";
     if (canClaim) {
-        messageAndCountdown = `<p style="text-align: center; width: 100%;"><strong>Illo recoge ya tu euro gratis</strong></p>` +
+      messageAndCountdown =
+        `<p style="text-align: center; width: 100%;"><strong>Illo recoge ya tu euro gratis</strong></p>` +
         `<p style="text-align: center; width: 100%;">Que al paso al que vas me lo quedo yo , o te crees tu que el gasoil se paga solo</p>`;
     } else {
-        messageAndCountdown = `<p style="text-align: center; width: 100%;">Po ya tienes tu misero euro gratis, ni se te ocurra irte sin darme las gracias</p>` +
-        `<p style="text-align: center; width: 100%;">Y comprame algo, que me queo sin come</p>` +
+      messageAndCountdown =
+        `<p style="text-align: center; width: 100%;">Po ya tienes tu misero euro gratis, ni se te ocurra irte sin darme las gracias</p>` +
+        `<p style="text-align: center; width: 100%;">Y cómprame algo, que me queo sin come</p>` +
         `<p style="text-align: center; width: 100%;">Vuelve en:<br><span id="daily-bonus-countdown" style="font-size: 20px; color: var(--primary-purple); font-weight: 900;">HH:MM:SS</span></p>`;
     }
 
     // Botón
     const button = `
-        <button id="btn-claim-daily-new" class="btn-claim-new ${canClaim ? '' : 'disabled'}" style="margin-top: auto;" ${canClaim ? '' : 'disabled'}>
-            ${canClaim ? '<i class="fas fa-coins"></i> RECLAMAR EURO' : 'COBRADO ¡MUSHO BETIS!'}
+        <button id="btn-claim-daily-new" class="btn-claim-new ${canClaim ? "" : "disabled"}" style="margin-top: auto;" ${canClaim ? "" : "disabled"}>
+            ${canClaim ? '<i class="fas fa-coins"></i> RECLAMAR EURO' : "COBRADO ¡MUSHO BETIS!"}
         </button>
     `;
 
@@ -2036,81 +2159,82 @@ async function renderDailyBonus() {
 
     // Conectamos el botón o activamos la cuenta atrás
     if (canClaim) {
-        document.getElementById('btn-claim-daily-new').addEventListener('click', claimDailyBonus);
+      document
+        .getElementById("btn-claim-daily-new")
+        .addEventListener("click", claimDailyBonus);
     } else {
-        startCountdown(exactClaimTime);
+      startCountdown(exactClaimTime);
     }
-
-    } catch (error) {
-        console.error("No se pudo cargar el estado del bono:", error);
-        container.innerHTML = `<p style="color:red; font-weight:bold;">Error de conexión con la BD.</p>`;
-    }
+  } catch (error) {
+    console.error("No se pudo cargar el estado del bono:", error);
+    container.innerHTML = `<p style="color:red; font-weight:bold;">Error de conexión con la BD.</p>`;
+  }
 }
 
 // ==========================================
 // FUNCIÓN PARA COBRAR EL EURO Y SUBIRLO A LA BD
 // ==========================================
 async function claimDailyBonus() {
-    const userId = localStorage.getItem("memeba_currentUserId");
-    if (!userId) return; 
+  const userId = localStorage.getItem("memeba_currentUserId");
+  if (!userId) return;
 
-    try {
-        const res = await fetch(`http://localhost:3000/users/${userId}`);
-        const user = await res.json();
+  try {
+    const res = await fetch(`http://localhost:3000/users/${userId}`);
+    const user = await res.json();
 
-        const newBalance = (user.balance || 0) + 1.00;
-        const exactTime = new Date().getTime(); // Momento exacto de la reclamación en milisegundos
+    const newBalance = (user.balance || 0) + 1.0;
+    const exactTime = new Date().getTime(); // Momento exacto de la reclamación en milisegundos
 
-        // Guardamos el nuevo saldo Y la marca de tiempo exacta
-        const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                balance: newBalance,
-                lastClaimedTime: exactTime // <-- ¡ESTO ES LO CLAVE!
-            })
-        });
+    // Guardamos el nuevo saldo Y la marca de tiempo exacta
+    const patchRes = await fetch(`http://localhost:3000/users/${userId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        balance: newBalance,
+        lastClaimedTime: exactTime, // <-- ¡ESTO ES LO CLAVE!
+      }),
+    });
 
-        if (patchRes.ok) {
-            const headerBal = document.getElementById("global-balance-text");
-            if (headerBal) headerBal.textContent = `${newBalance.toFixed(2)}€`;
+    if (patchRes.ok) {
+      const headerBal = document.getElementById("global-balance-text");
+      if (headerBal) headerBal.textContent = `${newBalance.toFixed(2)}€`;
 
-            renderDailyBonus();
-            showToast("¡Euro gratis añadido a tu cartera! 💰", "success");
-        }
-    } catch (error) {
-        console.error("Error al reclamar el bono:", error);
-        showToast("El servidor json-server está apagado.", "error");
+      renderDailyBonus();
+      showToast("¡Euro gratis añadido a tu cartera! 💰", "success");
     }
+  } catch (error) {
+    console.error("Error al reclamar el bono:", error);
+    showToast("El servidor json-server está apagado.", "error");
+  }
 }
 
 // ==========================================
 // EL RELOJ DE LA CUENTA ATRÁS (24H INDIVIDUAL)
 // ==========================================
 function startCountdown(lastClaimedTime) {
-    const countdownSpan = document.getElementById('daily-bonus-countdown');
-    if (!countdownSpan) return;
+  const countdownSpan = document.getElementById("daily-bonus-countdown");
+  if (!countdownSpan) return;
 
-    // La hora a la que podrá volver a cobrar (24h después)
-    const claimAvailableTime = lastClaimedTime + (24 * 60 * 60 * 1000);
+  // La hora a la que podrá volver a cobrar (24h después)
+  const claimAvailableTime = lastClaimedTime + 24 * 60 * 60 * 1000;
 
-    function updateCountdownUI() {
-        const now = new Date().getTime();
-        const diff = claimAvailableTime - now;
+  function updateCountdownUI() {
+    const now = new Date().getTime();
+    const diff = claimAvailableTime - now;
 
-        if (diff <= 0) {
-            if (window.countdownInterval) clearInterval(window.countdownInterval);
-            renderDailyBonus();
-            return;
-        }
-
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        countdownSpan.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    if (diff <= 0) {
+      if (window.countdownInterval) clearInterval(window.countdownInterval);
+      renderDailyBonus();
+      return;
     }
 
-    updateCountdownUI(); 
-    window.countdownInterval = setInterval(updateCountdownUI, 1000);
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    countdownSpan.textContent = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  updateCountdownUI();
+  window.countdownInterval = setInterval(updateCountdownUI, 1000);
 }
