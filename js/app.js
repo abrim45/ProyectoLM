@@ -692,7 +692,7 @@ async function processCheckout() {
       localStorage.setItem(`memeba_cart_${user.username}`, JSON.stringify([])); // Vaciamos local
       updateCartBadge(); // Resetea el numerito a 0
 
-      // Efecto visual épico de compra
+      // Efecto visual de compra
       document.getElementById("cart-items-container").innerHTML = `
                 <div style="text-align: center; padding: 50px;">
                     <i class="fas fa-check-circle" style="font-size: 80px; color: var(--price-green); margin-bottom: 20px;"></i>
@@ -1210,15 +1210,6 @@ function loadCartPage() {
     const summary = document.querySelector(".cart-summary");
     if (summary) summary.style.display = "none";
     return;
-    }
-    const btnCheckout = document.getElementById("btn-checkout");
-    if (btnCheckout) {
-      const newBtn = btnCheckout.cloneNode(true);
-      btnCheckout.parentNode.replaceChild(newBtn, btnCheckout);
-
-      newBtn.addEventListener("click", () => {
-        processCheckout();
-      });
     }
   
 

@@ -3682,10 +3682,10 @@
       "password": "usuario",
       "cart": [],
       "favorites": [],
-      "balance": 4.549999999999997,
-      "totalDeposited": 60,
-      "totalSpent": 57.45,
-      "savings": 57.53000000000001,
+      "balance": 62.11999999999999,
+      "totalDeposited": 160,
+      "totalSpent": 99.88,
+      "savings": 130.05,
       "purchases": [
         {
           "gameId": "11",
@@ -3707,6 +3707,48 @@
           "pricePaid": 15,
           "quantity": 1,
           "date": "2026-03-23T07:34:47.495Z"
+        },
+        {
+          "gameId": "47",
+          "title": "[GACHA] The Last Guardian",
+          "pricePaid": 15,
+          "quantity": 1,
+          "date": "2026-03-23T23:20:43.702Z"
+        },
+        {
+          "gameId": "2",
+          "title": "Cyberpunk 2077",
+          "pricePaid": 22.45,
+          "quantity": 1,
+          "date": "2026-03-23T23:21:03.448Z"
+        },
+        {
+          "gameId": "9",
+          "title": "Portal 2",
+          "pricePaid": 1.5,
+          "quantity": 1,
+          "date": "2026-03-23T23:22:01.798Z"
+        },
+        {
+          "gameId": "9",
+          "title": "Portal 2",
+          "pricePaid": 1.5,
+          "quantity": 1,
+          "date": "2026-03-23T23:22:58.994Z"
+        },
+        {
+          "gameId": "8",
+          "title": "Half-Life 2",
+          "pricePaid": 0.99,
+          "quantity": 1,
+          "date": "2026-03-23T23:26:19.671Z"
+        },
+        {
+          "gameId": "8",
+          "title": "Half-Life 2",
+          "pricePaid": 0.99,
+          "quantity": 1,
+          "date": "2026-03-23T23:27:51.603Z"
         }
       ],
       "lastClaimedTime": 1774225257761
